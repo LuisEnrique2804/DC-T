@@ -1,0 +1,64 @@
+<apex:page showHeader="false" controller="Presupuesto_ArbolDeDecision_ctr" sidebar="true">
+    
+    <apex:form id="idForm1">
+        <apex:pageBlock id="pgbl01" title="Arbol de Decisión">
+            <apex:pageBlockButtons id="pgblkbut01">
+                <apex:commandButton title="Regresar"  value="Regresar" onclick="history.go(-1);"/>
+            </apex:pageBlockButtons>
+            <table>
+                <tr>
+                    <td>
+                        <apex:outputText value="Mes "/>
+                        <apex:selectList Id="slMes" value="{!sFiltroMes}" multiselect="false" size="1">
+                            <apex:selectOptions value="{!lstMeses}"/>
+                            <apex:actionSupport event="onchange" action="{!ejecutarConsulta}" reRender="Contenedor" />
+                        </apex:selectList>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:pageBlockTable Id="Contenedor" value="{!lstArbolDecisiones}" var="objDetalle">
+                            <apex:column headerValue="JEC" footerValue="">
+                                 <a href="/{!objDetalle.objUser.id}" target="_blank" id="{!objDetalle.objUser.id}" onblur="LookupHoverDetail.getHover('{!objDetalle.objUser.id}{!objDetalle.objUser.id}').hide();" onfocus="LookupHoverDetail.getHover('{!objDetalle.objUser.id}', '/{!objDetalle.objUser.id}/m?retURL=%2F{!objDetalle.objUser.id} &isAjaxRequest=1').show();" onmouseout="LookupHoverDetail.getHover('{!objDetalle.objUser.id}').hide();" onmouseover="LookupHoverDetail.getHover('{!objDetalle.objUser.id}', '/{!objDetalle.objUser.id}/m?retURL=%2F{!objDetalle.objUser.id} &isAjaxRequest=1').show();">{!objDetalle.objUser.name}</a>
+                            </apex:column>
+                            <apex:column headerValue="Estatus">
+                                <apex:outputText value="{!objDetalle.strEstado}"/>
+                            </apex:column>
+                            <apex:column headerValue="Actuación">
+                                <apex:outputText value="{!objDetalle.strActuacion}"/>
+                            </apex:column>
+                            <!--<apex:column headerValue="Presupuesto">
+                                <apex:outputText value="{!objDetalle.decR9}"/>
+                            </apex:column>
+                            <apex:column headerValue="Ganada">
+                                <apex:outputText value="{!objDetalle.decGanada}"/>
+                            </apex:column>
+                            <apex:column headerValue="Prevision">
+                                <apex:outputText value="{!objDetalle.decPrevision}"/>
+                            </apex:column>
+                            <apex:column headerValue="Estandar A">
+                                <apex:outputText value="{!objDetalle.decEstandarA}"/>
+                            </apex:column>
+                            <apex:column headerValue="Estandar B">
+                                <apex:outputText value="{!objDetalle.decEstandarB}"/>
+                            </apex:column>
+                            <apex:column headerValue="Estandar C">
+                                <apex:outputText value="{!objDetalle.decEstandarC}"/>
+                            </apex:column>
+                            <apex:column headerValue="Cantidad Embudo">
+                                <apex:outputText value="{!objDetalle.decCantidadEmbudo}"/>
+                            </apex:column>
+                            <apex:column headerValue="Cantidad PCT">
+                                <apex:outputText value="{!objDetalle.decCantidadPCT}"/>
+                            </apex:column>
+                            <apex:column headerValue="Cantidad Prev y Post">
+                                <apex:outputText value="{!objDetalle.decCantidadPreventaPostventa}"/>
+                            </apex:column> -->
+                            
+                        </apex:pageBlockTable>
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>       
+    </apex:form>
+</apex:page>

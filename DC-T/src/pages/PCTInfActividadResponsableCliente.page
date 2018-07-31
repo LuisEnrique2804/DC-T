@@ -1,0 +1,80 @@
+<apex:page standardController="Account" extensions="AccountExtension">
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+    
+    <script >
+    $j = jQuery.noConflict();
+    $j(document).ready(function() {
+    $j('a').attr("target","_blank");
+    });
+    </script > 
+    <apex:form >
+       <apex:pageBlock id="pBOportunidades" >
+            <apex:pageBlockSection collapsible="true" columns="1" title="Oportunidades de Telcel">
+                <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/006/e?&accid={!Account.Id}&retURL=%2F{!Account.Id}','_blank');" value="Nueva Oportunidad"/>
+                <apex:pageBlockTable value="{!elementosAMostrarOportunidades}" var="so" rows="10">
+                    <apex:column headervalue="Nombre de la Oportunidad"><apex:outputLink target="_blank" value="/{!so.Id}">{!so.Name}</apex:outputLink></apex:column>
+                    <!--<apex:column value="{!so.Embudo__r.FechaInicio__c}"/> -->
+                    <apex:column value="{!so.Fase__c}"/>
+                    <!--<apex:column value="{!so.Proximaaccion__c}"/> -->
+                    <apex:column headervalue="Próxima Acción"><apex:outputLink target="_parent" value="/{!so.IdEventoProximaAccion__c}">{!so.Proximaaccion__c}</apex:outputLink></apex:column> 
+                    <!--<apex:column value="{!so.Fechaproximaaccion__c}"/> -->
+                    <apex:column headervalue="Fecha de Próxima Acción"><apex:outputLink target="_parent" value="/{!so.IdEventoProximaAccion__c}">
+                        <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                            <apex:param value="{!so.Fechaproximaaccion__c}" /> 
+                        </apex:outputText>
+                    </apex:outputLink></apex:column> 
+                    <apex:column value="{!so.LineasR9__c}"/>
+                    <!--<apex:column value="{!so.LineasR1a8__c}"/>-->
+                    <apex:column value="{!so.LineasDAT__c}"/>
+                    <apex:column value="{!so.Fechacierre__c}"/>
+                    <apex:column value="{!so.Embudo__r.P__c}"/>
+                    <apex:column value="{!so.EmbudoGlobal__c}"/>
+                    <apex:column headervalue="Nombre del Embudo"><apex:outputLink target="_parent" value="/{!so.Embudo__r.Id}">{!so.Embudo__r.Name}</apex:outputLink></apex:column>
+                    </apex:pageBlockTable>
+                    <apex:panelGrid columns="2">
+                        <apex:commandLink target="_parent" action="{!anteriorOportunidades}" value="Anterior" reRender="pBOportunidades" rendered="{!IF(OR(totalIndicesOportunidades==0,indiceActualOportunidades==1),'false','true')}"/>
+                        <apex:commandLink target="_parent" action="{!siguienteOportunidades}" value="Siguiente" reRender="pBOportunidades" rendered="{!IF(OR(totalIndicesOportunidades==0,indiceActualOportunidades==totalIndicesOportunidades),'false','true')}"/>
+                    </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:form > 
+        <apex:pageBlock id="pBInterlocutores">
+            <apex:pageBlockSection collapsible="true" columns="1" title="Interlocutores">
+                <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a0Q/e?CF00N1500000H1kRZ={!Account.Name}&CF00N1500000H1kRZ_lkid={!Account.Id}&retURL=%2F{!Account.Id}','_blank');" value="Nuevo Interlocutor"/>
+                <apex:pageBlockTable value="{!elementosAMostrarInterlocutores}" var="itl">
+                    <apex:column headervalue="Interlocutor"><apex:outputLink target="_blank" value="/{!itl.Id}">{!itl.Interlocutor__r.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!itl.PosicionPuesto__c}"/>
+                    <apex:column value="{!itl.Tipo__c}"/>
+                    <apex:column value="{!itl.Actitud__c}"/>
+                    <apex:column value="{!itl.Logro__c}"/>
+                    <apex:column value="{!itl.RelacionTelcel__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2"> 
+                        <apex:commandLink target="_parent" action="{!anteriorInterlocutores}" value="Anterior" reRender="pBInterlocutores" rendered="{!IF(OR(totalIndicesInterlocutores==0,indiceActualInterlocutores==1),'false','true')}"/>
+                        <apex:commandLink target="_parent" action="{!siguienteInterlocutores}" value="Siguiente" reRender="pBInterlocutores" rendered="{!IF(OR(totalIndicesInterlocutores==0,indiceActualInterlocutores==totalIndicesInterlocutores),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:form >
+        <apex:pageBlock id="pBDirectriz" >
+            <apex:pageBlockSection collapsible="true" columns="1" title="Directriz Telcel"> 
+                    <apex:commandButton rendered="{!$Profile.Name != 'JEC'}" onclick="window.open('/a0N/e?CF00N1500000H1kRX={!Account.Name}&CF00N1500000H1kRX_lkid={!Account.Id}&retURL=%2F{!Account.Id}','_blank');" value="Nueva Directriz de Telcel"/>
+                <apex:pageBlockTable value="{!elementosAMostrarDirectriz}" var="dt">
+                    <apex:column headervalue="Número de Directriz"><apex:outputLink target="_blank" value="/{!dt.Id}">{!dt.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!dt.FechaCreacion__c}"/>
+                    <apex:column value="{!dt.CreadoPor__c}"/>
+                    <apex:column value="{!dt.Directriz__c}"/>
+                    <apex:column value="{!dt.ReenviarNotificacion__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                        <apex:commandLink target="_parent" action="{!anteriorDirectriz}" value="Anterior" reRender="pBDirectriz" rendered="{!IF(OR(totalIndicesDirectriz==0,indiceActualDirectriz==1),'false','true')}"/>
+                        <apex:commandLink target="_parent" action="{!siguienteDirectriz}" value="Siguiente" reRender="pBDirectriz" rendered="{!IF(OR(totalIndicesDirectriz==0,indiceActualDirectriz==totalIndicesDirectriz),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

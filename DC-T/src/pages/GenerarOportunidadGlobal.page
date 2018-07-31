@@ -1,0 +1,210 @@
+<apex:page controller="GenerarOportunidadGlobalCtr" doctype="html-5.0">
+    
+    <apex:form id="theForm">
+    
+    <apex:pageBlock id="theBlock">
+        <apex:pageBlockButtons id="theButtons" > 
+            <apex:commandButton rendered="{!renderPanelClientes && !activado && iTipoFaseAcc != 10}" value="Crear Oportunidades" action="{!crearOportunidadesUsuarios}" />
+            <apex:commandButton rendered="{!iTipoFaseAcc == 10}" value="Crear Oportunidades Por Cliente" action="{!crearOportunidadesPorCliente}" />
+            <apex:commandButton id="botonVolver" rendered="{!(faseActual != null && faseActual != faseInicial) || !activado && iTipoFaseAcc != 10}" Value="Volver" action="{!volverFase}" 
+                                                                                    rerender="{!$Component.theForm},"/>
+            <apex:commandButton id="botonAvanzar" rendered="{!(faseActual == null || faseActual < 4 || activado) && iTipoFaseAcc != 10}" Value="Siguiente" action="{!avanzarFase}" 
+                                                                                        rerender="{!$Component.theForm}"/>
+        </apex:pageBlockButtons>
+            
+        <apex:pageBlock Title="Datos de La Oportunidad" id="blockPanelOportunidad">
+            <apex:outputPanel rendered="{!activado}" id="panelFormOportunidad">
+                <apex:pageBlockSection id="sectionFormOportunidad"> 
+                    
+                    <apex:inputField label="{!$ObjectType.Opportunity.fields.Name.Label}" value="{!oportunidadPorCliente.Name}"/>
+                    <apex:inputField label="{!$ObjectType.Opportunity.fields.CloseDate.Label}" value="{!oportunidadPorCliente.CloseDate}"/>
+                    <apex:inputField label="{!$ObjectType.Opportunity.fields.TipoPlataforma__c.Label}" required="true" value="{!oportunidadPorCliente.TipoPlataforma__c}"/>
+                    <apex:inputField label="{!$ObjectType.Opportunity.fields.Plataforma__c.Label}" required="true" value="{!oportunidadPorCliente.Plataforma__c}"/>
+                    <apex:inputField required="true" label="{!$ObjectType.Opportunity.fields.Description.Label}" value="{!oportunidadPorCliente.Description}"/>
+                    
+                </apex:pageBlockSection> 
+                
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!!activado}" id="panelExhibeOportunidad">
+                <apex:pageBlockSection id="sectionExhibeOportunidad">
+                    <apex:outputField label="{!$ObjectType.Opportunity.fields.Name.Label}" value="{!oportunidadPorCliente.Name}"/>
+                    <apex:outputField label="{!$ObjectType.Opportunity.fields.CloseDate.Label}" value="{!oportunidadPorCliente.CloseDate}"/>
+                    <apex:outputField label="{!$ObjectType.Opportunity.fields.TipoPlataforma__c.Label}" value="{!oportunidadPorCliente.TipoPlataforma__c}"/>
+                    <apex:outputField label="{!$ObjectType.Opportunity.fields.Plataforma__c.Label}" value="{!oportunidadPorCliente.Plataforma__c}"/>
+                    <apex:outputField label="{!$ObjectType.Opportunity.fields.Description.Label}" value="{!oportunidadPorCliente.Description}"/>
+                </apex:pageBlockSection> 
+                
+            </apex:outputPanel>
+        </apex:pageBlock>
+        
+        <apex:pageBlock Title="Tipo de búsqueda" id="blockPanelTipoBusqueda" rendered="{!bTipoBusqueda}">
+                <apex:pageBlockSection id="sectionSerchDefine">
+                    <apex:selectRadio value="{!OpcionBusqueda}">
+                        <apex:selectOptions value="{!lstOpcionBusqueda}" /> 
+                        <apex:actionSupport event="onchange" action="{!ValidarOpcionBusqueda}" rerender="theForm" status="updateStatus" />
+                    </apex:selectRadio>
+                </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:outputPanel rendered="{!bTipoBusqueda}" id="Filtros">
+            <apex:outputPanel rendered="{!!VisibleCliente}" id="filtrosCuentas">
+                <apex:pageBlock title="Filtros">
+                    <apex:outputLabel for="inputSegmento" value="  {!$ObjectType.Account.fields.Segmento__c.Label}: "/>
+                        <apex:selectList size="1" value="{!segmentoCuenta}">
+                            <apex:selectOptions value="{!listaSegmentos}"/>
+                        </apex:selectList>
+                    <apex:outputText value="  {!$ObjectType.Account.fields.Sector__c.Label}: "/>
+                    
+                    <apex:selectList size="1" value="{!sectorCuenta}">
+                        <apex:selectOptions value="{!listaSector}"/>
+                     </apex:selectList>
+                    
+                    <apex:outputText value="  {!$ObjectType.Account.fields.Subsector__c.Label} "/>
+                        <apex:selectList size="1" value="{!subsectorCuenta}">
+                    <apex:selectOptions value="{!listasubSector}"/>
+                    </apex:selectList>
+                </apex:pageBlock>
+            </apex:outputPanel>
+            
+            <apex:outputPanel rendered="{!VisibleCliente}" id="panelFormOportunidad001" >
+                <apex:pageBlockSection id="sectionFormOportunidad">
+                    <apex:inputField label="{!$ObjectType.Opportunity.fields.AccountID.Label}" value="{!oportunidadPorCliente.RazonSocialGlobal__c}" />
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        
+        
+        <apex:outputPanel style="margin-top:10px;" id="panelFormUsuarios" >
+            <apex:pageBlockSection columns="1" id="sectionFormUsuarios">
+                    <apex:pageMessages />
+                    <apex:outputPanel style="width:100%" id="panelUsuarios" rendered="{!renderPanelClientes}">
+                        <div style="clear:both;"></div>
+                        
+                        <!--  directores -->
+                        <div id="listaUsuarios1" style="margin-top:10px;width:100%; {!IF(faseActual != 0 || activado == true, 'display:none', '')}">
+                            <div style="font-weight:bold;text-align:center"> Directores Regionales</div>
+                            
+                            <div>
+                                <apex:commandButton rendered="{!NOT(ISNULL(nodosRaizes)) && nodosRaizes.size>0}" value="Seleccionar Todos" action="{!seleccionarLista1}" 
+                                  rerender="{!$Component.theForm.theBlock.panelFormUsuarios.sectionFormUsuarios.panelUsuarios.tablaDirectores}"/>
+                                <apex:commandButton rendered="{!NOT(ISNULL(nodosRaizes)) && nodosRaizes.size>0}" value="Limpiar Seleccion" action="{!deseleccionarLista1}" 
+                                  rerender="{!$Component.theForm.theBlock.panelFormUsuarios.sectionFormUsuarios.panelUsuarios.tablaDirectores}"/>
+                            </div>
+                            <table id="tablaDirectores">
+                                <apex:repeat value="{!nodosRaizes}" var="nodoNivel1">
+                                    <tr>
+                                        <td>
+                                            <apex:inputCheckbox value="{!nodoNivel1.seleccionado}">
+                                            </apex:inputCheckbox>
+                                        </td>
+                                        <td>{!nodoNivel1.usuario.manager.Name} - {!nodoNivel1.usuario.Name}</td>
+                                    </tr>
+                                </apex:repeat>
+                            </table>
+                        </div>
+                        
+                        
+                        <!--  subdirectores -->
+                        <div id="listaUsuarios1" style="margin-top:10px;width:100%; {!IF(faseActual != 1 || activado == true, 'display:none', '')}">
+                            <div style="font-weight:bold;text-align:center"> Sub-Directores</div>
+                            
+                            <div>
+                                <apex:commandButton rendered="{!NOT(ISNULL(nodosRaizes)) && nodosRaizes.size>0}" value="Seleccionar Todos" action="{!seleccionarLista1}" 
+                                  rerender="{!$Component.theForm.theBlock.panelFormUsuarios.sectionFormUsuarios.panelUsuarios.tablaDirectores}"/>
+                                <apex:commandButton rendered="{!NOT(ISNULL(nodosRaizes)) && nodosRaizes.size>0}" value="Limpiar Seleccion" action="{!deseleccionarLista1}" 
+                                  rerender="{!$Component.theForm.theBlock.panelFormUsuarios.sectionFormUsuarios.panelUsuarios.tablaDirectores}"/>
+                            </div>
+                            <table id="tablaDirectores">
+                                <apex:repeat value="{!listaDirectores}" var="nodoNivel1">
+                                    <tr>
+                                        <td>
+                                            <apex:inputCheckbox value="{!nodoNivel1.seleccionado}">
+                                            </apex:inputCheckbox>
+                                        </td>
+                                        <td>{!IF(faseInicial != null,IF(faseInicial < 1,nodoNivel1.usuario.manager.manager.Name + ' - ', ''), '')}
+                                            {!IF(faseInicial < 2, nodoNivel1.usuario.manager.Name + ' - ', '')} 
+                                            {!nodoNivel1.usuario.Name}</td>
+                                    </tr>
+                                </apex:repeat>
+                            </table>
+                        </div>
+                        <!-- Gerentes -->
+                        <div id="listaUsuarios1" style="margin-top:10px;width:100%;{!IF(faseActual != 2 || activado == true, 'display:none', '')}">
+                            <div style="font-weight:bold;text-align:center"> Gerentes </div>
+                            <apex:commandButton rendered="{!NOT(ISNULL(listaGerentes)) && listaGerentes.size>0}" value="Seleccionar Todos" action="{!seleccionarLista2}" 
+                                  rerender="{!$Component.theForm.theBlock.panelFormUsuarios}"/>
+                            <apex:commandButton rendered="{!NOT(ISNULL(listaGerentes)) && listaGerentes.size>0}" value="Limpiar Selección" action="{!deseleccionarLista2}" 
+                                  rerender="{!$Component.theForm.theBlock.panelFormUsuarios}"/>
+                            <table id="tablaGerentes">
+                                <apex:repeat value="{!listaGerentes}" var="nodoGerente">
+                                    <tr>
+                                        <td>
+                                            <apex:inputCheckbox value="{!nodoGerente.seleccionado}">
+                                            </apex:inputCheckbox>
+                                        </td>
+                                        <td>
+                                            {!IF(faseInicial < 1,nodoGerente.usuario.Manager.Manager.Manager.Name + ' - ', '')}
+                                            {!IF(faseInicial < 2, nodoGerente.usuario.Manager.Manager.Name + ' - ', '')}
+                                            {!IF(faseInicial < 3, nodoGerente.usuario.Manager.Name + ' - ', '')} 
+                                            {!nodoGerente.usuario.Name}
+                                            
+                                        </td>
+                                    </tr>
+                                </apex:repeat>
+                            </table>
+                        </div>
+                        <div style="margin-top:10px;width:100%;{!IF(faseActual != 3 || activado == true, 'display:none', '')}">
+                            <div style="font-weight:bold;text-align:center"> JECs </div>
+                            <apex:commandButton rendered="{!NOT(ISNULL(listaJECs)) && listaJECs.size>0}" value="Seleccionar Todos" action="{!seleccionarLista3}" 
+                                  rerender="{!$Component.theForm.theBlock.panelFormUsuarios.sectionFormUsuarios.panelUsuarios.tablaJECs}"/>
+                            <apex:commandButton rendered="{!NOT(ISNULL(listaJECs)) && listaJECs.size>0}" value="Limpiar Selección" action="{!deseleccionarLista3}" 
+                                  rerender="{!$Component.theForm.theBlock.panelFormUsuarios.sectionFormUsuarios.panelUsuarios.tablaJECs}"/>
+                            <table id="tablaJECs">
+                                <apex:repeat value="{!listaJECs}" var="nodoJEC">
+                                    <tr>
+                                        <td>
+                                            <apex:inputCheckbox value="{!nodoJEC.seleccionado}">
+                                            </apex:inputCheckbox>
+                                        </td>
+                                        <td>
+                                            {!IF(faseInicial < 1, nodoJEC.usuario.manager.manager.manager.manager.Name + ' - ', '')}  
+                                            {!IF(faseInicial < 2, nodoJEC.usuario.manager.manager.manager.Name + ' - ', '')}  
+                                            {!IF(faseInicial < 3, nodoJEC.usuario.manager.manager.Name + ' - ','')}
+                                            {!IF(faseInicial < 4, nodoJEC.usuario.manager.Name + ' - ','')}
+                                            {!nodoJEC.usuario.Name}
+                                        </td>
+                                    </tr>
+                                </apex:repeat>
+                            </table>
+                        </div>
+                        <div style="margin-top:10px;width:100%;{!IF(faseActual != 4|| activado == true, 'display:none', '')}">
+                            <div style="font-weight:bold;text-align:center"> Clientes</div>
+                        <table id="tablaJECs2">
+                            
+                            <apex:repeat value="{!listaCuentas}" var="nodoCuenta">
+                                <tr>
+                                    <td>
+                                        <apex:inputCheckbox value="{!nodoCuenta.seleccionado}">
+                                        </apex:inputCheckbox>
+                                    </td>
+                                    <td>    
+                                        {!IF(faseInicial < 1, nodoCuenta.cuenta.Owner.Manager.Manager.Manager.Name + ' - ', '')}  
+                                        {!IF(faseInicial < 2, nodoCuenta.cuenta.Owner.Manager.Manager.Name + ' - ', '')}
+                                        {!IF(faseInicial < 3, nodoCuenta.cuenta.Owner.Manager.Name + ' - ', '')}
+                                        {!IF(faseInicial < 4, nodoCuenta.cuenta.Owner.Name + ' - ', '')}
+                                        {!nodoCuenta.cuenta.Name}
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                        </div>
+                    </apex:outputPanel>
+                    <div style="clear:both"></div>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:pageBlock>
+        
+    </apex:form>
+    
+</apex:page>

@@ -1,0 +1,32 @@
+<apex:page controller="TOP_Oportunidades_ctr" setup="false">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pagemessages id="msj" />
+            <apex:panelGroup >
+                <apex:outputLabel >{!strMonthNow}</apex:outputLabel>
+            </apex:panelGroup>
+            <apex:panelBar >
+                <apex:panelBarItem label="Oportunidades abiertas" headerStyle="height: 25px; font-size: 20px;">
+                <apex:pageBlockSection id="bloc1" columns="1">
+                
+                    <apex:pageBlockTable value="{!lstOpportunityWrapper}" columns="3" var="item" id="table1">                        
+                        <apex:column headerValue="Nombre Oportunidad" rendered="{!item.oppy.id != null}"> 
+                            <apex:outputLink value="/{!item.oppy.id}" rendered="{!item.oppy.id != null}" target="_parent" Style="{!if(item.blnAlarma,'COLOR:RED','COLOR:GREEN')}">{!item.oppy.Account.Name}</apex:outputLink> 
+                        </apex:column>
+                        <apex:column headerValue="Nombre Oportunidad" rendered="{!item.oppy.id == null}" >      
+                            <apex:outputLink value="/{!strLinkReport}" rendered="{!item.oppy.id == null}" target="_parent" style="font-weight:bold">{!item.oppy.Name}</apex:outputLink> 
+                        </apex:column>/>
+                        <apex:column headerValue="Fase" style="text-align: left;">
+                            <apex:outputField value="{!item.oppy.Fase__c}" ></apex:outputField>
+                        </apex:column>/>
+                        <apex:column headerValue="Lineas R9" style="text-align: right;">
+                            <apex:outputField value="{!item.oppy.PresupuestoR9__c}" ></apex:outputField>
+                        </apex:column>/>
+                    </apex:pageBlockTable>
+                    
+                </apex:pageBlockSection>
+                </apex:panelBarItem>
+            </apex:panelBar>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

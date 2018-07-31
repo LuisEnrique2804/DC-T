@@ -1,0 +1,504 @@
+<apex:page controller="DCT_AccountOwnerAssignment_cls" sidebar="false" showHeader="false" action="{!creaConsecutivoWebSer}">
+    <html>
+        <head>
+            <meta charset="utf-8"/>
+            <apex:slds />
+        </head>
+        <body class="slds-scope">
+            <apex:actionStatus id="processing">
+                <apex:facet name="start">
+                    <div class="slds-spinner_container slds-is-fixed">
+                        <div class="slds-spinner--brand slds-spinner slds-spinner--medium" role="alert">
+                            <span class="slds-assistive-text">Processing</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:form id="mainForm">
+                <apex:actionFunction name="performAppFullRefresh" action="{!fullRefresh}"/>
+                <apex:actionFunction name="selectUserLookUp" action="{!selectUser}" reRender="" status="processing">
+                    <apex:param name="selectedOption" value="" assignTo="{!strSelectedUserId}" />
+                </apex:actionFunction>
+                <apex:actionFunction name="selectRightUser" action="{!assignSelectedRightUser}" reRender="" status="processing">
+                    <apex:param name="selectedRightUser" value="" assignTo="{!strSelectedRightUser}" />
+                </apex:actionFunction>
+                <apex:actionFunction name="selUnselAllLeftAccs" action="{!selectDeselectAllLeft}" reRender="leftUserAccountsOP" status="processing"/>
+                <apex:actionFunction name="selUnselAllRightAccs" action="{!selectDeselectAllRight}" reRender="rightUsersAccountsOP" status="processing">
+                    <apex:param name="toSelectDeselAllAccsUserId" value=""/>
+                </apex:actionFunction>
+                
+                <!-- PANEL PARA MOSTRAR LA BUSQUEDA INCIAL -->
+                <apex:outputPanel rendered="{!blnIsItPossibleToStart}">
+                
+					<!-- EL PANEL PARA MOSTRAR AL USUARIO SELECCIONADO  -->                
+                    <apex:outputPanel rendered="{!NOT(blnShowLookUpUI)}">
+                        <div class="demo-only" style="height: 600px;">
+                            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+                                <div class="slds-modal__container" style="width: {!IF( NOT(ISBLANK(selectedUser.Id)), '1200px;', '800px;')}">
+                                    
+                                    <header class="slds-modal__header">
+                                        
+                                    </header>
+                                    <div class="slds-modal__content slds-p-around_medium">
+                                        <div style=" width: max-content; margin: 0 auto;">
+                                            Búsqueda
+                                            <br/>
+                                            <apex:inputText value="{!strLookUpUserName}" styleClass="slds-input" style="width: 500px;"/>
+                                            <apex:commandButton styleClass="slds-button slds-button_neutral" value="Buscar" action="{!goToLookUpUI}" status="processing"/>           
+                                        </div>
+                                        <br/>
+                                        <apex:outputPanel id="msgs0OP">
+                                            <apex:outputPanel id="ErrorMsgs" rendered="{!lstErrorMsgs.size <> 0}">
+                                                <div class="slds-notify_container" style="position:relative;">
+                                                     <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+                                                         <apex:repeat value="{!lstErrorMsgs}" var="msg">
+                                                             {!msg} 
+                                                             <br/>
+                                                         </apex:repeat>
+                                                     </div>
+                                                 </div>
+                                             </apex:outputPanel> 
+                                             <apex:outputPanel id="SuccessMsgs" rendered="{!lstSuccessMsgs.size <> 0}">
+                                                 <div class="slds-notify_container" style="position:relative;">
+                                                     <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+                                                         <apex:repeat value="{!lstSuccessMsgs}" var="msg">
+                                                             {!msg} 
+                                                             <br/>
+                                                         </apex:repeat>
+                                                     </div> 
+                                                 </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!blnSuccessfulProcedure}">
+                                                <script type="text/javascript">
+                                                    setTimeout(performAppFullRefresh,3000);
+                                                </script>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                        
+                                        <!-- El div PARA MOSTRAR AL USUARIO ELEGIDO Y LA LISTA DE USUARIOS DISPONIBLES -->
+                                        <div class="slds-box">
+                                            <apex:outputPanel rendered="{!NOT(ISBLANK(selectedUser.Id))}">
+                                                <table style="width: 100%;" border="0" > 
+                                                    <thead></thead>
+                                                    <tbody>
+                                                        <tr>
+                                                        
+                                                            <td style="width: 45%">
+                                                                <label id="lblUsuarioElegido" class="slds-radio__label" for="us-UsuarioElegido">
+                                                                    <span class="slds-radio--faux"></span>
+                                                                    <span class="slds-form-element__label">&nbsp;&nbsp;<b>Usuario Elegido</b></span>
+                                                                </label>
+                                                            	<!-- LOS DATOS DEL USUARIO SELECCIONADO -->
+                                                                <div class="slds-box" style="width: 500px; margin: 0 auto; height: 300px; overflow-y: scroll;">
+                                                                    <apex:outputPanel id="leftUserAccountsOP">
+		                                                                <label id="lbl{!leftOwnerAndAccounts.sGestor}" class="slds-radio__label" for="us-{!leftOwnerAndAccounts.sGestor}">
+		                                                                    <span class="slds-radio--faux"></span>
+		                                                                    <span class="slds-form-element__label"><b>{!leftOwnerAndAccounts.sGestor}</b></span>
+		                                                                </label>
+		                                                                <br/>
+                                                                        <span class="slds-radio">
+                                                                            <input name="leftUserCheck" type="radio" Id="lftUs-{!leftOwnerAndAccounts.ownerRecord.Id}" value="{!leftOwnerAndAccounts.blnSelectedForAssignment}" checked="true" disabled="true" />
+                                                                            <label id="lbl{!leftOwnerAndAccounts.ownerRecord.Id}" class="slds-radio__label" for="lftUs-{!leftOwnerAndAccounts.ownerRecord.Id}">
+                                                                                <span class="slds-radio--faux"></span>
+                                                                                <span class="slds-form-element__label"><b>{!leftOwnerAndAccounts.ownerRecord.Name}</b></span>
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <apex:commandLink action="{!toggleLeftUserAccs}" reRender="leftUserAccountsOP">
+                                                                                <apex:image rendered="{!NOT(leftOwnerAndAccounts.blnDisplayAccounts)}" value="{!URLFOR($Resource.SLDS,'/icons/utility/add_60.png')}" style="height: 10px; width: 10px;" title="mostrar"/>
+                                                                                <apex:image rendered="{!leftOwnerAndAccounts.blnDisplayAccounts}" value="{!URLFOR($Resource.SLDS,'/icons/utility/dash_60.png')}" style="height: 10px; width: 10px;" title="ocultar"/>
+                                                                            </apex:commandLink>
+                                                                        </span>
+                                                                        <br/>                                                                        
+                                                                        <apex:outputPanel rendered="{!leftOwnerAndAccounts.blnDisplayAccounts}">
+                                                                            <apex:outputPanel rendered="{!leftOwnerAndAccounts.lstAccs.size <> 0}">
+                                                                                <div style="margin-left: 20px;">
+                                                                                    <div style="background-color: #fbf5f5;">
+                                                                                        <apex:inputCheckbox value="{!leftOwnerAndAccounts.blnselectAllAccs}" onchange="selUnselAllLeftAccs();"/>
+                                                                                        &nbsp; &nbsp;
+                                                                                        <apex:outputText value="Marcar / Desmarcar todas"/>
+                                                                                    </div>
+                                                                                    <apex:repeat value="{!leftOwnerAndAccounts.lstAccs}" var="accwr">
+                                                                                        <apex:inputCheckbox style="margin-left: 10px;" value="{!accwr.blnIsSelected}"/>
+                                                                                        &nbsp; &nbsp; 
+                                                                                        <apex:outputText value="{!accwr.accountRecord.Name}"/>
+                                                                               			&nbsp; &nbsp;
+                                                                               			<apex:outputText value="{!accwr.sFechaAsigna}"/>
+                                                                                        <br/>
+                                                                                    </apex:repeat>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!leftOwnerAndAccounts.lstAccs.size == 0}">
+                                                                                <div style="margin-left: 30px;">
+                                                                                    <p>Sin cuentas</p>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                        </apex:outputPanel>
+                                                                    </apex:outputPanel>
+                                                                </div>
+                                                                <!-- FIN DE LOS DATOS DEL USUARIO SELECCIONADO -->
+                                                            </td>
+
+                                                           	<!-- LAS FLECHAS PARA ASIGNAR LOS DATOS -->                                                            
+                                                            <td style="width: 10%">
+                                                                <div style="margin: 0 auto; width: max-content;">
+                                                                    <apex:commandLink action="{!moveToLeft}" reRender="leftUserAccountsOP,rightUsersAccountsOP,msgs0OP,msgs0OPFin,assignmentButtonsOP" status="processing">
+                                                                        <apex:image value="{!URLFOR($Resource.SLDS,'/icons/utility/chevronleft_120.png')}" style="cursor: pointer; height: 30px; width: 30px;"/> 
+                                                                    </apex:commandLink>
+                                                                    <apex:commandLink action="{!moveToRight}" reRender="leftUserAccountsOP,rightUsersAccountsOP,msgs0OP,msgs0OPFin,assignmentButtonsOP" status="processing">
+                                                                        <apex:image value="{!URLFOR($Resource.SLDS,'/icons/utility/chevronright_120.png')}" style="cursor: pointer; height: 30px; width: 30px;"/>
+                                                                    </apex:commandLink>
+                                                                </div>
+                                                            </td>
+                                                            <!-- FIN DE LAS FLECHAS PARA ASIGNAR LOS DATOS -->
+                                                            	                                                            
+                                                            <td style="width: 45% margin: 0 auto;">
+                                                                <label id="lblUsuarioElegido" class="slds-radio__label" for="us-UsuarioElegido">
+                                                                    <span class="slds-radio--faux"></span>
+                                                                    <span class="slds-form-element__label">&nbsp;&nbsp;<b>Usuarios Disponibles</b></span>
+                                                                </label>
+                                                                
+                                                                <!-- <apex:outputPanel id="oupSegmento" rendered="{!blnEsCoordinador}"> -->                                                                
+	                                                                <label id="lblUsuarioElegido" class="slds-radio__label" for="us-UsuarioElegido">
+	                                                                    <span class="slds-form-element__label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Segmento:</b></span>
+	                                                                </label>
+                                            						<!-- <apex:inputField value="{!accountRecord.Segmento__c}"/> -->	                                                                
+										                            <apex:selectList value="{!sSegmento}" title="Planes" size="1" id="Planes">
+										                                <apex:selectOptions value="{!soSegmento}" />
+										                                <!-- <apex:actionSupport event="onchange" action="{!actualizaGuiaPlanes}" rerender="TipoServ,msgs0OP" status="actGuiaPlanes" oncomplete="jsDespDoc();" />
+										                                <apex:actionStatus id="actGuiaPlanes" startText=" (Actualzando la guia del Plan...)" stopText=""/> -->                       
+										                            </apex:selectList>
+                                            						
+                                                                <!-- </apex:outputPanel> -->
+                                                                                                                                                                                                
+																<!-- LOS DATOS DE LOS USUARIOS DE DESTINO -->                                                            
+                                                                <div class="slds-box" style="width: 500px; margin: 0 auto; height: 300px; overflow-y: scroll;">
+                                                                    <apex:outputPanel id="rightUsersAccountsOP">
+																		<apex:outputPanel id="lookUpResultsGV" rendered="{!sIdUserActualPerfil == 'GV'}">
+				                                                        	<label id="lbl{!sIdUserActualPerfil}" class="slds-radio__label" for="us-{!sIdUserActualPerfil}">
+				                                                            	<span class="slds-radio--faux"></span>
+				                                                                <span class="slds-form-element__label"><b>Gerentes de Ventas</b></span>
+				                                                            </label>
+					                                                        <br/>
+                                                                        </apex:outputPanel>
+                                                                        <apex:repeat value="{!mapFinalOwnersAndAccounts}" var="k">
+                                                                            <script type="text/javascript">
+                                                                                if('{!mapFinalOwnersAndAccounts[k].blnSelectedForAssignment}' == 'true'){
+                                                                                    document.getElementById('rightUs-{!mapFinalOwnersAndAccounts[k].ownerRecord.Id}').checked=true;
+                                                                                }
+                                                                            </script>
+																			<apex:outputPanel id="lookUpResults" rendered="{!mapFinalOwnersAndAccounts[k].bDespGestor}">
+				                                                                <label id="lbl{!mapFinalOwnersAndAccounts[k].sGestor}" class="slds-radio__label" for="us-{!mapFinalOwnersAndAccounts[k].sGestor}">
+				                                                                    <span class="slds-radio--faux"></span>
+				                                                                    <span class="slds-form-element__label"><b>{!mapFinalOwnersAndAccounts[k].sGestor}</b></span>
+				                                                                </label>
+	                                                                            <apex:commandLink action="{!toggleRightUserAccs}" reRender="rightUsersAccountsOP" rendered="{!mapFinalOwnersAndAccounts[k].bMuestraNivelSuperiror}">
+	                                                                            	<apex:image value="{!URLFOR($Resource.SLDS,'/icons/utility/level_up_60.png')}" style="height: 10px; width: 10px;" title="Nivel Superior"/>
+	                                                                                <apex:param name="toToggleUserId" value="{!mapFinalOwnersAndAccounts[k].sManager}"/>
+                                                                                    <apex:param name="toToggleNivel" value="1"/>
+	                                                                            </apex:commandLink>				                                                                 
+					                                                            <br/>
+                                                                            </apex:outputPanel>				                                                                
+                                                                            <span class="slds-radio">
+                                                                            	<apex:outputPanel id="oupPanPse11" rendered="{!mapFinalOwnersAndAccounts[k].blnPermiteSelSub}">
+	                                                                                <input name="rightUserCheck" type="radio" Id="rightUs-{!mapFinalOwnersAndAccounts[k].ownerRecord.Id}" value="{!mapFinalOwnersAndAccounts[k].blnSelectedForAssignment}" onclick="selectRightUser('{!k}')"/>
+	                                                                                <label id="lbl{!mapFinalOwnersAndAccounts[k].ownerRecord.Id}" class="slds-radio__label" for="rightUs-{!mapFinalOwnersAndAccounts[k].ownerRecord.Id}" onclick="document.getElementById(this.htmlFor).checked=true;">
+	                                                                                    <span class="slds-radio--faux"></span>
+	                                                                                    <span class="slds-form-element__label"><b>{!mapFinalOwnersAndAccounts[k].ownerRecord.Name}</b></span>
+	                                                                                </label>
+                                                                                </apex:outputPanel>
+	 			                                                                <apex:outputPanel id="oupPanPse00" rendered="{!!mapFinalOwnersAndAccounts[k].blnPermiteSelSub}">
+					                                                            	<label id="lbl{!mapFinalOwnersAndAccounts[k].ownerRecord.Id}" class="slds-radio__label" for="rightUs-{!mapFinalOwnersAndAccounts[k].ownerRecord.Id}" onclick="document.getElementById(this.htmlFor).checked=true;">
+					                                                                	<span class="slds-form-element__label"><b>{!mapFinalOwnersAndAccounts[k].ownerRecord.Name}</b></span>
+					                                                                </label> 
+				                                                                </apex:outputPanel>
+                                                                                <apex:commandLink action="{!toggleRightUserAccs}" reRender="rightUsersAccountsOP">
+                                                                                    <apex:image rendered="{!NOT(mapFinalOwnersAndAccounts[k].blnDisplayAccounts)}" value="{!URLFOR($Resource.SLDS,'/icons/utility/add_60.png')}" style="height: 10px; width: 10px;" title="mostrar"/>
+                                                                                    <apex:image rendered="{!mapFinalOwnersAndAccounts[k].blnDisplayAccounts}" value="{!URLFOR($Resource.SLDS,'/icons/utility/dash_60.png')}" style="height: 10px; width: 10px;" title="ocultar"/>
+                                                                                    <apex:param name="toToggleUserId" value="{!k}"/>
+                                                                                </apex:commandLink>
+                                                                            </span>
+                                                                            <br/>                                                                            
+                                                                            
+                                                                            <!-- Usuarios Primer Nivel -->
+																			<apex:outputPanel id="oupPanUsrSub" rendered="{!mapFinalOwnersAndAccounts[k].blnDisplayAccounts}">
+                                                                            
+ 																				<!-- TIENE USUARIOS ASOCIADOS -->
+                                                                                <apex:outputPanel rendered="{!mapFinalOwnersAndAccounts[k].subordinados.size <> 0}">
+                                                                                
+                                                                                    <div style="margin-left: 20px;">                                                                                
+	                                                                                    <apex:repeat value="{!mapFinalOwnersAndAccounts[k].subordinados}" var="sub">
+	 			                                                                            <span class="slds-radio">
+	 			                                                                                <apex:outputPanel id="oupPanPse1" rendered="{!sub.blnPermiteSelSub}">
+ 				                                                                                	<input name="rightUserCheck" type="radio" Id="rightUs-{!sub.ownerRecord.Id}" value="{!sub.blnSelectedForAssignment}" onclick="selectRightUser('{!sub.ownerRecord.Id}')"/>
+					                                                                                <label id="lbl{!sub.ownerRecord.Id}" class="slds-radio__label" for="rightUs-{!sub.ownerRecord.Id}" onclick="document.getElementById(this.htmlFor).checked=true;">
+					                                                                                    <span class="slds-radio--faux"></span>
+					                                                                                    <span class="slds-form-element__label"><b>{!sub.ownerRecord.Name}</b></span>
+					                                                                                </label>
+				                                                                                </apex:outputPanel>
+	 			                                                                                <apex:outputPanel id="oupPanPse0" rendered="{!!sub.blnPermiteSelSub}">
+					                                                                                <label id="lbl{!sub.ownerRecord.Id}" class="slds-radio__label" for="rightUs-{!sub.ownerRecord.Id}" onclick="document.getElementById(this.htmlFor).checked=true;">
+					                                                                                    <span class="slds-form-element__label"><b>{!sub.ownerRecord.Name}</b></span>
+					                                                                                </label>	 			                                                                                
+				                                                                                </apex:outputPanel>
+				                                                                                <apex:commandLink action="{!toggleRightUserAccs}" reRender="rightUsersAccountsOP">
+				                                                                                    <apex:image rendered="{!NOT(sub.blnDisplayAccounts)}" value="{!URLFOR($Resource.SLDS,'/icons/utility/add_60.png')}" style="height: 10px; width: 10px;" title="mostrar"/>
+				                                                                                    <apex:image rendered="{!sub.blnDisplayAccounts}" value="{!URLFOR($Resource.SLDS,'/icons/utility/dash_60.png')}" style="height: 10px; width: 10px;" title="ocultar"/>
+				                                                                                    <apex:param name="toToggleUserId" value="{!sub.ownerRecord.Id}"/>
+				                                                                                    <apex:param name="toToggleNivel" value="2"/>
+				                                                                                </apex:commandLink>
+				                                                                            </span>
+				                                                                            <br/>
+				                                                                            
+			 																				<!-- TIENE CUANTAS ASOCIADAS -->
+				                                                                            <!-- <label id="lbl{!sub.blnDisplayAccounts}" > {!sub.lstAccs.size} {!sub.blnDisplayAccounts} </label> -->			 																				
+			                                                                                <apex:outputPanel id="oupPanPct" rendered="{!AND(sub.lstAccs.size > 0, sub.blnDisplayAccounts)}">		                                                                                	
+			                                                                                    <div style="margin-left: 20px;">
+			                                                                                        <div style="background-color: #fbf5f5;">
+			                                                                                            <apex:inputCheckbox value="{!sub.blnselectAllAccs}" onchange="selUnselAllRightAccs('{!sub.ownerRecord.id}');"/>			                                                                                            
+			                                                                                            &nbsp; &nbsp;
+			                                                                                            <apex:outputText value="Marcar / Desmarcar"/>
+			                                                                                        </div>
+			                                                                                        <apex:repeat value="{!sub.lstAccs}" var="accsrwrSub">
+			                                                                                            <apex:inputCheckbox style="margin-left: 10px;" value="{!accsrwrSub.blnIsSelected}"/>
+			                                                                                            &nbsp; &nbsp;
+			                                                                                            <apex:outputText value="{!accsrwrSub.accountRecord.Name}"/>
+                                                                                            			&nbsp; &nbsp;
+                                                                                            			<apex:outputText value="{!accsrwrSub.sFechaAsigna}"/>
+			                                                                                            <br/>
+			                                                                                        </apex:repeat>
+			                                                                                    </div>
+			                                                                                </apex:outputPanel>
+		 																					<!-- FIN SI TIENE CUANTAS ASOCIADAS -->
+				                                                                             
+	                                                                                    </apex:repeat>
+                                                                                    </div>
+                                                                                    
+                                                                                </apex:outputPanel>
+ 																				<!-- FIN TIENE USUARIOS ASOCIADOS -->
+ 																				 																				                                                                            
+ 																				<!-- TIENE CUANTAS ASOCIADAS -->	                                                                           
+                                                                                <apex:outputPanel id="oupPanPct" rendered="{!mapFinalOwnersAndAccounts[k].lstAccs.size <> 0}">
+                                                                                    <div style="margin-left: 20px;">
+                                                                                        <div style="background-color: #fbf5f5;">
+                                                                                            <apex:inputCheckbox value="{!mapFinalOwnersAndAccounts[k].blnselectAllAccs}" onchange="selUnselAllRightAccs('{!k}');"/>
+                                                                                            &nbsp; &nbsp;
+                                                                                            <apex:outputText value="Marcar / Desmarcar"/>
+                                                                                        </div>
+                                                                                        <apex:repeat value="{!mapFinalOwnersAndAccounts[k].lstAccs}" var="accsrwr">
+                                                                                            <apex:inputCheckbox style="margin-left: 10px;" value="{!accsrwr.blnIsSelected}"/>
+                                                                                            &nbsp; &nbsp;
+                                                                                            <apex:outputText value="{!accsrwr.accountRecord.Name}"/>
+                                                                                            &nbsp; &nbsp;
+                                                                                            <apex:outputText value="{!accsrwr.sFechaAsigna}"/>                                                                                            
+                                                                                            <br/>
+                                                                                        </apex:repeat>
+                                                                                    </div>
+                                                                                </apex:outputPanel>
+                                                                                
+                                                                                <apex:outputPanel rendered="{!mapFinalOwnersAndAccounts[k].lstAccs.size == 0}">
+                                                                                    <div style="margin-left: 30px;">
+                                                                                        <p>Sin cuentas para: {!mapFinalOwnersAndAccounts[k].ownerRecord.Name}</p>
+                                                                                    </div>
+                                                                                </apex:outputPanel>
+ 																				<!-- FIN SI TIENE CUANTAS ASOCIADAS -->
+ 																				
+                                                                            </apex:outputPanel>
+                                                                            <!-- Fin Usuarios Primer Nivel -->
+                                                                            
+                                                                        </apex:repeat>
+                                                                        
+                                                                    </apex:outputPanel>
+                                                                                  
+                                                                </div>
+																<!-- FIN DE LOS DATOS DE LOS USUARIOS DE DESTINO -->
+																                                                                
+                                                            </td>
+                                                            
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!ISBLANK(selectedUser.Id)}">
+                                                <div style=" width: max-content; margin: 0 auto; text-align: center">
+                                                    <p>No se ha seleccionado un usuario.</p> 
+                                                    <p>Realice la búsqueda y seleccione un usuario.</p>
+                                                </div>
+                                            </apex:outputPanel>
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                    <footer class="slds-modal__footer">
+                                        <apex:outputPanel id="assignmentButtonsOP">
+                                            <div style="width: max-content; margin: 0 auto;">
+                                                <apex:commandButton styleClass="slds-button slds-button_neutral" value="Cancelar" action="{!fullRefresh}"/>
+                                                <apex:commandButton disabled="{!NOT(blnChangesHaveBeenMade)}" styleClass="slds-button slds-button_brand" value="Aplicar" action="{!confirmAssignment}" status="processing" reRender="leftUserAccountsOP,rightUsersAccountsOP,msgs0OP,msgs0OPFin,assignmentButtonsOP"/>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <br/>
+										<apex:outputPanel id="msgs0OPFin">
+											<apex:outputPanel id="ErrorMsgsFinal" rendered="{!lstErrorMsgs.size <> 0}">
+												<div class="slds-notify_container" style="position:relative;">
+													<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+														<apex:repeat value="{!lstErrorMsgs}" var="msg">
+															{!msg} 
+															<br/>
+														</apex:repeat>
+													</div>
+												</div>
+											</apex:outputPanel> 
+											<apex:outputPanel id="SuccessMsgsFinal" rendered="{!lstSuccessMsgs.size <> 0}">
+												<div class="slds-notify_container" style="position:relative;">
+													<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+														<apex:repeat value="{!lstSuccessMsgs}" var="msg">
+															{!msg} 
+															<br/>
+														</apex:repeat>
+													</div> 
+												</div>
+											</apex:outputPanel>
+										</apex:outputPanel>
+                                        
+                                    </footer>
+                                </div>
+                            </section>
+                            <div class="slds-backdrop slds-backdrop_open"></div>
+                        </div>
+                        
+                    </apex:outputPanel>
+					<!-- FIN PARA EL PANEL PARA MOSTRAR AL USUARIO SELECCIONADO  -->
+					                    
+					<!-- PANEL PARA MOSTRAR LA PAGINA INICIAL DE LA BUSQUEDA -->					                    
+                    <apex:outputPanel rendered="{!blnShowLookUpUI}" id="oupDespliegaUsuarios">
+                        <div class="demo-only" style="height: 600px;">
+                            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                                <div class="slds-modal__container" style="width: 800px;">
+                                    <header class="slds-modal__header">
+                                    </header>
+                                    <div class="slds-modal__content slds-p-around_medium">
+                                        <div style="width:100%;">
+                                            <apex:outputPanel id="msgs1OP">
+                                                <apex:outputPanel rendered="{!lstErrorMsgs.size != 0}">
+                                                    <!--Mensajes de error-->
+                                                    <div class="slds-notify_container" style="display:{!IF(lstErrorMsgs.size <> 0,'inline','none')}; position:relative;">
+                                                        <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture" role="alert">
+                                                            <h2>
+                                                                <ul>
+                                                                    <apex:repeat value="{!lstErrorMsgs}" var="strMsg">
+                                                                        <li>
+                                                                          {!strMsg}
+                                                                        </li>
+                                                                    </apex:repeat>
+                                                                </ul>
+                                                            </h2>
+                                                        </div>
+                                                    </div>
+                                                </apex:outputPanel>
+                                            </apex:outputPanel>
+                                            <div style=" width: max-content; margin: 0 auto;">
+                                                <apex:inputText value="{!strLookUpUserName}" styleClass="slds-input" style="width: 400px;"/>
+                                                <apex:commandButton styleClass="slds-button slds-button_neutral" value="Buscar" action="{!searchUsers}" reRender="lookUpResults, lookUpButtonsOP" status="processing"/>
+                                            </div>
+                                            <br/>
+                                            <br/>
+                                            <apex:outputPanel id="lookUpResults">
+                                                <div class="slds-box">
+                                                    <div style="width: max-content; margin: 0 auto;">
+                                                        <apex:outputPanel rendered="{!lstFoundUsersLookUp.size <> 0}">
+                                                            <apex:repeat value="{!lstFoundUsersLookUp}" var="iterator">
+																<apex:outputPanel id="lookUpResults" rendered="{!iterator.bDespGestor}">                                                            
+	                                                                <label id="lbl{!iterator.foundUser.Id}" class="slds-radio__label" for="us-{!iterator.sGestor}">
+	                                                                    <span class="slds-radio--faux"></span>
+	                                                                    <span class="slds-form-element__label"><b>{!iterator.sGestor}</b></span>
+	                                                                </label>
+	                                                                <br/> 
+                                                                </apex:outputPanel>
+                                                                <span class="slds-radio">
+                                                                    <input name="userCheck" type="radio" Id="us-{!iterator.foundUser.Id}" value="{!iterator.blnIsSelected}" onclick="selectUserLookUp('{!iterator.foundUser.Id}')"/>
+                                                                    <label id="lbl{!iterator.foundUser.Id}" class="slds-radio__label" for="us-{!iterator.foundUser.Id}" onclick="document.getElementById(this.htmlFor).checked=true;">
+                                                                        <span class="slds-radio--faux"></span>
+                                                                        <span class="slds-form-element__label">{!iterator.foundUser.Name}</span>
+                                                                    </label>
+                                                                </span>
+                                                                <br/>
+                                                            </apex:repeat>
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!lstFoundUsersLookUp.size == 0}">
+															<apex:outputLabel value="La búsqueda no devolvió resultados. Intente nuevamente."  rendered="{!!bUsrBusExit}"/>
+															<apex:outputLabel value="El/Los usuario(s) en la búsqueda no tienen cuentas para reasignar." rendered="{!bUsrBusExit}"/>                                                        
+                                                        </apex:outputPanel>   
+                                                    </div>                                               
+                                                </div>
+                                            </apex:outputPanel>
+                                        </div>
+                                    </div>
+                                    <footer class="slds-modal__footer">
+										<!-- hubo error por que no selecciono un usuario -->
+                                        <apex:outputPanel rendered="{!lstErrorMsgsBU.size != 0}">
+                                                    <!--Mensajes de error-->
+                                                    <div class="slds-notify_container" style="display:{!IF(lstErrorMsgsBU.size <> 0,'inline','none')}; position:relative;">
+                                                        <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture" role="alert">
+                                                            <h2>
+                                                                <ul>
+                                                                    <apex:repeat value="{!lstErrorMsgsBU}" var="strMsg">
+                                                                        <li>
+                                                                          {!strMsg}
+                                                                        </li>
+                                                                    </apex:repeat>
+                                                                </ul>
+                                                            </h2>
+                                                        </div>
+                                                    </div>
+                                        <br/><br/>                                                    
+                                        </apex:outputPanel>
+
+                                        <apex:outputPanel id="lookUpButtonsOP">
+                                            <div style="width: max-content; margin: 0 auto;">
+												<apex:outputPanel rendered="{!lstFoundUsersLookUp.size <> 0}">
+                                                    <apex:commandButton value="Cancelar" action="{!returnToMain}" styleClass="slds-button slds-button_neutral" status="processing"/>
+                                                    <apex:commandButton value="Siguiente" action="{!commitUserSelection}" styleClass="slds-button slds-button_neutral" status="processing"/>
+                                                </apex:outputPanel> 
+                                                <apex:outputPanel rendered="{!lstFoundUsersLookUp.size == 0}">
+                                                    <apex:commandButton value="Volver" action="{!returnToMain}" styleClass="slds-button slds-button_neutral" status="processing"/>
+                                                </apex:outputPanel>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </footer>
+                                </div>
+                            </section>
+                            <div class="slds-backdrop slds-backdrop_open"></div>
+                        </div>                        
+                    </apex:outputPanel>
+					<!-- FIN DEL PANEL PARA MOSTRAR LA PAGINA INICIAL DE LA BUSQUEDA -->
+					                    
+                </apex:outputPanel>
+				<!-- FIN PARA EL PANEL PARA MOSTRAR LA BUSQUEDA INCIAL -->
+                
+				<!-- PANEL PARA MOSTRAR ERRORES DE LA CARGA INICIAL -->                
+                <apex:outputPanel rendered="{!NOT(blnIsItPossibleToStart)}">
+                    <apex:outputPanel rendered="{!lstErrorMsgs.size != 0}">
+                        <!--Mensajes de error-->
+                        <div class="slds-notify_container" style="display:{!IF(lstErrorMsgs.size <> 0,'inline','none')}; position:relative;">
+                            <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture" role="alert">
+                                <h2>
+                                    <ul>
+                                        <apex:repeat value="{!lstErrorMsgs}" var="strMsg">
+                                            <li>
+                                              {!strMsg}
+                                            </li>
+                                        </apex:repeat>
+                                    </ul>
+                                </h2>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+				<!-- FIN DEL PANEL PARA MOSTRAR ERRORES -->
+				                
+            </apex:form>
+            
+        </body>
+    </html>
+</apex:page>

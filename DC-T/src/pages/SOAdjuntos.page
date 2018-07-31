@@ -1,0 +1,23 @@
+<apex:page standardController="SeguimientoOportunidades__c" extensions="SOExtension" >
+    <apex:form >
+    <apex:pageBlock id="pbAtt">
+        <apex:pageBlockTable value="{!lstAttachShowed}" var="att" >
+            <apex:column headervalue="Archivo Adjunto">
+                <apex:outputLink target="_parent" value="https://c.cs17.content.force.com/servlet/servlet.FileDownload?file={!att.Id }">{!att.name}</apex:outputLink>
+            </apex:column>
+                        
+            <apex:column value="{!att.ContentType}"/>
+            <apex:column value="{!att.LastModifiedDate}"/>
+            <apex:column value="{!att.Description}"/>
+            <apex:column value="{!att.CreatedById}"/>
+        </apex:pageBlockTable>
+        
+                
+        <apex:panelGrid columns="2">
+            
+            <apex:commandLink target="_parent" action="{!antAtt}" value="Anterior" reRender="pbAtt" rendered="{!IF(OR(indexTotAttach==0,indexActAttach==1),'false','true')}"/>
+            <apex:commandLink target="_parent" action="{!sigAtt}" value="Siguiente" reRender="pbAtt" rendered="{!IF(OR(indexTotAttach==0,indexActAttach==indexTotAttach),'false','true')}"/>
+        </apex:panelGrid>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

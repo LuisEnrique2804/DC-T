@@ -1,0 +1,50 @@
+<apex:page standardController="Presupuesto__c" extensions="AsignacionPresupuesto_ctr">
+<!-- <flow:interview name="AsignacionPresupuesto"/>  -->
+    <apex:form id="frmAP">
+    <apex:pageMessages />
+    <apex:pageBlock title="Asignacion Presupuesto">
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton value="Siguiente" action="{!siguente}" rendered="{!booUser}"/>
+            <apex:commandButton value="Guardar" action="{!guardar}" rendered="{!booDatosPres}"/>
+            <apex:commandButton action="{!cancel}" value="Salir" immediate="true" html-formnovalidate="formnovalidate" />
+        </apex:pageBlockButtons>
+         <apex:pageBlockSection columns="1" title="Seleccione el/los usuarios y el año a crear presupuestos" rendered="{!booUser}" collapsible="false">
+         <apex:pageBlockSectionItem >
+         <!-- <apex:selectCheckboxes value="{!anios}" title="Seleccione el año">
+            <apex:selectOptions value="{!items}"/>
+        </apex:selectCheckboxes><br/> -->
+        <apex:outputLabel > Años Presupuesto: </apex:outputLabel>
+        <apex:selectList value="{!anio}" multiselect="false" size="1">
+                <apex:selectOptions value="{!lstanios}"/>
+            </apex:selectList>
+        </apex:pageBlockSectionItem> 
+        <apex:pageBlockTable value="{!listUser}" var="item" rows="{!PageSize}" rendered="{!booUser}">
+            <apex:column headerValue="Select" width="10%">
+                <apex:facet name="header">
+                    <apex:panelGroup >
+                        <apex:inputCheckbox id="selectall" selected="false" value="{!todosMarcados}">
+                            <apex:actionSupport status="actStatusId" event="onclick" action="{!action_seleccionarTodos}" rerender="frmAP"/>
+                        </apex:inputCheckbox>
+                        <apex:outputLabel value="Todos"/>
+                    </apex:panelGroup>
+                </apex:facet>
+                <apex:inputCheckBox id="selected" value="{!item.seleccionado}"/>
+            </apex:column>
+            <apex:column headerValue="{!$Label.LB_Nombre_Usuario}" value="{!item.us.Name}" />
+            </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <apex:pageBlockTable value="{!lstwraPre}" var="item" rendered="{!booDatosPres}">
+                <apex:column headerValue="Mes" value="{!item.strMes}"/>
+                <apex:column headerValue="Presupuesto R9" >
+                    <apex:inputField value="{!item.objPresupuesto.R9__c}"/>
+                </apex:column>
+                <!--<apex:column headerValue="DAT" >
+                    <apex:inputField value="{!item.objPresupuesto.DAT__c}"/>
+                </apex:column>
+                <apex:column headerValue="R1 - 8" >
+                    <apex:inputField value="{!item.objPresupuesto.R1a8__c}"/>
+                </apex:column> -->
+            </apex:pageBlockTable>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

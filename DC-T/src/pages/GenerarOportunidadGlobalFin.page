@@ -1,0 +1,8 @@
+<apex:page controller="GenerarOportunidadGlobalFinCtr">
+    <apex:form >
+    <apex:outputPanel >
+        <apex:outputText style="font-size:18px" value="{!msjResultado}"/>
+        <div style="float:center"> <apex:commandButton value="Volver al Inicio" action="{!salir}"/></div>       
+    </apex:outputPanel>
+    </apex:form>
+</apex:page>

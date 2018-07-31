@@ -1,0 +1,10 @@
+<apex:page standardController="Opportunity">
+    <c:chevronsGraph labels="['Oportunidad','Aproximación','Contacto','Proyecto',
+    'Propuesta','Ganada']" 
+        selected="{!Opportunity.StageName}"
+        offsetx="0"
+        width="180"
+        height="50"
+        arrow="40"
+     />
+</apex:page>

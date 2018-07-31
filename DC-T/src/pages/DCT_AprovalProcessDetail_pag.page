@@ -1,0 +1,68 @@
+<apex:page showHeader="false"  sidebar="true" controller="DCT_AprovalProcessDetail_ctrl">
+
+    <apex:form id="theForm" rendered="{!bAprovalProcessValid}">
+        <apex:pageMessages />
+		
+        <div style=" width: max-content; margin: 0 auto; text-align: center">
+			<h1 class="slds-text-title" style="text-align: center; color: red">Si no aceptas el total de las empresas da clik aqui : 
+			    <apex:outputLink value="{!URLFOR($Action.DCTAssignment__c.View, DctEncabezado.Id)}">
+			    	{!DctEncabezado.Name}
+			    </apex:outputLink>			
+			</h1>
+		</div>
+		
+<!--         <apex:pageBlock tabStyle="DCTAssignment__c" mode="maindetail" id="pbDetUsr" Title="Datos generales">
+            <apex:pageBlockSection id="pbsUsuarios" title="" showHeader="false" columns="2" collapsible="false" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Nombre de la Aprobación" />
+                    <apex:outputField value="{!DctEncabezado.Name}"  />
+                </apex:pageBlockSectionItem> 
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Aprobador" />
+                    <apex:outputField value="{!DctEncabezado.Aprobador__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Total de Cuentas Aprobadas" />
+                    <apex:outputField value="{!DctEncabezado.ApprovedAccounts__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Gerencia Anterior" />
+                    <apex:outputField value="{!DctEncabezado.PreviousManagement__c}" />
+                </apex:pageBlockSectionItem>                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Cuentas Enviadas Para Aprobación" />
+                    <apex:outputField value="{!DctEncabezado.TotalAccountstoApprove__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Estatus de la aprobación" />
+                    <apex:outputField value="{!DctEncabezado.Status__c}" />
+                </apex:pageBlockSectionItem>                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="" />
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Creado por" />
+                    <apex:outputField value="{!DctEncabezado.CreatedById}" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock> -->
+        
+        <apex:pageBlock tabStyle="DCTAssignment__c" mode="maindetail" id="pbDetCtes" Title="Clientes reasignados" rendered="{!lDctAccReasig.size > 0}">
+	            <apex:pageBlockSection id="pbsCuentas" showHeader="false" columns="1" collapsible="false"  >
+					<apex:pageBlockTable id="pbtListCotiza" value="{!lDctAccReasig}" var="Cta" columnsWidth="35%, 25%, 25%, 15%">
+			      		<apex:column headerValue="NOMBRE DE CLIENTES PROSPECTO" value="{!Cta.Name}" />
+<!-- 						<apex:column headerValue="APROBACIÓN" >
+	                        <apex:inputField value="{!Cta.Approval__c}" >
+	                        </apex:inputField>
+						</apex:column>			      		 -->
+			      		<apex:column headerValue="USUARIO EMISOR" value="{!Cta.IssuingUser__c}" />		      		
+			      		<apex:column headerValue="USUARIO RECEPTOR" value="{!Cta.UserReceiver__c}" />		      		
+			      		<apex:column headerValue="ESTATUS POR REGISTRO" value="{!Cta.Status__c}" />
+			      		<apex:column headerValue="" />			      		
+					</apex:pageBlockTable>
+            </apex:pageBlockSection>
+	        </apex:pageBlock>
+		<h1 class="slds-text-title">Página {!pageNumber} de {!totalPages}</h1>
+	</apex:form>
+	
+</apex:page>

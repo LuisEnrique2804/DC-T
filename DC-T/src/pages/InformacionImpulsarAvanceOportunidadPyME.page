@@ -1,0 +1,36 @@
+<apex:page standardController="SeguimientoOportunidades__c" extensions="SeguimientoOportunidadListasExtension">
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+
+    <script >
+        $j = jQuery.noConflict();
+        $j(document).ready(function() {
+        $j('a').attr("target","_blank");
+        });
+    </script > 
+
+    <apex:form >
+        <apex:pageBlock id="pbSoportes">
+           <apex:pageblocksection columns="1" collapsible="true" title="Soporte dentro de Telcel">  
+                <apex:commandButton onclick="window.open('/a0Z/e?CF00N1500000H1kRh={!SeguimientoOportunidades__c.Name}&CF00N1500000H1kRh_lkid={!SeguimientoOportunidades__c.Id}&retURL=%2F{!SeguimientoOportunidades__c.Id}','_blank');" value="Nuevo Soporte Dentro de Telcel"/>
+                <apex:pageBlockTable value="{!elementosAMostrarSoportes}" var="sp">
+                    <apex:column headervalue="Número de Soporte Dentro de Telcel"><apex:outputLink target="_blank" value="/{!sp.Id}">{!sp.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!sp.Nombre__c}"/>
+                    <apex:column value="{!sp.Posicion__c}"/>
+                    <apex:column value="{!sp.Area__c}"/>
+                    <apex:column value="{!sp.Email__c}"/>
+                    <apex:column value="{!sp.TelefonoExtension__c}"/>
+                    <apex:column value="{!sp.Celular__c}"/>
+                    <apex:column value="{!sp.Descripcion__c}"/>
+                    <apex:column value="{!sp.Notificacion__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" action="{!anteriorSoportes}" value="Anterior" reRender="pbSoportes" rendered="{!IF(OR(totalIndicesSoportes==0,indiceActualSoportes==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" action="{!siguienteSoportes}" value="Siguiente" reRender="pbSoportes" rendered="{!IF(OR(totalIndicesSoportes==0,indiceActualSoportes==totalIndicesSoportes),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageblocksection>
+        </apex:pageblock>  
+    </apex:form>
+    
+    
+</apex:page>

@@ -1,0 +1,123 @@
+<apex:page standardController="Account" extensions="AccountExtension">
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+    
+    <script >
+        $j = jQuery.noConflict();
+        $j(document).ready(function() {
+            $j('a').attr("target","_blank");
+        });
+        
+    </script >
+        
+    <!-- Estrategia en Tecnología de Información y Comunicaciones (TIC)-->
+    <apex:form id="fEstrategia">   
+        
+        <apex:actionFunction id="afGuardar" name="guardarAF" action="{!guardarCambios}" reRender="pbEstrategia" oncomplete="cambioDatos(); redireccionarSiAplica('{!huboError}')"/>
+        <apex:actionFunction name="cancelarAF" action="{!reset}"/>
+
+        <apex:actionFunction name="cambioDatosAF" action="{!cambios}" reRender="scriptEstrategia" />
+        
+        <apex:actionFunction name="actdesactCinco" action="{!cambiarModoCampo5}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactSeis" action="{!cambiarModoCampo6}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        
+
+        <script id="scriptEstrategia">
+        
+            function redireccionarSiAplica(huboError)
+            {
+                if(huboError == 'false')
+                {
+                    window.open('/{!Account.Id}','_parent');
+                }
+            }
+
+            function cambioDatos()
+            {
+                var cambios = '{!hanHabidoCambios}';
+                if(cambios == 'false')
+                {
+                    var botonGuardar1 = document.getElementById('btnGuardar1');
+                    var botonGuardar2 = document.getElementById('btnGuardar2');
+                    var botonCancelar1 = document.getElementById('btnCancelar1');
+                    var botonCancelar2 = document.getElementById('btnCancelar2');
+                    
+                    botonGuardar1.style.visibility = 'visible';
+                    botonGuardar2.style.visibility = 'visible';
+                    botonCancelar1.style.visibility = 'visible';
+                    botonCancelar2.style.visibility = 'visible';
+                    
+                    cambioDatosAF();
+                }        
+            }   
+            
+    
+        </script>
+        
+        <apex:pageBlock id="pbEstrategia">
+            
+            <input id="btnGuardar1" type="button" onclick="guardarAF();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+            <input id="btnCancelar1" type="button" onclick="cancelarAF();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+        
+            <apex:messages id="mensajes" styleClass="errorMsg"/>
+        
+            <apex:pageBlockSection columns="2" id="pbCampos" title="Estrategia en Tecnologías de Información y Comunicaciones (TIC)">
+                
+                <apex:pageBlockSection id="pBSICampoCinco" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoCinco}" helpText="{!$ObjectType.Account.fields.EstrategiaTecInformacionComunicacion__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoCincoLabel" value="Estrat. en Tec. de Inf. y Comunicación" rendered="{!lecturaCampoCinco}"/>
+                        <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" id="lecturaCampoCinco"  ondblclick="{!IF(perfilValidoEscritura,'actdesactCinco('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!Account.EstrategiaTecInformacionComunicacion__c}" rendered="{!lecturaCampoCinco}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!escrituraCampoCinco}" helpText="{!$ObjectType.Account.fields.EstrategiaTecInformacionComunicacion__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoCincoLabel" value="Estrat. en Tec. de Inf. y Comunicación" rendered="{!escrituraCampoCinco}"/>
+                      <apex:inputField id="escrituraCampoCinco" onblur="actdesactCinco('lectura');" value="{!Account.EstrategiaTecInformacionComunicacion__c}" rendered="{!escrituraCampoCinco}"/>                
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>    
+            
+                <apex:pageBlockSection id="pBSICampoSeis" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoSeis}" helpText="{!$ObjectType.Account.fields.InterlocutorEstrategia__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoSeisLabel" value="Interlocutor" rendered="{!lecturaCampoSeis}"/>
+                        <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" id="lecturaCampoSeis"  ondblclick="{!IF(perfilValidoEscritura,'actdesactSeis('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!IF(Account.InterlocutorEstrategia__c==null,'Sin asignar',Account.InterlocutorEstrategia__r.Name)}" rendered="{!lecturaCampoSeis}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!escrituraCampoSeis}" helpText="{!$ObjectType.Account.fields.InterlocutorEstrategia__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoSeisLabel" value="Interlocutor" rendered="{!escrituraCampoSeis}"/>
+                      <apex:inputField id="escrituraCampoSeis" onchange="cambioDatos();" value="{!Account.InterlocutorEstrategia__c}" rendered="{!escrituraCampoSeis}"/>                
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>    
+               
+            </apex:pageBlockSection>
+          
+            <input id="btnGuardar2" type="button" onclick="guardarAF();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+            <input id="btnCancelar2" type="button" onclick="cancelarAF();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+            
+        </apex:pageBlock>
+
+    </apex:form>  
+    
+    <!-- CONOCIMIENTO DE MERCADO-->
+    <apex:form >
+        <apex:pageBlock id="pBConocimiento" >
+            <apex:pageBlockSection columns="1" collapsible="true" title="Conocimiento de Mercado">
+                <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a0H/e?CF00N1500000H1kRT={!Account.Name}&CF00N1500000H1kRT_lkid={!Account.Id}&retURL=%2F{!Account.Id}','_blank');" value="Nuevo Conocimiento de Mercado"/>
+                <apex:pageBlockTable var="cm" value="{!elementosAMostrarConocimiento}" >
+                    <apex:column headervalue="Mercado"><apex:outputLink target="_blank" value="/{!cm.Id}">{!cm.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!cm.Presencia__c}"/>
+                    <apex:column value="{!cm.Cuota__c}"/>
+                    <apex:column value="{!cm.Liderazgo__c}"/>
+                    <apex:column value="{!cm.Competencia__c}"/>
+                    <apex:column value="{!cm.DiferenciacionCliente__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" action="{!anteriorConocimiento}" value="Anterior" reRender="pBConocimiento" rendered="{!IF(OR(totalIndicesConocimiento==0,indiceActualConocimiento==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" action="{!siguienteConocimiento}" value="Siguiente" reRender="pBConocimiento" rendered="{!IF(OR(totalIndicesConocimiento==0,indiceActualConocimiento==totalIndicesConocimiento),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+     
+    
+</apex:page>

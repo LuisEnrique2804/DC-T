@@ -1,0 +1,17 @@
+{
+    "projectName": "DC-T",
+    "username": "admavx@telcel.com.dc",
+    "id": "b2a62290-94d4-11e8-9e3b-b18dab0992be",
+    "namespace": "",
+    "orgType": "developer",
+    "loginUrl": "https://login.salesforce.com/",
+    "instanceUrl": "https://telcel-dev--DC.cs18.my.salesforce.com",
+    "workspace": "C:\\Users\\ToshAvanxo\\Documents\\Workspace\\DC-T",
+    "subscription": [
+        "ApexClass",
+        "ApexComponent",
+        "ApexPage",
+        "ApexTrigger",
+        "StaticResource"
+    ]
+}

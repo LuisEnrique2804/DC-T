@@ -1,0 +1,34 @@
+<apex:page standardController="ProcessInstanceWorkitem" extensions="DCT_ApprovalProcessReassignCtrl" showHeader="false" sidebar="false">
+  <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+    <head>
+      <apex:includeScript value="/support/console/41.0/integration.js"/>
+      <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+      <apex:includeScript value="/soap/ajax/40.0/connection.js"/>
+      <apex:slds />
+      <script type="text/javascript">      
+        function Regregsar(){
+          afRegresar();
+        }
+      </script>      
+    </head>
+    <body class="slds-scope">
+      <apex:outputPanel id="main">
+        <apex:form id="theForm1">
+        	<apex:actionFunction name="afRegresar" action="{!regresa}"/>              
+	        <div style="width: 100%; margin: 0 auto;">
+	          <div style="width: max-content; margin: 0 auto;">
+	            <BR/><BR/>
+	            No es posible reasignar un proceso de aprobación.
+	          </div>
+	        </div>
+	        <div style="width: 10%; margin: 0 auto;">	       
+	            <BR/><BR/>
+	            <apex:outputLink onclick="Javascript:Regregsar(); return false;" styleClass="slds-align_absolute-center slds-button slds-button_brand" >
+	              Regresar
+	            </apex:outputLink>
+	        </div>
+        </apex:form>        
+     </apex:outputPanel>
+    </body> 
+  </html>
+</apex:page>

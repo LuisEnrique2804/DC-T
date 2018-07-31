@@ -1,0 +1,1443 @@
+<apex:page showHeader="false" sidebar="false" extensions="DCT_CustomerTechnicalToken_ext" standardController="Cliente__c" id="pagekey" >
+	<html>
+		<head>
+			<meta charset="utf-8" />
+			<apex:slds />
+			<script type="text/javascript">
+				function refresh(blnIsUpdate){
+					var vBlnIsUpdate = blnIsUpdate;
+					console.log('Luis: '+vBlnIsUpdate)
+					if (vBlnIsUpdate) {
+						console.log('Luis');
+						setTimeout(afRefreshTable,5000);
+						console.log('Enrique');
+					} else{
+						console.log('Garcia');
+						setTimeout(afCancel,500);
+						console.log('Sanabria');
+					}
+				}
+			</script>
+		</head>
+		<body class="slds-scope">
+			<apex:actionStatus id="processing">
+				<apex:facet name="start">
+					<div class="slds-spinner_container slds-is-fixed">
+						<div class="slds-spinner--brand slds-spinner slds-spinner--medium" role="alert">
+							<span class="slds-assistive-text">Processing</span>
+							<div class="slds-spinner__dot-a"></div>
+							<div class="slds-spinner__dot-b"></div>
+						</div>
+					</div>
+				</apex:facet>
+			</apex:actionStatus>
+			<apex:form id="mainForm" rendered="{!blnIsItValidToStart}">
+				<apex:actionFunction name="afRefreshTable" action="{!refreshTable}" />
+				<apex:actionFunction name="afCancel" action="{!cancel}" />
+				<apex:actionFunction name="expandCollapseSection" action="{!collapseExpandSection}" immediate="true" status="processing" reRender=" 
+					gDataContentOP,switchIconsGeneralDataOP,
+					switchIconsVoiceAndDataPlansOP,VoiceAndDataPlansContentOP,
+					switchIconsNationalAndParentAccOP,NationalAndParentContentOP,
+					switchProvisioningOP,ProvisioningOP,
+					switchVPNKeysOP,VPNKeysOP,
+					switchPermanentLinksOP,PermanentLinksOP,
+					switchInplantOP,InplantOP,
+					switchCompetitorsOP,competitorsOP,
+					switchProductos,ProductosOP">
+					<apex:param name="sectionId" assignTo="{!strSectionId}" value="" />
+				</apex:actionFunction>
+
+				<apex:actionFunction name="deleteProvisioningItem" action="{!erasePrivisioning}" status="processing" reRender="ProvisioningOP,msgs0OP3" oncomplete="javaScript:refresh({!blnIsUpdateOK});">
+					<apex:param name="provId" value="" />
+				</apex:actionFunction>
+
+				<apex:actionFunction name="aFchangeblnNewProvisingItem" action="{!changeblnNewProvisingItem}" status="processing" reRender="ProvisioningOP,msgs0OP, msgs0OP2"/>				
+
+				<apex:actionFunction name="editProvisioningItem" action="{!toggleNewProvisioningItem}" status="processing" reRender="ProvisioningOP,msgs0OP, msgs0OP2">
+					<apex:param name="provId" value="" />
+				</apex:actionFunction>
+
+				<apex:actionFunction name="deleteDedicatedLinkItem" action="{!eraseDedidateLink}" status="processing" reRender="PermanentLinksOP,msgs0OP, msgs0OP2">
+					<apex:param name="dedLinkId" value="" />
+				</apex:actionFunction>
+
+				<apex:actionFunction name="editDedicatedLinkItem" action="{!toggleNewDedicatedLinksUI}" status="processing" reRender="PermanentLinksOP,msgs0OP, msgs0OP2">
+					<apex:param name="dedLinkId" value="" />
+				</apex:actionFunction>
+
+				<apex:actionFunction name="addNewVPNKey" action="{!addNewVPNKey}" status="processing" reRender="VPNKeysOP,msgs0OP, msgs0OP2">
+					<apex:param name="VPNKeyTypeForAdd" value=""/>
+				</apex:actionFunction>
+
+				<apex:actionFunction name="eraseVPNKey" action="{!eraseVPNKey}" status="processing" reRender="VPNKeysOP,msgs0OP, msgs0OP2">
+					<apex:param name="VPNkeyType" value=""/>
+					<apex:param name="VPNkeyName" value=""/>
+				</apex:actionFunction>
+
+				<apex:actionFunction name="eraseCompetitorsGroup" action="{!eraseCompetitorsGroup}" status="processing" reRender="competitorsOP,msgs0OP, msgs0OP2">
+					<apex:param name="competGroupId" value=""/>
+				</apex:actionFunction>
+
+				<apex:actionFunction name="eraseCompetitor" action="{!eraseCompetitor}" status="processing" reRender="competitorsOP,msgs0OP, msgs0OP2">
+					<apex:param name="competId" value=""/>
+				</apex:actionFunction>
+
+				<apex:actionFunction name="returnToDirectory" action="{!returnToDirectory}" status="processing"/>
+
+				<apex:actionFunction name="toggleNewDedicatedLink" status="processing" action="{!toggleNewDedicatedLinksUI}" reRender="PermanentLinksOP,msgs0OP, msgs0OP2" />
+				<apex:actionFunction name="aFToggleNewProvisioningItem" status="processing" action="{!toggleNewProvisioningItem}"/>
+				<apex:actionFunction name="toggleNewCompetitor" status="processing" action="{!toggleNewCompetitor}" reRender="competitorsOP,msgs0OP, msgs0OP2" />
+
+				<div class="demo-only">
+					<!-- <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large"> -->
+					<section>
+						<div class="" >
+							<header class="">
+								<h2 id="modal-heading-01" class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate">Ficha Técnica</h2>
+								<div class="slds-form slds-form_compound">
+									<fieldset class="slds-form-element">
+										<div class="slds-form-element__group">
+											<div class="slds-form-element__row">
+												<div class="slds-form-element slds-size_1-of-3">
+												</div>
+												<div class="slds-align_absolute-center slds-form-element slds-size_1-of-3">
+													<div class="slds-button slds-button_neutral" style="cursor: pointer;" onclick="returnToDirectory();">
+														<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/back_60.png')}" styleClass="slds-button__icon slds-button__icon_left" style="height: 15px; width: 15px;" /> Volver
+													</div>
+												</div>
+												<div class="slds-form-element slds-size_1-of-3">
+												</div>
+											</div>
+										</div>
+									</fieldset>
+								</div>
+								<br/>
+								<br/>
+								<div class="slds-form slds-form_compound">
+									<fieldset class="slds-form-element">
+										<div class="slds-form-element__group">
+											<div class="slds-form-element__row">
+												<div class="slds-form-element slds-size_1-of-4">
+													<label class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate slds-form-element__label">
+														Razón Social
+													</label>
+													<div class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate">
+														<div  disabled="true" style="cursor: auto; user-select:auto;">
+															<apex:outputField value=" {!telcelComertialDirectory.Name}"/>
+														</div>
+													</div>
+												</div>
+												<div class="slds-form-element slds-size_1-of-4">
+													<label class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate slds-form-element__label">
+														RFC
+													</label>
+													<div class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate ">
+														<div disabled="true" style="cursor: auto; user-select:auto;">
+															<apex:outputField value="{!telcelComertialDirectory.RFC__c}"/>
+														</div>
+													</div>
+												</div>
+												<div class="slds-form-element slds-size_1-of-4">
+													<label class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate slds-form-element__label">
+														Leyenda VIP
+													</label>
+													<div class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate ">
+														<div disabled="true" style="cursor: auto; user-select:auto;">
+															<apex:outputField value="{!telcelComertialDirectory.DCTLegend__c}"/>
+														</div>
+													</div>
+												</div>
+												<div class="slds-form-element slds-size_1-of-4">
+													<label class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate slds-form-element__label">
+														Advertencia
+													</label>
+													<div class="slds-align_absolute-center slds-text-heading_medium slds-hyphenate ">
+														<div disabled="true" style="cursor: auto; user-select:auto;">
+															<apex:outputField value="{!telcelComertialDirectory.DCTWarningImage__c}"/>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</fieldset>
+								</div>
+							</header>
+							<apex:outputPanel id="msgs0OP">
+								<apex:outputPanel id="ErrorMsgs" rendered="{!lstErrorMsgs.size <> 0}">
+									<div class="slds-notify_container" style="position:relative;">
+										<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+											<apex:repeat value="{!lstErrorMsgs}" var="msg">
+												{!msg}
+												<br/>
+											</apex:repeat>
+										</div>
+									</div>
+								</apex:outputPanel>
+								<apex:outputPanel id="SuccessMsgs" rendered="{!lstSuccessMsgs.size <> 0}">
+									<div class="slds-notify_container" style="position:relative;">
+										<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+											<apex:repeat value="{!lstSuccessMsgs}" var="msg">
+												{!msg}
+												<br/>
+											</apex:repeat>
+										</div>
+									</div>
+								</apex:outputPanel>
+							</apex:outputPanel>
+							<div class="slds-modal__content slds-p-around_medium">
+								<apex:outputPanel id="mainOP">
+
+									<!--Datos generales-->
+
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('GeneralData');">
+											<apex:outputPanel id="switchIconsGeneralDataOP">
+												<apex:image rendered="{!NOT(mapSectionSwitches['GeneralData'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['GeneralData']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">Datos Generales</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="gDataContentOP">
+										<apex:outputPanel rendered="{!mapSectionSwitches['GeneralData']}">
+											<div style="width: 80%; margin: 0 auto;">
+												<apex:outputPanel rendered="{!NOT(ISNULL(telcelComertialDirectory.Id))}">
+													<br/>
+													<div class="demo-only">
+														<div class="slds-form slds-form_compound">
+															<fieldset class="slds-form-element">
+																<div class="slds-form-element__group">
+																	<div class="slds-form-element__row">
+																		<!-- <div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Razón Social
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.Name}
+																				</div>
+																			</div>
+																		</div> -->
+																		
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Fecha de Constitución de la Empresa
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					<apex:outputField value="{!telcelComertialDirectory.DCTDateIncorporationCompany__c}"/>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Cliente Telcel Desde
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					<apex:outputField value="{!telcelComertialDirectory.DCTCustomerFrom__c}" />
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																	<!-- <div class="slds-form-element__row">
+																		 <div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				RFC
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.RFC__c}
+																				</div>
+																			</div>
+																		</div> 
+																		 <div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Cliente Telcel Desde
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTCustomerFrom__c}
+																				</div>
+																			</div>
+																		</div> 
+																	</div> -->
+																	<div class="slds-form-element__row">
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Grupo
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					<apex:outputField value="{!telcelComertialDirectory.Grupo__c}"/>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Antigüedad
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTAntiquity__c}
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="slds-form-element__row">
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Clave NISI 
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-text-body_regular" style="cursor: auto; user-select:auto;">
+																					<apex:inputField value="{!telcelComertialDirectory.DCTKeyNISI__c}" styleClass="slds-input" />
+																				</div>
+																			</div>
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				ID Femtocelda
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<apex:inputField value="{!telcelComertialDirectory.DCTIDfemtocell__c}" styleClass="slds-input" />
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="slds-form-element__row">
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Representante Legal
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTLegalRepresentative__c}
+																				</div>
+																			</div>
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Segmento
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.Segmento__c}
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="slds-form-element__row">
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Nombre de la VPN
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<apex:inputField value="{!telcelComertialDirectory.DCTNameVPN__c}" styleClass="slds-input" />
+																			</div>
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Sector
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.Sector__c}
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="slds-form-element__row">
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Clave APN
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<apex:inputField value="{!telcelComertialDirectory.DCTCodeAPN__c}" styleClass="slds-input" />
+																			</div>
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Subsector
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.Subsector__c}
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="slds-form-element__row">
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Alias
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<apex:inputField styleClass="slds-input" value="{!telcelComertialDirectory.DCTAlias__c}" />
+																			</div>
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<!-- <label class="slds-form-element__label">
+																				Producto
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTProduct__c}
+																				</div>
+																			</div> -->
+																			<label class="slds-form-element__label">
+																				Beneficios
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTBenefits__c}
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="slds-form-element__row">
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<br/>
+																			<br/>
+																			<br/>
+																			<!-- <label class="slds-form-element__label">
+																				Beneficios
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTBenefits__c}
+																				</div>
+																			</div> -->
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Domicilio Fiscal
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTFiscalAddress__c}
+																				</div>
+																			</div>
+																			<label class="slds-form-element__label">
+																				Domicilio Correspondencia
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">                                                             
+																					{!telcelComertialDirectory.DCTCorrespondenceAddress__c }
+																				</div>
+																			</div>
+																			<label class="slds-form-element__label">
+																				Cliente Esporádico SAP
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTSAPSporadicCustomer__c}
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="slds-form-element__row">
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<label class="slds-form-element__label">
+																				Forma de Pago
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTMethodOfPayment__c}
+																				</div>
+																			</div>
+																			<label class="slds-form-element__label">
+																				Referencia RAP
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!telcelComertialDirectory.DCTRapReference__c}
+																				</div>
+																			</div>
+																			<label class="slds-form-element__label">
+																				Bonifica Cobranza
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<apex:inputField value="{!telcelComertialDirectory.DCTCollectionBonus__c}" />
+																					
+																				
+																			</div>
+																			<label class="slds-form-element__label">
+																				Días
+																			</label>
+																			<div class="slds-text-body_regular">
+																				<apex:inputField value="{!telcelComertialDirectory.DCTDays__c}" styleClass="slds-input" />
+																			</div>
+																		</div>
+																		<div class="slds-form-element slds-size_1-of-2">
+																			<br/>
+																			<br/>
+																			<br/>
+																			<label class="slds-form-element__label">
+																				<b>Fecha de Registro:</b> &nbsp;
+																				<apex:outputField value="{!telcelComertialDirectory.DCTWarningDate__c}" />
+																				<br/>
+																				<b>Advertencia</b> &nbsp;
+																				<!--TODO: Revisar o poner lógica de alarma (ícono warning)-->
+																				<!-- <apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/warning_60.png')}" style="height: 15px; width: 15px; background-color: gray; border-radius: 100%;" /> &nbsp; -->
+																			</label>
+																			<br/><br/>
+																			<div class="slds-text-body_regular">
+																				<div class="slds-text-body_regular" disabled="{!$Profile.Name != 'JEC'}" style="cursor: auto; user-select:auto;">
+																					<apex:inputField value="{!telcelComertialDirectory.DCTWarning__c}" styleClass="slds-input" />
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</fieldset>
+														</div>
+													</div>
+													<br/>
+													<br/>
+													<apex:outputPanel id="msgs0OP2">
+														<apex:outputPanel id="ErrorMsgs2" rendered="{!lstErrorMsgs.size <> 0}">
+															<div class="slds-notify_container" style="position:relative;">
+																<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+																	<apex:repeat value="{!lstErrorMsgs}" var="msg">
+																			{!msg}
+																				<br/>
+																	</apex:repeat>
+																</div>
+															</div>
+														</apex:outputPanel>
+														<apex:outputPanel id="SuccessMsgs2" rendered="{!lstSuccessMsgs.size <> 0}">
+															<div class="slds-notify_container" style="position:relative;">
+																<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+																	<apex:repeat value="{!lstSuccessMsgs}" var="msg">
+																		{!msg}
+																		<br/>
+																	</apex:repeat>
+																</div>
+															</div>
+														</apex:outputPanel>
+													</apex:outputPanel>
+													<apex:outputPanel rendered="{!$Profile.Name== 'JEC' || $Profile.Name == 'Administrador del sistema'}">
+														<div style="width:100%;">
+															<div style="width: max-content; width: -moz-max-content; margin:0 auto;">
+																<div class="slds-button-group" role="group">
+																	<apex:commandButton styleClass="slds-button slds-button_brand" value="Guardar" action="{!saveChangesOnGeneralData}" status="processing" reRender="msgs0OP, msgs0OP2" oncomplete="javaScript:refresh({!blnIsUpdateOK});"/>
+																</div>
+															</div>
+														</div>
+													</apex:outputPanel>
+													<br/>
+													<br/>
+												</apex:outputPanel>
+												<apex:outputPanel rendered="{!ISNULL(telcelComertialDirectory.Id)}">
+													<div style="width: 100%; text-align: center;">
+														No Existe Directorio Comercial Asociado a Esta Cuenta.
+													</div>
+												</apex:outputPanel>
+											</div>
+										</apex:outputPanel>
+									</apex:outputPanel>
+
+									<!--Cuenta nacional y padre-->
+
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('CtaNacionalYPadre');">
+											<apex:outputPanel id="switchIconsNationalAndParentAccOP">
+												<apex:image rendered="{!NOT(mapSectionSwitches['CtaNacionalYPadre'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['CtaNacionalYPadre']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">Cuenta Nacional y Padre</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="NationalAndParentContentOP">
+										<apex:outputPanel rendered="{!mapSectionSwitches['CtaNacionalYPadre']}">
+											<div style="width: 80%; margin: 0 auto;">
+												<br/>
+												<br/>
+												<apex:outputPanel rendered="{!blnAreThereRelAccs}">
+													<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered">
+														<thead>
+															<tr class="slds-text-title_caps">
+																<th scope="col" class="slds-cell-wrap">
+																	<div class="slds-truncate" title="Cuenta nacional">Cuenta Nacional</div>
+																</th>
+																<th scope="col" class="slds-cell-wrap">
+																	<div class="slds-truncate" title="Cuenta padre">Cuenta Padre</div>
+																</th>
+																<th scope="col" class="slds-cell-wrap">
+																	<div class="slds-truncate" title="Region">Región</div>
+																</th>
+															</tr>
+														</thead>
+														<tbody>
+															<apex:repeat value="{!lstRegion}" var="acc">
+																<tr> 
+																	<td>
+																		<apex:outputText rendered="{!NOT(ISNULL(acc.NationalAccount__c))}" value="{!acc.NationalAccount__c}" />
+																	</td>
+																	<td>
+																		<apex:outputText rendered="{!NOT(ISNULL(acc.FatherAccount__c))}" value="{!acc.FatherAccount__c}" />
+																	</td>
+																	<td>
+																		<apex:outputText rendered="{!NOT(ISNULL(acc.Region__c))}" value="{!acc.Region__c}" />
+																	</td>
+																</tr>
+															</apex:repeat>
+														</tbody>
+													</table>
+												</apex:outputPanel>
+												<apex:outputPanel rendered="{!NOT(blnAreThereRelAccs)}">
+													<div style="width: 100%; text-align: center;">
+														El Cliente no es Padre ni Hijo de Ninguna Cuenta Registrada
+													</div>
+												</apex:outputPanel>
+												<br/>
+												<br/>
+											</div>
+										</apex:outputPanel>
+									</apex:outputPanel>
+
+									<!--InPlant-->
+
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('Inplant');">
+											<apex:outputPanel id="switchInplantOP">
+												<apex:image rendered="{!NOT(mapSectionSwitches['Inplant'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['Inplant']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">InPlant</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="InplantOP">
+										<apex:outputPanel rendered="{!mapSectionSwitches['Inplant']}">
+											<div style="width: 80%; margin: 0 auto;">
+												<br/>
+												<br/>
+												<apex:outputPanel >
+													<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered slds-no-row-hover">
+														<thead>
+															<tr class="slds-text-title_caps">
+																<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																	<div class="slds-truncate" title="Clave del plan">Nombre</div>
+																</th>
+																<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																	<div class="slds-truncate" title="Clave del plan">Distribuidor</div>
+																</th>
+																<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																	<div class="slds-truncate" title="Clave del plan">Celular</div>
+																</th>
+																<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																	<div class="slds-truncate" title="Clave del plan">Teléfono</div>
+																</th>
+																<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																	<div class="slds-truncate" title="Clave del plan">Extensión</div>
+																</th>
+																<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																	<div class="slds-truncate" title="Clave del plan">Correo Electrónico</div>
+																</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTInplantName1__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTDistribuidorPrincipal__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTInplantmobile1__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTInplantPhone1__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTExt1__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTInplantEmail1__c}" />
+																</td>
+															</tr>
+															<tr>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTInplantName2__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTDistribuidorSecundario__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTInplantmobile2__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTInplantPhone2__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTExt2__c}" />
+																</td>
+																<td style="text-align: center;">
+																	<apex:outputField value="{!telcelComertialDirectory.DCTInplantEmail2__c}" />
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</apex:outputPanel>
+												<br/>
+												<br/>
+											</div>
+										</apex:outputPanel>
+									</apex:outputPanel>
+
+									<!--Planes de voz y datos-->
+
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('PlanesVozDatos');">
+											<apex:outputPanel id="switchIconsVoiceAndDataPlansOP">
+												<apex:image rendered="{!NOT(mapSectionSwitches['PlanesVozDatos'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['PlanesVozDatos']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">Planes de Voz y Datos</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="VoiceAndDataPlansContentOP">
+										<apex:outputPanel rendered="{!mapSectionSwitches['PlanesVozDatos']}">
+											<div style="width: 80%; margin: 0 auto;">
+												<br/>
+												<br/>
+												<apex:outputPanel rendered="{!lstAuthLines.size <> 0}">
+													<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered">
+														<thead>
+															<tr class="slds-text-title_caps">
+																<!-- <th scope="col" class="slds-cell-wrap">
+																	<div class="slds-truncate" title="Seguimiento de Productos">Seguimiento de Productos</div>
+																</th>	 -->														
+																<apex:repeat value="{!$ObjectType.DCTAuthorizedLines__c.FieldSets.TechnicalTokenVoiceAndDataFS}" var="field">
+																	<th scope="col" class="slds-cell-wrap">
+																		<div class="slds-truncate" title="{!field.label}">{!field.label}</div>
+																	</th>
+																</apex:repeat>
+																<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																	<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/check_60.png')}" style="height: 15px; width: 15px;" />
+																</th>
+															</tr>
+														</thead>
+														<tbody>
+															<apex:repeat value="{!lstAuthLines}" var="authLine">
+																<tr>
+																	<!-- <td style="text-align: center;" title="">
+																		<apex:inputCheckbox style="margin-left: 10px;" value="{!authLine.DCTHideAdditionalServices__c}" rendered="{!!mapIdProcesAproba[authLine.id]}"/>
+																		<apex:outputLabel value="" rendered="{!mapIdProcesAproba[authLine.id]}"/>
+																	</td> -->																
+																	<apex:repeat value="{!$ObjectType.DCTAuthorizedLines__c.FieldSets.TechnicalTokenVoiceAndDataFS}" var="field">
+																		<td data-label="{!authLine[field]}">
+																			<div class="slds-truncate" title="{!authLine[field]}">{!authLine[field]}</div>
+																		</td>
+																	</apex:repeat>
+																	<!--TODO: Poner en title qué persona autorizó-->
+																	<td style="text-align: center;" title="
+																	{!IF(
+																		AND(authLine.DCTTerm__c == '12 MESES', authLine.DCTAuthorizationDate__c != null), 
+																		'Autorizó: '+authLine.CreatedBy.Manager.Name+'- Fecha: '+ TEXT(DAY(authLine.DCTAuthorizationDate__c))+'/'+TEXT(MONTH(authLine.DCTAuthorizationDate__c))+'/'+TEXT(YEAR(authLine.DCTAuthorizationDate__c)),
+																		authLine.Status__c
+																	)}">
+																		<!-- {!authLine.DCTTerm__c} -->
+																	  <apex:image rendered="{!authLine.DCTTerm__c == '12 MESES'}" value="{!URLFOR($Resource.SLDS,'icons/utility/user_60.png')}" style="height: 15px; width: 15px;" />
+																	</td>
+																</tr>
+															</apex:repeat>
+														</tbody>
+													</table>
+													<br/><br/>
+													<!-- <div style="width: max-content; -moz-max-content; margin: 0 auto;">
+														<div class="slds-button-group" role="group">
+															<apex:commandButton styleClass="slds-button slds-button_brand" value="Guardar" action="{!saveUpdateProvisioningItem}" rendered="{!AND(lstAuthLines.size > 0, $Profile.Name== 'JEC')}" reRender="VoiceAndDataPlansContentOP, ProvisioningOP" status="processing" oncomplete="javaScript:refresh({!blnIsUpdateOK});"/>
+																														
+														</div>
+													</div>	 -->												
+												</apex:outputPanel>
+												<apex:outputPanel rendered="{!lstAuthLines.size == 0}">
+													<div style="width: 100%; text-align: center;">
+														El Cliente no Tiene Planes de Voz y Datos Activos.
+													</div>
+												</apex:outputPanel>
+												<br/>
+												<apex:outputPanel id="SuccessMsgAutLin" rendered="{!lExito.size > 0}">
+													<div class="slds-notify_container" style="position:relative;">
+														<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+															<apex:repeat value="{!lExito}" var="msg">
+																{!msg}
+																<br/>
+															</apex:repeat>
+														</div>
+													</div>
+												</apex:outputPanel>																										
+											</div>
+										</apex:outputPanel>
+									</apex:outputPanel>
+
+									<!--Aprovisionamiento-->
+
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('Aprovisionamiento');">
+											<apex:outputPanel id="switchProvisioningOP">
+												<apex:image rendered="{!NOT(mapSectionSwitches['Aprovisionamiento'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['Aprovisionamiento']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">Lista de Servicios asociados al Plan</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="ProvisioningOP">		
+										<apex:outputPanel rendered="{!mapSectionSwitches['Aprovisionamiento']}">
+											<apex:outputPanel id="msgs0OP3">
+												<apex:outputPanel id="ErrorMsgs3" rendered="{!lstErrorMsgs.size <> 0}">
+													<div class="slds-notify_container" style="position:relative;">
+														<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+															<apex:repeat value="{!lstErrorMsgs}" var="msg">
+																{!msg}
+																<br/>
+															</apex:repeat>
+														</div>
+													</div>
+												</apex:outputPanel>
+												<apex:outputPanel id="SuccessMsgs3" rendered="{!lstSuccessMsgs.size <> 0}">
+													<div class="slds-notify_container" style="position:relative;">
+														<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+															<apex:repeat value="{!lstSuccessMsgs}" var="msg">
+																{!msg}
+																<br/>
+															</apex:repeat>
+														</div>
+													</div>
+												</apex:outputPanel>
+											</apex:outputPanel>										
+											<apex:outputPanel rendered="{!NOT(blnNewProvisioningItem)}">											
+												<div style="width: 100%; margin: 0 auto;">
+													<br/>
+													<apex:outputPanel rendered="{!$Profile.Name== 'JEC' || $Profile.Name == 'Administrador del sistema'}">
+														<div style="width: 100%; text-align: right;" onclick="aFchangeblnNewProvisingItem();">
+															<div class="slds-button slds-button_neutral" style="cursor: pointer;">
+																<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" styleClass="slds-button__icon slds-button__icon_left" style="height: 15px; width: 15px;" /> Agregar
+															</div>
+														</div>
+													</apex:outputPanel>
+													<br/>													
+													<apex:outputPanel rendered="{!blnAreThereProvisioningRecords}">
+														<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered slds-no-row-hover">
+															<thead>
+																<tr class="slds-text-title_caps">
+																	<!-- <th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/edit_60.png')}" style="height: 15px; width: 15px;" />
+																	</th> -->
+																	<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" style="height: 15px; width: 15px;" />
+																	</th>
+																	<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		<div class="slds-truncate" title="Clave del plan">Clave del Plan</div>
+																	</th>
+																	<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		<div class="slds-truncate" title="Nombre del plan">Nombre del Plan</div>
+																	</th>
+																	<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		<div class="slds-truncate" title="Clave del servicio">Clave del Servicio</div>
+																	</th>
+																	<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		<div class="slds-truncate" title="Servicio / Producto Original">Descripción</div>
+																	</th>
+																</tr>
+															</thead>
+															<tbody>
+																<apex:repeat value="{!mapALByKey}" var="authLnG">
+																	<apex:variable value="{!0}" var="appliesJoin" />
+																	<apex:repeat value="{!mapALByKey[authLnG]}" var="authL">
+																		<tr>
+																			<!-- <td style="text-align: center;">
+																				<apex:image rendered="{!$Profile.Name== 'JEC' || $Profile.Name == 'Administrador del sistema'}" onclick="editProvisioningItem('{!authL.Id}');" value="{!URLFOR($Resource.SLDS,'icons/utility/edit_60.png')}" style="height: 15px; width: 15px; cursor: pointer;" title="Modificar" />
+																			</td> -->
+																			<td style="text-align: center;">
+																				<apex:image rendered="{!$Profile.Name== 'JEC'|| $Profile.Name == 'Administrador del sistema'}" onclick="deleteProvisioningItem('{!authL.Id}');" value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" style="height: 15px; width: 15px; cursor: pointer;" title="eliminar"/>
+																			</td>
+																			<td rowspan="{!mapAuthLinesRowsPans[authLnG]}" style="text-align: center; display: {!IF(appliesJoin == 0,'table-cell','none')};">
+																				{!authLnG}
+																			</td>
+																			<td rowspan="{!mapAuthLinesRowsPans[authLnG]}" style="text-align: center; display: {!IF(appliesJoin == 0,'table-cell','none')};">
+																				{!mapALByKey[authLnG][0].Name} 1
+																			</td>
+																			<apex:variable value="{!appliesJoin + 1}" var="appliesJoin" />
+																			<td style="text-align: center;">
+																				{!authL.DCTAdditionalServices__c}
+																			</td>
+																			<td style="text-align: center;">
+																				{!authL.DCTAdditionalProductService__c}
+																			</td>
+																		</tr>
+																	</apex:repeat>
+																</apex:repeat>
+															</tbody>
+														</table>
+													</apex:outputPanel>
+													<apex:outputPanel rendered="{!NOT(blnAreThereProvisioningRecords)}">
+														<div style="width: 100%; text-align: center;">
+															El Cliente no Tiene Aprovisionamientos Asociados.
+														</div>
+													</apex:outputPanel>
+													<br/>
+													<br/>
+												</div>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!blnNewProvisioningItem}" id="oupFiltNuevoPlan">
+												<div style="width: 80%; margin: 0 auto;">
+													<br/>
+													<div style="width: 100%;">
+														<div style="width: max-content; -moz-max-content; margin: 0 auto;">
+															<div class="slds-box">
+																<legend class="slds-form-element__legend slds-form-element__label">Servicio Asociados al plan</legend>
+																<label class="slds-form-element__label">
+																	<abbr class="slds-required" title="requerido">*</abbr> Plan
+																</label>
+																<div class="slds-text-body_regular">
+																	<!-- <apex:inputText styleClass="slds-input" value="{!strPlanConcat}" /> -->
+																	<!-- <apex:selectList value="{!selectedPlan}" title="Plan" size="1" id="plan" onchange="aFToggleNewProvisioningItem();"> -->
+																	<apex:selectList value="{!selectedPlan}" title="Plan" size="1" id="plan">
+																		<apex:selectOptions value="{!selectPlan}" />
+																	</apex:selectList>
+																</div>
+																<label class="slds-form-element__label">
+																	<abbr class="slds-required" title="requerido">*</abbr> Clave del Servicio
+																</label>
+																<div class="slds-text-body_regular">
+																	<!-- <apex:inputField styleClass="slds-input" value="{!newProvisioningInstance.DCTAdditionalServices__c}" /> -->
+                                                                    <apex:repeat value="{!lWrpServicios}" var="lServ">
+																		<apex:inputCheckbox style="margin-left: 10px;" value="{!lServ.bSelected}"/>
+                                                                        &nbsp; 
+                                                                        <apex:outputText value="{!lServ.sDescripcion}"/>
+                                                                        <br/>
+                                                                    </apex:repeat>	
+																	<apex:outputPanel rendered="{!lWrpServicios.size == 0}" id="oupNoSErvices"> 
+																		<abbr class="slds-required" title="requerido">*</abbr> Este Plan no tiene servicios asociados
+																	</apex:outputPanel>																	
+																</div>
+																<br/>
+																<br/>
+																<div style="width: max-content; -moz-max-content; margin: 0 auto;">
+																	<div class="slds-button-group" role="group">
+																		<apex:commandButton styleClass="slds-button slds-button_neutral" value="Cancelar" action="{!cancel}" reRender="ProvisioningOP,msgs0OP3" status="processing" />
+																		<apex:commandButton styleClass="slds-button slds-button_brand" value="Guardar" action="{!saveNewProvisioningItem}"  reRender="ProvisioningOP, msgs0OP3" status="processing" oncomplete="javaScript:refresh(true);"/>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div> 
+													<br/>
+												</div>
+											</apex:outputPanel>
+										</apex:outputPanel>
+									</apex:outputPanel>
+
+									<!-- Productos -->
+									
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('Productos');">
+											<apex:outputPanel id="switchProductos">
+												<apex:image rendered="{!NOT(mapSectionSwitches['Productos'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['Productos']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">Productos</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="ProductosOP">		
+										<apex:outputPanel rendered="{!mapSectionSwitches['Productos']}">
+											<apex:outputPanel id="msgsProd">
+												<apex:outputPanel id="ErrorMsgsProd" rendered="{!lstErrorMsgs.size <> 0}">
+													<div class="slds-notify_container" style="position:relative;">
+														<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+															<apex:repeat value="{!lstErrorMsgs}" var="msg">
+																{!msg}
+																<br/>
+															</apex:repeat>
+														</div>
+													</div>
+												</apex:outputPanel>
+												<apex:outputPanel id="SuccessMsgsProd" rendered="{!lstSuccessMsgs.size <> 0}">
+													<div class="slds-notify_container" style="position:relative;">
+														<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+															<apex:repeat value="{!lstSuccessMsgs}" var="msg">
+																{!msg}
+																<br/>
+															</apex:repeat>
+														</div>
+													</div>
+												</apex:outputPanel>
+											</apex:outputPanel>										
+											<apex:outputPanel >											
+												<div style="width: 100%; margin: 0 auto;">
+													<br/>													
+													<apex:outputPanel rendered="{!blnAreThereProductosRecords}">
+														<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered slds-no-row-hover">
+															<thead>
+												                <tr class="slds-text-title_caps" style="text-align: left;">
+<!-- 												                    <th scope="col" >
+												                      <div class="slds-truncate" title=""></div>
+												                    </th>	                 -->
+												                    <th scope="col" >
+												                      <div class="slds-truncate" title="Nombre">Nombre</div>
+												                    </th>
+												                    <th scope="col" >
+												                      <div class="slds-truncate" title="Nombre">Clave</div>
+												                    </th>	                    
+												                    <th scope="col">
+												                      <div class="slds-truncate" title="Familia">Especial</div>
+												                    </th>
+												                    <th scope="col" >
+												                      <div class="slds-truncate" title="Familia">Familia</div>
+												                    </th>
+												                    <th scope="col" >
+												                      <div class="slds-truncate" title="Familia">Descripción</div>
+												                    </th>
+												                </tr>
+															</thead>
+															<tbody>
+																<apex:repeat value="{!lstProdSelecc}" var="producto">
+																	<tr class="slds-text-title_caps">
+<!-- 																		<td style="text-align: center;">
+																			<apex:image rendered="{!$Profile.Name== 'JEC'|| $Profile.Name == 'Administrador del sistema'}" onclick="Javascript:jsEliminarProducto('{!producto.ID}');" value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" style="height: 15px; width: 15px; cursor: pointer;" title="eliminar"/>
+																		</td> -->
+																		<td data-label="{!producto.Producto__r.Name}">
+										                                    <div class="slds-truncate" title="{!producto.Producto__r.Name}">{!producto.Producto__r.Name}</div>
+										                                </td>
+																		<td data-label="{!producto.Producto__r.Name}">
+										                                    <div class="slds-truncate" title="{!producto.Producto__r.DCTKey__c}">{!producto.Producto__r.DCTKey__c}</div>
+										                                </td>                                
+										                                <td data-label="{!producto.Producto__r.DCT_IsSpecialProduct__c}">
+										                                    <div class="slds-truncate" title="{!producto.Producto__r.DCT_IsSpecialProduct__c}">
+																				<apex:outputField value="{!producto.Producto__r.DCT_IsSpecialProduct__c}"/>                                    
+										                                    </div>
+										                                </td>
+										                                <td data-label="{!producto.Producto__r.Family}">
+										                                    <div class="slds-truncate" title="{!producto.Producto__r.Family}">{!producto.Producto__r.Family}</div>
+										                                </td>
+										                                <td data-label="{!producto.Producto__r.Description}">
+										                                    <div class="slds-truncate" title="{!producto.Producto__r.Description}">{!producto.Producto__r.Description}</div>
+										                                </td>
+										                            </tr>
+																</apex:repeat>
+															</tbody>
+														</table>
+													</apex:outputPanel>
+													<apex:outputPanel rendered="{!NOT(blnAreThereProductosRecords)}">
+														<div style="width: 100%; text-align: center;">
+															El Cliente no Tiene Productos Asociados.
+														</div>
+													</apex:outputPanel>
+													<br/>
+													<br/>
+												</div>
+											</apex:outputPanel>
+										</apex:outputPanel>
+									</apex:outputPanel>
+
+									<!--Claves VPN-->
+
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('ClavesVPN');">
+											<apex:outputPanel id="switchVPNKeysOP">
+												<apex:image rendered="{!NOT(mapSectionSwitches['ClavesVPN'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['ClavesVPN']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">Claves VPN</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="VPNKeysOP">
+										<apex:outputPanel rendered="{!mapSectionSwitches['ClavesVPN']}">
+											<div style="width: 60%; margin: 0 auto;">
+												<br/>
+												<br/>
+													<table style="table-layout: fixed;">
+														<thead>
+
+														</thead>
+														<tbody>
+															<tr>
+																<td>
+																	<label class="slds-form-element__label">
+																	<abbr class="slds-required" title="requerido">*</abbr> 
+																		Controladas 
+																	</label>
+																	<apex:outputPanel rendered="{!OR($Profile.Name== 'JEC', $Profile.Name == 'Administrador del sistema')}">
+																		<span style="display: flex;">
+																			<apex:selectList size="1" styleClass="slds-input" value="{!strSelectedNewControlledVPNKey}">
+																				<apex:selectOptions value="{!ControlledVPNKeysOptions}"/>
+																			</apex:selectList>
+																			<button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" title="Agregar" onclick="addNewVPNKey('Controlled'); return false;">
+																			  <apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" styleClass="slds-button__icon" /> 
+																			  <span class="slds-assistive-text">Agregar</span>
+																			</button>
+																		</span>
+																	</apex:outputPanel>
+																</td>
+																<td>
+																	&nbsp;
+																	&nbsp;
+																	&nbsp;
+																	&nbsp;
+																</td>
+																<td>
+																	<label class="slds-form-element__label">
+																	<abbr class="slds-required" title="requerido">*</abbr> 
+																		Abiertas
+																	</label>
+																	<apex:outputPanel rendered="{!OR($Profile.Name == 'JEC', $Profile.Name == 'Administrador del sistema')}">
+																		<span style="display: flex;">
+																			<apex:selectList size="1" styleClass="slds-input" value="{!strSelectedNewOpenVPNKey}">
+																				<apex:selectOptions value="{!OpenVPNKeysOptions}"/>
+																			</apex:selectList>
+																			<button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" title="Agregar" onclick="addNewVPNKey('Open'); return false; ">
+																			  <apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" styleClass="slds-button__icon" /> 
+																			  <span class="slds-assistive-text">Agregar</span>
+																			</button>
+																		</span>
+																	</apex:outputPanel>
+																</td>                               
+															</tr>
+															<tr>
+																<td>
+																	<br/>
+																	<div class="slds-box">
+																		<apex:outputText value="No se Han Seleccionado Claves" rendered="{!blnIsEmptyControlledVPNKeyMap}"/>
+																		<apex:repeat value="{!mapControlledVPNKeys}" var="k">
+																			<span style="display: flex;">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!k}
+																				</div>
+																				<apex:outputPanel rendered="{!OR($Profile.Name== 'JEC', $Profile.Name == 'Administrador del sistema')}">	
+																					<button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" title="eliminar" onclick="eraseVPNKey('Controlled','{!k}'); return false; ">
+																					  <apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" styleClass="slds-button__icon" /> 
+																					  <span class="slds-assistive-text">Eliminar</span>
+																					</button>
+																				</apex:outputPanel>
+																			</span>
+																		</apex:repeat>
+																	</div>
+																</td>
+																<td>
+																</td>
+																<td>
+																	<br/>
+																	<div class="slds-box">
+																		<apex:outputText value="No se Han Seleccionado Claves" rendered="{!blnIsEmptyOpenVPNKeyMap}"/>
+																		<apex:repeat value="{!mapOpenVPNKeys}" var="k">
+																			<span style="display: flex;">
+																				<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																					{!k}
+																				</div>
+																				<apex:outputPanel rendered="{!OR($Profile.Name == 'JEC', $Profile.Name == 'Administrador del sistema')}">	
+																					<button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" title="eliminar" onclick="eraseVPNKey('Open','{!k}'); return false; ">
+																					  <apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" styleClass="slds-button__icon" /> 
+																					  <span class="slds-assistive-text">Eliminar</span>
+																					</button>
+																				</apex:outputPanel>
+																			</span>
+																		</apex:repeat>
+																	</div>
+																</td>
+																<br/>
+																<br/>
+															</tr>
+														</tbody>
+													</table>
+													<br/>
+													<apex:outputPanel rendered="{!OR($Profile.Name== 'JEC', $Profile.Name == 'Administrador del sistema')}">
+														<div style="width: max-content; -moz-max-content; margin: 0 auto;">
+															<div class="slds-button-group" role="group">
+																<apex:commandButton styleClass="slds-button slds-button_neutral" value="Cancelar" action="{!processVPNKeys}" reRender="VPNKeysOP" status="processing" />
+																<apex:commandButton styleClass="slds-button slds-button_brand" value="Guardar" action="{!saveVPNKeys}" reRender="VPNKeysOP, msgs0OP, msgs0OP2" status="processing" oncomplete="javaScript:refresh({!blnIsUpdateOK});"/>
+															</div>
+														</div>
+													</apex:outputPanel>	
+													<br/>
+											</div>
+										</apex:outputPanel>
+									</apex:outputPanel>
+
+									<!--Enlaces dedicados-->
+
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('EnlacesDedicados');">
+											<apex:outputPanel id="switchPermanentLinksOP">
+												<apex:image rendered="{!NOT(mapSectionSwitches['EnlacesDedicados'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['EnlacesDedicados']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">Enlaces Dedicados</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="PermanentLinksOP">
+										<apex:outputPanel rendered="{!mapSectionSwitches['EnlacesDedicados']}">
+											<apex:outputPanel rendered="{!NOT(blnNewDedicatedLink)}">
+												<div style="width: 80%; margin: 0 auto;">
+													<br/>
+													<apex:outputPanel rendered="{!IF($Profile.Name== 'JEC', true, false)}">
+														<div  style="width: 100%; text-align: right;" onclick="toggleNewDedicatedLink();">
+															<div class="slds-button slds-button_neutral" style="cursor: pointer;">
+																<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" styleClass="slds-button__icon slds-button__icon_left" style="height: 15px; width: 15px;" /> Agregar
+															</div>
+														</div>
+													</apex:outputPanel>
+													<br/>
+													<apex:outputPanel >
+													<!-- <apex:outputPanel rendered="{!blnAreThereDedicatedLinks}"> -->
+														<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered slds-no-row-hover">
+															<thead>
+																<tr class="slds-text-title_caps">
+																	<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/edit_60.png')}" title="Modificar" style="height: 15px; width: 15px;" />
+																	</th>
+																	<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" title="Eliminar" style="height: 15px; width: 15px;" />
+																	</th>
+																	<apex:repeat value="{!$ObjectType.DCTDedicatedLinks__c.FieldSets.DedicatedLinksTechnicalToken}" var="f">
+																		<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																			{!f.label}
+																		</th>
+																	</apex:repeat>
+																	<!-- <th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																		Fecha de creación
+																	</th> -->
+																</tr>
+															</thead>
+															<tbody>
+																<!-- <apex:outputPanel rendered="{!$Profile.Name != 'CoordinacionAdministrativa'}"> -->
+																	<apex:repeat value="{!mapDedicatedLinksById}" var="k">
+																		<tr>
+																			<td style="text-align: center;">
+																				<apex:outputPanel rendered="{!IF($Profile.Name== 'JEC', true, false)}">
+																					<apex:image onclick="editDedicatedLinkItem('{!mapDedicatedLinksById[k].Id}');" value="{!URLFOR($Resource.SLDS,'icons/utility/edit_60.png')}" style="height: 15px; width: 15px; cursor: pointer;" title="eliminar" />
+																				</apex:outputPanel>
+																			</td>
+																			<td style="text-align: center;">
+																				<apex:outputPanel rendered="{!IF($Profile.Name== 'JEC', true, false)}">
+																					<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" style="height: 15px; width: 15px; cursor: pointer;" title="eliminar" onclick="deleteDedicatedLinkItem('{!mapDedicatedLinksById[k].Id}');" />
+																				</apex:outputPanel>
+																			</td>
+																			<apex:repeat value="{!$ObjectType.DCTDedicatedLinks__c.FieldSets.DedicatedLinksTechnicalToken}" var="f">
+																				<td scope="col" class="slds-cell-wrap" style="text-align: center;">
+																					<apex:outputField value="{!mapDedicatedLinksById[k][f]}" />
+																				</td>
+																			</apex:repeat>
+																			<!-- <td scope="col" class="slds-cell-wrap" style="text-align: center;">
+																				<apex:outputField value="{!System.now()}" />
+																			</td> -->
+																		</tr>
+																	</apex:repeat>
+																<!-- </apex:outputPanel> -->
+															</tbody>
+														</table>
+													</apex:outputPanel>
+													<!--<apex:outputPanel rendered="{!NOT(blnAreThereDedicatedLinks)}">
+														<div style="width: 100%; text-align: center;">
+															El Cliente no Tiene Enlaces Dedicados Asociados.
+														</div>
+													</apex:outputPanel> -->
+													<br/>
+													<br/>
+												</div>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!blnNewDedicatedLink}">
+												<div style="width: 60%; margin: 0 auto;">
+													<br/>
+													<div style="width: 100%;">
+														<div style="width: max-content; -moz-max-content; margin: 0 auto;">
+															<div class="slds-box">
+																<legend class="slds-form-element__legend slds-form-element__label">Nuevo Enlace</legend>
+																<label class="slds-form-element__label">
+																	<abbr class="slds-required" title="requerido">*</abbr> Tipo de enlace
+																</label>
+																<div class="slds-text-body_regular">
+																	<apex:inputField styleClass="slds-input" value="{!dedicatedLinkInstance.Name}" />
+																</div>
+																<label class="slds-form-element__label">
+																	<abbr class="slds-required" title="requerido">*</abbr> Clave
+																</label>
+																<div class="slds-text-body_regular">
+																	<apex:inputField styleClass="slds-input" value="{!dedicatedLinkInstance.KeyCode__c}" />
+																</div>
+																<label class="slds-form-element__label">
+																	<abbr class="slds-required" title="requerido">*</abbr> Fecha de creación
+																</label>
+																<div class="slds-text-body_regular">
+																	<apex:inputField styleClass="slds-input" value="{!dedicatedLinkInstance.DCTRegistrerDate__c}" />
+																</div>
+																<br/>
+																<br/>
+																<div style="width: max-content; -moz-max-content; margin: 0 auto;">
+																	<div class="slds-button-group" role="group">
+																		<apex:commandButton styleClass="slds-button slds-button_neutral" value="Cancelar" action="{!cancel}" reRender="PermanentLinksOP,msgs0OP, msgs0OP2" status="processing" />
+																		<!-- <apex:commandButton styleClass="slds-button slds-button_brand" value="Guardar" action="{!saveNewPLink}" reRender="PermanentLinksOP, msgs0OP" status="processing" oncomplete="refresh();"/> -->
+																		<apex:commandButton styleClass="slds-button slds-button_brand" value="Guardar" action="{!saveNewPLink}" reRender="PermanentLinksOP, msgs0OP, msgs0OP2" status="processing"/>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<br/>
+												</div>
+											</apex:outputPanel>
+										</apex:outputPanel>
+									</apex:outputPanel>
+
+									<!--Competidores-->
+
+									<h3 class="slds-section__title">
+										<div aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="expandCollapseSection('Competitors');">
+											<apex:outputPanel id="switchCompetitorsOP">
+												<apex:image rendered="{!NOT(mapSectionSwitches['Competitors'])}" value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" style="height: 10px; width: 10px;" />
+												<apex:image rendered="{!mapSectionSwitches['Competitors']}" value="{!URLFOR($Resource.SLDS,'icons/utility/erect_window_60.png')}" style="height: 10px; width: 10px;" />
+											</apex:outputPanel>
+											&nbsp; &nbsp;
+											<span class="slds-truncate" title="Section Title">Competidores</span>
+										</div>
+									</h3>
+
+									<apex:outputPanel id="competitorsOP">
+										<apex:outputPanel rendered="{!mapSectionSwitches['Competitors']}">
+											<apex:outputPanel rendered="{!NOT(blnNewCompetitor)}">
+												<div style="width: 95%; margin: 0 auto;">
+													<apex:outputPanel rendered="{!$Profile.Name== 'JEC' || $Profile.Name== 'Administrador del sistema'}">
+														<br/>
+														<div style="width: 100%; text-align: right;" onclick="toggleNewCompetitor();">
+															<div class="slds-button slds-button_neutral" style="cursor: pointer;">
+																<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/add_60.png')}" styleClass="slds-button__icon slds-button__icon_left" style="height: 15px; width: 15px;" /> Agregar
+															</div>
+														</div>
+													</apex:outputPanel>
+													<br/>
+													<apex:outputPanel rendered="{!NOT(blnIsEmptyCompetitorMap)}">
+														<apex:repeat value="{!mapCompByName}" var="k">
+															<div class="slds-box">
+																<span style="display: flex;">
+																	<div class="slds-input" disabled="true" style="cursor: auto; user-select:auto;">
+																		{!k}
+																	</div>
+																	<apex:outputPanel rendered="{!IF($Profile.Name== 'JEC', true, false)}">
+																		<button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" title="eliminar" onclick="eraseCompetitorsGroup('{!k}'); return false; ">
+																		  <apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" styleClass="slds-button__icon" /> 
+																		  <span class="slds-assistive-text">Eliminar</span>
+																		</button>
+																	</apex:outputPanel>
+																</span>
+																<br/>
+																<table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered slds-no-row-hover">
+																	<thead>
+																		<tr class="slds-text-title_caps">
+																			<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																				<apex:image value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" style="height: 15px; width: 15px;" />
+																			</th>
+																			<apex:repeat value="{!$ObjectType.CompetidoresPlataformas__c.FieldSets.TechnicalTokenCompetitorsOutputFS}" var="f">
+																				<th scope="col" class="slds-cell-wrap" style="text-align: center;">
+																					{!f.label}
+																				</th>
+																			</apex:repeat>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<apex:repeat value="{!mapCompByName[k]}" var="comp">
+																			<tr>
+																				<td style="text-align: center;">
+																					<apex:image rendered="{!IF($Profile.Name== 'JEC', true, false)}" value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" style="height: 15px; width: 15px; cursor: pointer;" title="eliminar" onclick="eraseCompetitor('{!comp.Id}');" />
+																				</td>
+																				<apex:repeat value="{!$ObjectType.CompetidoresPlataformas__c.FieldSets.TechnicalTokenCompetitorsOutputFS}" var="f">
+																					<td scope="col" class="slds-cell-wrap" style="text-align: center;">
+																						<apex:outputField value="{!comp[f]}" />
+																					</td>
+																				</apex:repeat>
+																			</tr>
+																		</apex:repeat>
+																	</tbody>
+																</table>
+															</div>
+															<br/>
+														</apex:repeat>
+													</apex:outputPanel>
+													<apex:outputPanel rendered="{!blnIsEmptyCompetitorMap}">
+														<div style="width: 100%; text-align: center;">
+															No hay Competidores Asociados.
+														</div>
+													</apex:outputPanel>
+													<br/>
+													<br/>
+												</div>
+											</apex:outputPanel>
+											<apex:outputPanel rendered="{!blnNewCompetitor}">
+												<div style="width: 60%; margin: 0 auto;">
+													<br/>
+													<div style="width: 100%;">
+														<div style="width: max-content; -moz-max-content; margin: 0 auto;">
+															<div>
+																<legend class="slds-form-element__legend slds-form-element__label">Nuevo Competidor</legend>
+																<!-- <label class="slds-form-element__label">
+																	<abbr class="slds-required" title="requerido">*</abbr> 
+																	Nombre
+																</label>
+																<div class="slds-text-body_regular">
+																	<apex:inputField styleClass="slds-input" value="{!newCompetitorInstance.Name}" />
+																</div> -->
+																<apex:repeat value="{!$ObjectType.CompetidoresPlataformas__c.FieldSets.TechnicalTokenCompetitorsInputFS}" var="f">
+																	<label class="slds-form-element__label">
+																		<abbr class="slds-required" title="requerido">*</abbr> 
+																		{!f.label}
+																	</label>
+																	<div class="slds-text-body_regular">
+																		<apex:inputField styleClass="slds-input" value="{!newCompetitorInstance[f]}" />
+																	</div>
+																</apex:repeat>
+																<br/>
+																<br/>
+																<div style="width: max-content; -moz-max-content; margin: 0 auto;">
+																	<div class="slds-button-group" role="group">
+																		<apex:commandButton styleClass="slds-button slds-button_neutral" value="Cancelar" action="{!cancel}" reRender="competitorsOP,msgs0OP, msgs0OP2" status="processing" />
+																		<apex:commandButton styleClass="slds-button slds-button_brand" value="Guardar" action="{!saveNewCompetitor}" reRender="competitorsOP, msgs0OP, msgs0OP2" status="processing"/>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<br/>
+												</div>
+											</apex:outputPanel>
+										</apex:outputPanel>
+									</apex:outputPanel>
+								</apex:outputPanel>
+							</div>
+						</div>
+					</section>
+					<!-- <div class="slds-backdrop slds-backdrop_open"></div> -->
+				</div>
+			</apex:form>
+			<apex:form id="NotValidToStartForm" rendered="{!NOT(blnIsItValidToStart)}">
+				<div class="slds-notify_container" style="position:relative;">
+					<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+						No es Posible Mostrar la Ficha Técnica Debido a que no se Recibió una Referencia de Cuenta o no se Tiene Asociado un Directorio.
+					</div>
+				</div>
+			</apex:form>
+		</body>
+	</html>
+</apex:page>

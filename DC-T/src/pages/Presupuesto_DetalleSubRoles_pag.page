@@ -1,0 +1,30 @@
+<apex:page showHeader="false" sidebar="true" controller="Presupuesto_DetallePorRoles_ctr"  label="Presupuestos">
+
+    
+    <apex:form id="idForm1">
+        <apex:pageBlock id="pgbl01" >
+             
+            <apex:pageBlockTable value="{!lstDetallePresupuestoWrp}" var="objDetalle">
+                <apex:column headerValue="Usuario" >
+                     <apex:facet name="footer">
+                        <a href="/apex/Presupuesto_detallePorRoles_pag" target="_parent" >TOTAL: </a>
+                     </apex:facet>
+                     <a href="/apex/Presupuesto_detallePorRoles_pag?idUser={!objDetalle.objUser.id}" target="_parent" >{!objDetalle.strLabel}</a>
+                </apex:column>
+                <apex:column headerValue=" Prev. vs Ppto." footerValue="{!decTotalPorcentajePrevisones}%">
+                    <apex:outputText value="{!objDetalle.decMediaPrevisonvsPresupuesto}%" rendered="{!blnSD}"/>
+                    <apex:outputText value="{!objDetalle.prevPres} %" rendered="{!blnGV}" />
+                </apex:column>
+                
+                
+                <apex:column headerValue="Ppto. vs Ganada." footerValue="{!decTotalPorcentajeGanadas}%">
+                    <apex:outputText value="{!objDetalle.decMediaVentavsPresupuesto} %" rendered="{!blnSD}"/>
+                    <apex:outputText value="{!objDetalle.PrevVsGda} %" rendered="{!blnGV}" />
+                    <apex:outputText value=""/>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+
+    </apex:form>
+    
+</apex:page>

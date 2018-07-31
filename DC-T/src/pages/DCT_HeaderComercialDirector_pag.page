@@ -1,0 +1,92 @@
+<apex:page title="TEST" showHeader="true" sidebar="false" standardStylesheets="false" standardController="Cliente__c" extensions="DCT_HeaderComercialDirector_ctr">
+	<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+		<head>
+			<meta charset="utf-8" />
+			<meta http-equiv="x-ua-compatible" content="ie=edge" />
+			<apex:includeLightning />
+			<apex:includeScript value="/support/console/39.0/integration.js" />
+			<apex:slds />
+			<script type="text/javascript">
+				function jsSubmitForApprovalScr(tieneProceso){
+					var sTieneProceso = tieneProceso;
+					//alert('EN jsSubmitForApprovalScr sTieneProceso: ' + sTieneProceso);
+					if (sTieneProceso == 'false'){
+						if (confirm('Are you sure?')){
+							afsubmitForApprovalFun();
+						}//Fin si confirm('Are you sure?')
+					}//Fin si sTieneProceso == 'false'
+					if (sTieneProceso == 'true')
+						alert('Ya tienes un proceso de aprobación pendiente para este Prospecto.');
+					return true;
+				}//Fin si jsSubmitForApprovalScr(tieneProceso)
+			</script>
+		</head>
+		<body>
+			<apex:form id="headerForm">
+				<apex:actionFunction name="afsubmitForApprovalFun" action="{!submitForApproval}" rerender="oupEnBlanco"/>
+				<div class="slds-page-header">
+					<div class="slds-grid">
+						<div class="slds-col slds-has-flexi-truncate">
+							<div class="slds-media slds-no-space slds-grow">
+								<div class="slds-media__figure">
+									<svg class="slds-icon slds-icon-custom-custom60" aria-hidden="true">
+										<use xlink:href="{!URLFOR($Resource.SLDS,'icons/custom-sprite/svg/symbols.svg#custom60')}" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+									</svg>
+								</div>
+								<div class="slds-media__body">
+									<!-- <apex:sectionHeader subtitle="{!Cliente__c.Name}" title="{!Cliente__c.RecordType.Name}"/> -->
+									<p class="slds-text-title--caps slds-line-height--reset">{!Cliente__c.RecordType.Name}</p>
+									<p class="slds-page-header__title slds-truncate" title="{!Cliente__c.Name}">{!Cliente__c.Name}</p>
+								</div>
+								<div class="slds-media__figure slds-media__figure--reverse">
+									<div class="slds-button-group" role="group">				
+										<apex:outputLink rendered="{!Cliente__c.RecordType.Name == 'Cliente Cautivo' }" value="{!URLFOR($Action.Cliente__c.DCTDataSheet, Cliente__c.Id)}" styleClass="slds-button slds-button--neutral">
+											Ficha Técnica
+										</apex:outputLink>
+										<apex:outputLink rendered="{!$Profile.Name== 'JEC' || $Profile.Name== 'Administrador del sistema' }" value="{!URLFOR($Action.Cliente__c.Edit, Cliente__c.Id)}" styleClass="slds-button slds-button--neutral">
+											Modificar
+										</apex:outputLink>
+										<apex:outputLink rendered="{!AND(Cliente__c.RecordType.Name == 'Cliente Cautivo', OR($Profile.Name== 'JEC', $Profile.Name== 'Administrador del sistema'))}" onclick="javaScript:jsSubmitForApprovalScr('{!bTieneProcesoPendiente}'); return true;" styleClass="slds-button slds-button--neutral">
+											Enviar a aprobación
+										</apex:outputLink>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="width: 100%; margin: 0 auto; word-wrap: break-word;">
+					<!-- <apex:outputPanel rendered="{!IF(Cliente__c.RecordType.Name == 'Cliente Cautivo',true,false)}">
+						<table class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout: fixed; width: 100%">
+					  	<thead>
+							<tr class="slds-text-title_caps">
+						  	<apex:repeat value="{!$ObjectType.Cliente__c.FieldSets.DCT_InfoHeader}" var="field">
+									<th scope="col" style="text-align: center;">
+						  			<div class="slds-truncate" title="{!field.label}">{!field.label}</div>
+									</th>
+						  	</apex:repeat>
+							</tr>
+				  		</thead>
+					  	<tbody>
+							<apex:repeat value="{!Cliente__c}" var="iterator">
+						  		<tr class="slds-text-title_caps">
+									<apex:repeat value="{!$ObjectType.Cliente__c.FieldSets.DCT_InfoHeader}" var="field">
+						  			<td data-label="{!iterator[field]}" style="text-align: center;">
+										<div title="{!iterator[field]}">
+						  					<apex:outputField value="{!iterator[field]}"/>
+										</div>
+						  			</td>
+									</apex:repeat>
+						  		</tr>
+							</apex:repeat>
+					  	</tbody>
+						</table>
+					</apex:outputPanel> -->
+				</div>
+			</apex:form>
+			<apex:outputPanel id="oupEnBlanco">
+				<div class="slds-truncate"> &nbsp;</div>			
+			</apex:outputPanel>
+		</body>
+	</html>
+</apex:page>

@@ -1,0 +1,32 @@
+<apex:page standardController="Account">
+
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+
+<script >
+$j = jQuery.noConflict();
+$j(document).ready(function() {
+$j('a').attr("target","_parent");
+});
+</script > 
+
+
+<apex:pageBlock >
+<apex:pageBlockSection columns="1" collapsible="true" title="Conocimiento de Mercado">
+
+<apex:form >
+<apex:commandButton onclick="window.open('/a0R/e?CF00N1500000H1kRT={!Account.Name}&CF00N1500000H1kRT_lkid={!Account.Id}&retURL=%2F{!Account.Id}','_top');" value="Nuevo Conocimiento de Mercado">
+</apex:commandButton>
+</apex:form>
+
+<apex:pageBlockTable value="{!Account.ConocimientosMercados__r}" var="cm" >
+<apex:column headervalue="Mercado"><apex:outputLink target="_parent" value="/{!cm.Id}">{!cm.Name}</apex:outputLink></apex:column>
+<apex:column value="{!cm.Presencia__c}"/>
+<apex:column value="{!cm.Cuota__c}"/>
+<apex:column value="{!cm.Liderazgo__c}"/>
+<apex:column value="{!cm.Competencia__c}"/>
+<apex:column value="{!cm.DiferenciacionCliente__c}"/>
+</apex:pageBlockTable>
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:page>

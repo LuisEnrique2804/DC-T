@@ -1,0 +1,128 @@
+<apex:page standardController="DCTAssignment__c" extensions="DCT_RelatedListAssigment_ctr" showHeader="true"  sidebar="false" >
+	<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+		<head>
+			<apex:includeLightning />
+			<meta charset="utf-8" />
+			<meta http-equiv="x-ua-compatible" content="ie=edge" />
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<apex:includeScript value="/support/console/41.0/integration.js"/>
+      <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+      <apex:includeScript value="/soap/ajax/40.0/connection.js"/>
+      <apex:slds />
+		</head> 
+		<body style="background-color: white">    
+			<apex:form >
+				<apex:outputPanel id="msgsOP">
+					<apex:outputPanel id="ErrorMsgs" rendered="{!lstErrorMsgs.size <> 0}">
+						<div class="slds-notify_container" style="position:relative;">
+							<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture" role="alert">
+								<apex:repeat value="{!lstErrorMsgs}" var="msg">
+									{!msg}
+									<br/>
+								</apex:repeat>
+							</div>
+						</div>
+					</apex:outputPanel> 
+					<apex:outputPanel id="SuccessMsgs" rendered="{!lstSuccessMsgs.size <> 0}">
+						<div class="slds-notify_container" style="position:relative;">
+							<div class="slds-notify slds-notify--alert slds-theme--alert-texture" role="alert">
+								<apex:repeat value="{!lstSuccessMsgs}" var="msg">
+									{!msg}
+									<br/>
+								</apex:repeat>
+							</div>
+						</div>
+					</apex:outputPanel>
+				</apex:outputPanel>
+				<apex:outputPanel id="resultado" layout="block">
+					<apex:pageBlock >   
+						<apex:actionFunction action="{!refreshGrid}" name="queryByPage" reRender="myPanel,myButtons" >
+							<apex:param name="firstParam" assignTo="{!selectedPage}" value="" />
+						</apex:actionFunction>     
+						<apex:dynamicComponent componentValue="{!myCommandButtons}"/>  
+						<apex:outputPanel id="myPanel">
+							<apex:pageMessages id="theMessages" />
+							<h1 class="slds-text-title">Página {!pageNumber} de {!totalPages}</h1>
+							<table class="slds-table slds-table_bordered slds-table_resizable-cols slds-table_fixed-layout" role="grid">
+								<thead>
+									<tr class="slds-line-height_reset">
+										<th class="slds-is-sortable slds-is-resizable slds-text-title_caps" scope="col">
+											<a href="javascript:void(0);" class="slds-th__action slds-text-link_reset" tabindex="0">
+												<span class="slds-assistive-text">Sort </span>
+												<span class="slds-truncate" title="Name">Nombre de Clientes prospecto</span>
+												<span class="slds-assistive-text" aria-live="assertive" aria-atomic="true"></span>
+											</a>
+										</th>
+										<th class="slds-is-sortable slds-is-resizable slds-text-title_caps" scope="col">
+											<a href="javascript:void(0);" class="slds-th__action slds-text-link_reset" tabindex="0">
+												<span class="slds-assistive-text">Sort </span>
+												<span class="slds-truncate" title="Aprobación">Aprobación</span>
+												<span class="slds-assistive-text" aria-live="assertive" aria-atomic="true"></span>
+											</a>
+										</th>
+										<th class="slds-is-sortable slds-is-resizable slds-text-title_caps" scope="col">
+											<a href="javascript:void(0);" class="slds-th__action slds-text-link_reset" tabindex="0">
+												<span class="slds-assistive-text">Sort </span>
+												<span class="slds-truncate" title="Usuario Emisor">Usuario Emisor</span>
+												<span class="slds-assistive-text" aria-live="assertive" aria-atomic="true"></span>
+											</a>
+										</th>
+										<th class="slds-is-sortable slds-is-resizable slds-text-title_caps" scope="col">
+											<a href="javascript:void(0);" class="slds-th__action slds-text-link_reset" tabindex="0">
+												<span class="slds-assistive-text">Sort </span>
+												<span class="slds-truncate" title="Usuario Receptor">Usuario Receptor</span>
+												<span class="slds-assistive-text" aria-live="assertive" aria-atomic="true"></span>
+											</a>
+										</th>
+										<th class="slds-is-sortable slds-is-resizable slds-text-title_caps" scope="col">
+											<a href="javascript:void(0);" class="slds-th__action slds-text-link_reset" tabindex="0">
+												<span class="slds-assistive-text">Sort </span>
+												<span class="slds-truncate" title="Estatus por registro">Estatus por registro</span>
+												<span class="slds-assistive-text" aria-live="assertive" aria-atomic="true"></span>
+											</a>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<apex:variable var="count" value="{!0}"   />
+									<apex:repeat value="{!DCTAssigment}" var="c" id="theRepeat">
+										<tr class="slds-hint-parent">
+											<th scope="gridcell">
+												<div class="slds-truncate" title="{!c.Name}">{!c.Name}</div>
+											</th>
+											<td role="gridcell">
+												<div class="slds-truncate" title="{!c.Approval__c}">
+													<apex:inputField value="{!c.Approval__c}"/>
+												</div>
+											</td>
+											<td role="gridcell">
+												<div class="slds-truncate" title="{!c.IssuingUser__c}">
+													<apex:outputField value="{!c.IssuingUser__r.Name}" rendered="{!AND(!c.DCTReassignmentCoordination__c, bUsrEmisor)}"/>
+													<apex:outputField value="{!c.IssuingUser__r.Name}" rendered="{!bEsAdmin}"/>
+												</div>
+											</td>
+											<td role="gridcell">
+												<div class="slds-truncate" title="{!c.UserReceiver__c}">
+													<apex:outputField value="{!c.UserReceiver__r.Name}" rendered="{!bUsrRecep}"/>
+													<apex:outputField value="{!c.UserReceiver__r.Name}" rendered="{!bEsAdmin}"/>
+												</div>
+											</td>
+											<td role="gridcell">
+												<div class="slds-truncate" title="{!c.Status__c}">
+													{!c.Status__c}
+												</div>
+											</td>
+										</tr>
+										<apex:variable value="{!count+1}" var="count"/>  
+									</apex:repeat>
+								</tbody>
+							</table>
+							<h1 class="slds-text-title">Página {!pageNumber} de {!totalPages}</h1>
+						</apex:outputPanel>
+						<apex:dynamicComponent componentValue="{!myCommandButtons}"/>  
+					</apex:pageBlock>
+				</apex:outputPanel>
+			</apex:form>
+		</body>
+	</html>
+</apex:page>

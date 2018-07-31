@@ -1,0 +1,98 @@
+<apex:page standardController="MapaCliente__c" extensions="MCInfoEstructuraOrgClienteCorpCtr">
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+        <script >
+            $j = jQuery.noConflict();
+            $j(document).ready(function() {
+            $j('a').attr("target","_blank");
+            });
+        </script > 
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>    
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['orgchart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+        data.addRows([{!userdata}]);
+          
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        chart.draw(data, {allowHtml:true, nodeClass: 'myNodeClass'});
+      }
+    </script>
+    <style>
+        .myNodeClass {
+        text-align: center;
+        background-color: #edf7ff;
+        vertical-align: middle;
+        border: 1px solid #b5d9ea;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-box-shadow: rgba(0, 0, 0, 0.5) 3px 3px 3px;
+        -webkit-box-shadow: rgba(0, 0, 0, 0.5) 3px 3px 3px;
+        }
+
+        .google-visualization-orgchart-lineright{
+        border-width: 3px;  
+        border-right-style: solid;
+        border-right-color: #483D8B !important;
+        }
+        
+        .google-visualization-orgchart-lineleft{
+        border-left-width: 3px;
+        border-left-style: solid;
+        border-left-color: #483D8B !important;
+        }
+        
+        .google-visualization-orgchart-linebottom {
+        border-bottom-width: 3px !important;
+        border-bottom-style: solid !important;
+        border-bottom-color: #483D8B !important;
+        }
+        
+    </style>
+    <apex:form >
+        <apex:pageblock >
+            <apex:pageBlockSection columns="1" collapsible="true" title="Organigrama">
+                    <div id='chart_div' style="background-color:#D3D3D3; font-size:18px;"></div>
+            </apex:pageBlockSection>
+        </apex:pageblock>
+        <apex:pageBlock id="pBContactos">
+            <apex:pageBlockSection columns="1" collapsible="true" title="Contactos Organigrama">     
+                <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/003/e?con4={!MapaCliente__c.PlanCliente__r.Name}&con4_lkid={!MapaCliente__c.PlanCliente__r.Id}&CF00N1500000H1kTa={!MapaCliente__c.Name}&CF00N1500000H1kTa_lkid={!MapaCliente__c.Id}&retURL=%2F{!MapaCliente__c.Id}','_blank');" value="Interlocutor Alta"/>
+                <apex:pageBlockTable value="{!elementosAMostrarContactos}" var="contact">
+                        <apex:column headervalue="Contacto">
+                            <apex:outputLink target="_parent" value="/{!contact.Id}">{!contact.Name}</apex:outputLink></apex:column>
+                        <apex:column value="{!contact.Posicion__c}"  />
+                        <apex:column value="{!contact.Email}"  />
+                        <apex:column value="{!contact.Phone}"  /> 
+                        <apex:column value="{!contact.MobilePhone}"  />
+                        <!--<apex:column value="{!contact.Nivel__c}"/> -->
+                        <apex:column value="{!contact.JefeSuperior__c}"/>
+                        <apex:column value="{!contact.Estructura__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" action="{!anteriorContactos}" value="Anterior" reRender="pBContactos" rendered="{!IF(OR(totalIndicesContactos==0,indiceActualContactos==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" action="{!siguienteContactos}" value="Siguiente" reRender="pBContactos" rendered="{!IF(OR(totalIndicesContactos==0,indiceActualContactos==totalIndicesContactos),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock id="pBAnalisis">
+           <apex:pageblocksection columns="1" collapsible="true" title="Análisis de Relaciones">  
+                <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a07/e?CF00N1500000H1kRN={!MapaCliente__c.Name}&CF00N1500000H1kRN_lkid={!MapaCliente__c.Id} &CF00N1500000H1kSY={!MapaCliente__c.PlanCliente__r.Name}&CF00N1500000H1kSY_lkid={!MapaCliente__c.PlanCliente__r.Id} & retURL=%2F{!MapaCliente__c.Id}','_blank');" value="Nuevo Análisis"/>
+                <apex:pageBlockTable value="{!elementosAMostrarAnalisis}" var="ar">
+                    <apex:column headervalue="Número de Análisis"><apex:outputLink target="_blank" value="/{!ar.Id}">{!ar.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!ar.PersonasTelcel__c}"/>
+                    <apex:column value="{!ar.InterlocutoresCliente__c}"/>
+                    <apex:column value="{!ar.Total__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" action="{!anteriorAnalisis}" value="Anterior" reRender="pBAnalisis" rendered="{!IF(OR(totalIndicesAnalisis==0,indiceActualAnalisis==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" action="{!siguienteAnalisis}" value="Siguiente" reRender="pBAnalisis" rendered="{!IF(OR(totalIndicesAnalisis==0,indiceActualAnalisis==totalIndicesAnalisis),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageblocksection>
+        </apex:pageblock>  
+     </apex:form>
+</apex:page>

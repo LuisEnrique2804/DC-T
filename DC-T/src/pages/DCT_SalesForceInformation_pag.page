@@ -1,0 +1,70 @@
+<apex:page lightningStylesheets="true" standardController="Cliente__c" showHeader="false" sidebar="false" extensions="DCT_SalesForceInformation_ctr" action="{!ActualizaFuerzaVetaWs}">
+  <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+    <head>
+      <apex:includeScript value="/support/console/41.0/integration.js"/>
+      <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+      <apex:includeScript value="/soap/ajax/40.0/connection.js"/>
+      <apex:slds />
+    </head>
+    <body class="slds-scope">
+      <apex:outputPanel id="main">
+		<div style="width: max-content; margin: 0 auto;">
+		  <apex:variable value="{!0}" var="lines"/>
+          <apex:repeat value="{!lstResponsable}" var="iterator">              
+           	<apex:variable value="{!lines+1}" var="lines"/>
+          </apex:repeat>
+          <apex:outputPanel rendered="{!lines == 0}">
+            No hay Fuerza de Venta para esta cuenta
+		  </apex:outputPanel>
+          <apex:outputPanel rendered="{!lstResponsable.size <> 0}">
+            <table class="slds-table slds-table_bordered">
+              <thead>
+                <tr class="slds-text-title_caps">
+                    <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate" title="NOMBRE COMPLETO">NOMBRE COMPLETO</div>
+                    </th>
+                    <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate" title="PUESTO">PUESTO</div>
+                    </th>
+                    <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate" title="CELULAR">CELULAR</div>
+                    </th>
+                    <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate" title="TELÉFONO / EXTENSIÓN">TELÉFONO / EXTENSIÓN</div>
+                    </th>
+                </tr>
+              </thead>
+              <tbody>
+                <apex:repeat value="{!lstResponsable}" var="iterator">
+                  <tr class="slds-text-title_caps">                  
+                      <td data-label="{!iterator.NombreResponsable__c}" style="text-align: center;">
+                          <apex:outputField value="{!iterator.NombreResponsable__c}"/>
+                      </td>
+
+                      <td data-label="{!iterator.Funcion__c}" style="text-align: center;">
+                        <div class="slds-truncate" title="{!iterator.Funcion__c}">
+                          <apex:outputField value="{!iterator.Funcion__c}"/>
+                        </div>
+                      </td>
+
+                      <td data-label="{!iterator.Celular__c}" style="text-align: center;">
+                        <div class="slds-truncate" title="{!iterator.Celular__c}">
+                          <apex:outputField value="{!iterator.Celular__c}"/>
+                        </div>
+                      </td>
+
+                      <td data-label="{!iterator.TelefonoExtension__c}" style="text-align: center;">
+                        <div class="slds-truncate" title="{!iterator.TelefonoExtension__c}">
+                          <apex:outputField value="{!iterator.TelefonoExtension__c}"/>
+                        </div>
+                      </td>
+                  </tr>
+                </apex:repeat>
+              </tbody>
+            </table>
+          </apex:outputPanel>
+        </div>
+      </apex:outputPanel>
+    </body> 
+  </html>
+</apex:page>

@@ -1,0 +1,216 @@
+<apex:page standardController="MapaCliente__c" extensions="MapaClienteExtension">
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+    
+    <script >
+        $j = jQuery.noConflict();
+        $j(document).ready(function() {
+        $j('a').attr("target","_blank");
+        });
+        function redireccionaGuardado(){
+        var referrer = document.referrer;
+        window.open(referrer, '_top')
+        }
+    </script > 
+    
+    <apex:pageBlock >
+        
+        <apex:pageBlockSection columns="1" collapsible="true" title="Detección de Nuevas Oportunidades"> 
+            
+            <apex:form id="fEstrategiaTelcelCliente">
+        
+                <apex:actionFunction id="afGuardar" name="guardarAF" action="{!guardarCambios}" reRender="pbEstrategiaTelcelCliente" oncomplete="cambioDatos(); redireccionarSiAplica('{!huboError}')"/>
+                <apex:actionFunction name="cancelarAF" action="{!reset}"/>
+                
+                <apex:actionFunction name="cambioDatosAF" action="{!cambios}" reRender="scriptEstrategiaTelcelCliente"/>
+                
+                <apex:actionFunction name="actdesactTres" action="{!cambiarModoCampo3}" reRender="pbCampos" oncomplete="cambioDatos();">
+                    <apex:param name="modo" value=""/>
+                </apex:actionFunction>
+                
+                <script id="scriptEstrategiaTelcelCliente">
+                
+                    function redireccionarSiAplica(huboError)
+                    {
+                        if(huboError == 'false')
+                        {
+                            window.open('/{!MapaCliente__c.Id}','_parent');
+                        }
+                    }
+        
+                    function cambioDatos()
+                    {
+                        var cambios = '{!hanHabidoCambios}';
+                        if(cambios == 'false')
+                        {
+                            var botonGuardar1 = document.getElementById('btnGuardar1');
+                            var botonGuardar2 = document.getElementById('btnGuardar2');
+                            var botonCancelar1 = document.getElementById('btnCancelar1');
+                            var botonCancelar2 = document.getElementById('btnCancelar2');
+                            
+                            botonGuardar1.style.visibility = 'visible';
+                            botonGuardar2.style.visibility = 'visible';
+                            botonCancelar1.style.visibility = 'visible';
+                            botonCancelar2.style.visibility = 'visible';
+                            
+                            cambioDatosAF();
+                        }        
+                    }   
+                    
+                </script>
+                
+                <apex:pageBlock id="pbEstrategiaTelcelCliente">
+                
+                    <input id="btnGuardar1" type="button" onclick="guardarAF();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+                    <input id="btnCancelar1" type="button" onclick="cancelarAF();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+                    
+                    <apex:messages id="mensajes" styleClass="errorMsg"/>
+                    
+                    <apex:pageBlockSection id="pbCampos">
+                        
+                        <apex:pageBlockSectionItem rendered="{!lecturaCampoTres}" helpText="{!$ObjectType.MapaCliente__c.fields.EstrategiaTelcelCliente__c.inlineHelpText}">
+                            <apex:outputLabel styleClass="labelCol vfLabelColTextWrap  first  last" value="Estrategia de Telcel y con el Cliente" rendered="{!lecturaCampoTres}"/>
+                            <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}"  ondblclick="{!IF(perfilValidoEscritura,'actdesactTres('&escritura&')','')}" styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!MapaCliente__c.EstrategiaTelcelCliente__c}" rendered="{!lecturaCampoTres}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!escrituraCampoTres}" helpText="{!$ObjectType.MapaCliente__c.fields.EstrategiaTelcelCliente__c.inlineHelpText}">
+                            <apex:outputLabel styleClass="labelCol vfLabelColTextWrap  first  last" value="Estrategia de Telcel y con el Cliente" rendered="{!escrituraCampoTres}"/>
+                            <apex:inputField onblur="actdesactTres('lectura');" value="{!MapaCliente__c.EstrategiaTelcelCliente__c}" rendered="{!escrituraCampoTres}"/>
+                        </apex:pageBlockSectionItem>                
+                          
+                    </apex:pageBlockSection> 
+                                    
+                    <input id="btnGuardar2" type="button" onclick="guardarAF();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+                    <input id="btnCancelar2" type="button" onclick="cancelarAF();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+                    
+                </apex:pageBlock>
+        
+            </apex:form> 
+             
+            <apex:form >
+                <apex:pageBlock id="pBDeteccion">
+                        <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a0L/e?CF00N1500000H1kRV={!MapaCliente__c.Name}&CF00N1500000H1kRV_lkid={!MapaCliente__c.Id} &CF00N1500000H1kU5={!MapaCliente__c.PlanCliente__r.Name}&CF00N1500000H1kU5_lkid={!MapaCliente__c.PlanCliente__r.Id} & retURL=%2F{!MapaCliente__c.Id}','_blank');" value="Nueva Oportunidad Potencial"/>
+                    <apex:pageBlockTable value="{!elementosAMostrarDeteccion}" var="dno">
+                        <apex:column headervalue="Número de Detección"><apex:outputLink target="_blank" value="/{!dno.Id}">{!dno.Name}</apex:outputLink></apex:column>
+                        <apex:column value="{!dno.OportunidadesPotenciales__c}"/>
+                        <apex:column value="{!dno.AreaCliente__c}"/>
+                        <apex:column value="{!dno.Interlocutor__c}"/>
+                        <apex:column value="{!dno.Fecha__c}"/>
+                    </apex:pageBlockTable>
+                    <apex:panelGrid columns="2">
+                        <apex:commandLink target="_parent" action="{!anteriorDeteccion}" value="Anterior" reRender="pBDeteccion" rendered="{!IF(OR(totalIndicesDeteccion==0,indiceActualDeteccion==1),'false','true')}"/>
+                        <apex:commandLink target="_parent" action="{!siguienteDeteccion}" value="Siguiente" reRender="pBDeteccion" rendered="{!IF(OR(totalIndicesDeteccion==0,indiceActualDeteccion==totalIndicesDeteccion),'false','true')}"/>
+                    </apex:panelGrid>
+                </apex:pageBlock>                
+            </apex:form>
+        </apex:pageBlockSection>
+    </apex:pageBlock>  
+    
+    <apex:form >
+        <apex:pageBlock id="pBConectores" >
+            <apex:pageBlockSection columns="1" collapsible="true" title="Conectores con Otras Áreas (Dentro de Telcel)">
+                    <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a0G/e?CF00N1500000H1kRS={!MapaCliente__c.Name}&CF00N1500000H1kRS_lkid={!MapaCliente__c.Id}&retURL=%2F{!MapaCliente__c.Id}','_blank');" value="Nuevo Conector con Otra Área"/>
+                <apex:pageBlockTable value="{!elementosAMostrarConectores}" var="coa">
+                    <apex:column headervalue="Número de Conector con Otra Área"><apex:outputLink target="_blank" value="/{!coa.Id}">{!coa.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!coa.Persona__c}"/>
+                    <apex:column value="{!coa.Area__c}"/>
+                    <apex:column value="{!coa.Descripcion__c}"/>
+                    <apex:column value="{!coa.Fecha__c}"/>
+                    <apex:column value="{!coa.Notificacion__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                        <apex:commandLink target="_parent" action="{!anteriorConectores}" value="Anterior" reRender="pBConectores" rendered="{!IF(OR(totalIndicesConectores==0,indiceActualConectores==1),'false','true')}"/>
+                        <apex:commandLink target="_parent" action="{!siguienteConectores}" value="Siguiente" reRender="pBConectores" rendered="{!IF(OR(totalIndicesConectores==0,indiceActualConectores==totalIndicesConectores),'false','true')}"/>
+                    </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+   
+    <apex:pageBlock >
+        <apex:pageBlockSection columns="1" collapsible="true" title="Valoración General de la Cuenta"> 
+   
+            <apex:form id="fAnalisisGeneralCuenta">
+            
+                <apex:actionFunction name="guardarAF2" action="{!guardarCambios}" reRender="pbAnalisisGeneralCuenta" oncomplete="cambioDatos2(); redireccionarSiAplica2('{!huboError}')"/>
+                <apex:actionFunction name="cancelarAF2" action="{!reset}"/>
+                
+                <apex:actionFunction name="cambioDatosAF2" action="{!cambios}" reRender="scriptAnalisisGeneralCuenta"/>
+                
+                <apex:actionFunction name="actdesactCuatro" action="{!cambiarModoCampo4}" reRender="pbCampos2" oncomplete="cambioDatos2();">
+                    <apex:param name="modo" value=""/>
+                </apex:actionFunction>
+                
+                <script id="scriptAnalisisGeneralCuenta">
+                
+                    function redireccionarSiAplica2(huboError)
+                    {
+                        if(huboError == 'false')
+                        {
+                            window.open('/{!MapaCliente__c.Id}','_parent');
+                        }
+                    }
+        
+                    function cambioDatos2()
+                    {
+                        var cambios = '{!hanHabidoCambios}';
+                        if(cambios == 'false')
+                        {
+                            var botonGuardar3 = document.getElementById('btnGuardar3');
+                            var botonGuardar4 = document.getElementById('btnGuardar4');
+                            var botonCancelar3 = document.getElementById('btnCancelar3');
+                            var botonCancelar4 = document.getElementById('btnCancelar4');
+                            
+                            botonGuardar3.style.visibility = 'visible';
+                            botonGuardar4.style.visibility = 'visible';
+                            botonCancelar3.style.visibility = 'visible';
+                            botonCancelar4.style.visibility = 'visible';
+                            
+                            cambioDatosAF2();
+                        }        
+                    }   
+                    
+                </script>
+                
+                <apex:pageBlock id="pbAnalisisGeneralCuenta">
+                
+                    <input id="btnGuardar3" type="button" onclick="guardarAF2();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+                    <input id="btnCancelar3" type="button" onclick="cancelarAF2();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+                    
+                    <apex:messages id="mensajes2" styleClass="errorMsg"/>
+                    
+                    <apex:pageBlockSection id="pbCampos2">
+                        
+                        <apex:pageBlockSectionItem rendered="{!lecturaCampoCuatro}" helpText="{!$ObjectType.MapaCliente__c.fields.AnalisisGeneralCuenta__c.inlineHelpText}">
+                            <apex:outputLabel styleClass="labelCol vfLabelColTextWrap  first  last" value="Análisis General de la Cuenta" rendered="{!lecturaCampoCuatro}"/>
+                            <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}"  ondblclick="{!IF(perfilValidoEscritura,'actdesactCuatro('&escritura&')','')}" styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!MapaCliente__c.AnalisisGeneralCuenta__c}" rendered="{!lecturaCampoCuatro}"/>
+                        </apex:pageBlockSectionItem> 
+                        <apex:pageBlockSectionItem rendered="{!escrituraCampoCuatro}" helpText="{!$ObjectType.MapaCliente__c.fields.AnalisisGeneralCuenta__c.inlineHelpText}">
+                            <apex:outputLabel styleClass="labelCol vfLabelColTextWrap  first  last" value="Análisis General de la Cuenta" rendered="{!escrituraCampoCuatro}"/>
+                            <apex:inputField onblur="actdesactCuatro('lectura');" value="{!MapaCliente__c.AnalisisGeneralCuenta__c}" rendered="{!escrituraCampoCuatro}"/>                
+                        </apex:pageBlockSectionItem>                
+                          
+                    </apex:pageBlockSection> 
+                                    
+                    <input id="btnGuardar4" type="button" onclick="guardarAF2();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+                    <input id="btnCancelar4" type="button" onclick="cancelarAF2();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+                
+                </apex:pageBlock>
+                
+            </apex:form>   
+            <apex:form >
+                <apex:pageBlock id="pBValoracion">
+                    <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a0a/e?CF00N1500000H1kRi={!MapaCliente__c.Name}&CF00N1500000H1kRi_lkid={!MapaCliente__c.Id}&retURL=%2F{!MapaCliente__c.Id}','_blank');" value="Nueva Valoración General del Cliente"/>
+                    <apex:pageBlockTable value="{!elementosAMostrarValoracion}" var="vgc">
+                        <apex:column headervalue="Número de Valoración General de la Cuenta"><apex:outputLink target="_blank" value="/{!vgc.Id}">{!vgc.Name}</apex:outputLink></apex:column>
+                        <apex:column value="{!vgc.Tipo__c}"/>
+                        <apex:column value="{!vgc.Descripcion__c}"/>
+                    </apex:pageBlockTable>
+                    <apex:panelGrid columns="2">
+                        <apex:commandLink target="_parent" action="{!anteriorValoracion}" value="Anterior" reRender="pBValoracion" rendered="{!IF(OR(totalIndicesValoracion==0,indiceActualValoracion==1),'false','true')}"/>
+                        <apex:commandLink target="_parent" action="{!siguienteValoracion}" value="Siguiente" reRender="pBValoracion" rendered="{!IF(OR(totalIndicesValoracion==0,indiceActualValoracion==totalIndicesValoracion),'false','true')}"/>
+                    </apex:panelGrid>
+                </apex:pageBlock>
+            </apex:form>        
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+
+</apex:page>

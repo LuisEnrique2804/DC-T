@@ -1,0 +1,69 @@
+<apex:page showHeader="false" sidebar="true" controller="Presupuesto_DetallePorRoles_ctr"  label="Presupuestos">
+    <apex:form id="idForm1">
+        <apex:pageBlock id="pgbl01" title="Usuario: {!objUser.name}">
+            <apex:pageMessages id="mError" />
+            <apex:pageBlockButtons id="pgblkbut01">
+                <apex:commandButton title="Regresar"  value="Regresar" onclick="history.go(-1);"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!lstDetallePresupuestoWrp}" var="objDetalle">
+                <!-- <apex:column headerValue="{!objDetalle.objUser.UserRole.Name}" footerValue="TOTAL {!objDetalle.objUser.UserRole.Name}: {!IntTotal} "> -->
+                <!-- <a href="/{!objDetalle.objUser.id}" target="_blank" id="{!objDetalle.objUser.id}" onblur="LookupHoverDetail.getHover('{!objDetalle.objUser.id}{!objDetalle.objUser.id}').hide();" onfocus="LookupHoverDetail.getHover('{!objDetalle.objUser.id}', '/{!objDetalle.objUser.id}/m?retURL=%2F{!objDetalle.objUser.id} &isAjaxRequest=1').show();" onmouseout="LookupHoverDetail.getHover('{!objDetalle.objUser.id}').hide();" onmouseover="LookupHoverDetail.getHover('{!objDetalle.objUser.id}', '/{!objDetalle.objUser.id}/m?retURL=%2F{!objDetalle.objUser.id} &isAjaxRequest=1').show();">{!objDetalle.objUser.name}</a> -->
+                <apex:column >  
+                    <apex:facet name="header">{!objDetalle.objUser.UserRole.Name}</apex:facet>
+                    <apex:facet name="footer">TOTAL {!objDetalle.objUser.UserRole.Name}: {!IntTotal} </apex:facet>
+                    <a href="{!objDetalle.Uri}{!objDetalle.objUser.id}" target="_parent" id="{!objDetalle.objUser.id}" onblur="LookupHoverDetail.getHover('{!objDetalle.objUser.id}{!objDetalle.objUser.id}').hide();" onfocus="LookupHoverDetail.getHover('{!objDetalle.objUser.id}', '/{!objDetalle.objUser.id}/m?retURL=%2F{!objDetalle.objUser.id} &isAjaxRequest=1').show();" onmouseout="LookupHoverDetail.getHover('{!objDetalle.objUser.id}').hide();" onmouseover="LookupHoverDetail.getHover('{!objDetalle.objUser.id}', '/{!objDetalle.objUser.id}/m?retURL=%2F{!objDetalle.objUser.id} &isAjaxRequest=1').show();">{!objDetalle.objUser.name}</a>
+                </apex:column>
+                <apex:column headerValue="Datos R9" footerValue="{!decTotalDatosR9}">
+                    <apex:outputText value="{!objDetalle.datosR9}"/>
+                </apex:column>
+                <apex:column headerValue="Voz R9" footerValue="{!decTotalVozR9}" >
+                    <apex:outputText value="{!objDetalle.vozR9}"/>
+                </apex:column>
+                <apex:column headerValue="TIC R9" footerValue="{!decTotalTicR9}">
+                    <apex:outputText value="{!objDetalle.ticR9}"/>
+                </apex:column>
+                <apex:column headerValue="Presupuesto R9" footerValue="{!decTotalPresupuestoR9}">
+                    <apex:outputText value="{!objDetalle.presupuestoR9}"/>
+                </apex:column>
+                <apex:column headerValue="Prev. vs Ppto." footerValue="{!decTotalPorcentajePrevisones}%">
+                    <apex:outputText value="{!objDetalle.decMediaPrevisonvsPresupuesto}%" rendered="{!blnSD}"/>
+                    <apex:outputText value="{!objDetalle.prevPres} %" rendered="{!blnGV}" />
+                </apex:column>
+                <!--<apex:column headerValue=" %" footerValue="{!decTotalPorcentajePrevisones}%">
+                    <apex:outputText value="{!objDetalle.decMediaPrevisonvsPresupuesto} %"/>
+                </apex:column> -->
+                <apex:column headerValue="Ganada R9" footerValue="{!decTotalGanadaR9}">
+                    <apex:outputText value="{!objDetalle.ganadaR9}" />
+                </apex:column>
+                <apex:column headerValue="Prev. vs Gda." footerValue="{!decTotalPorcentajeGanadas}%">
+                    <apex:outputText value="{!objDetalle.decMediaVentavsPresupuesto} %" rendered="{!blnSD}"/>
+                    <apex:outputText value="{!objDetalle.PrevVsGda} %" rendered="{!blnGV}" />
+                </apex:column>
+                <!--<apex:column headerValue="%" footerValue="{!decTotalPorcentajeGanadas}%">
+                    <apex:outputText value="{!objDetalle.decMediaVentavsPresupuesto} %"/>
+                </apex:column> -->
+                <apex:column headerValue="Voz R1-8" footerValue="{!dectotalVozR1_8}">
+                    <apex:outputText value="{!objDetalle.vozR1_8}"/>
+                </apex:column>
+                <apex:column headerValue="Datos R1-8" footerValue="{!decTotalDatosR1_8}">
+                    <apex:outputText value="{!objDetalle.datosR1a8 }"/>
+                </apex:column>
+                <apex:column headerValue="TIC R1-8" footerValue="{!dectotalTICR1_8}">
+                    <apex:outputText value="{!objDetalle.ticR1_8}"/>
+                </apex:column>
+                <apex:column headerValue="Datos DAT" footerValue="{!decTotalDatosDAT}">
+                    <apex:outputText value="{!objDetalle.datosDAT}"/>
+                </apex:column>
+                <apex:column headerValue="VOZ DAT" footerValue="{!decTotalVozDAT}">
+                    <apex:outputText value="{!objDetalle.vozDAT}"/>
+                </apex:column>
+                <apex:column headerValue="TIC DAT" footerValue="{!decTotalTICDAT}">
+                    <apex:outputText value="{!objDetalle.ticDAT}"/>
+                </apex:column>
+                
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+
+    </apex:form>
+    
+</apex:page>

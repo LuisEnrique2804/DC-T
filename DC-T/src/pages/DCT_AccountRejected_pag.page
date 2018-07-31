@@ -1,0 +1,17 @@
+<apex:page standardController="DCTClientsProspectstoAssigned__c" extensions="DCT_AccountRejectedCtrl" recordSetVar="clientes" action="{!ActualizaClientes}">
+	<apex:form id="mainForm">
+	<apex:outputPanel id="assignmentButtonsOK" rendered="{!setErrores.size == 0}">
+		<div style="width: max-content; margin: 0 auto;">
+			<h1>Los registros fueron rechazados con éxito</h1>
+			<apex:commandButton styleClass="slds-button slds-button_neutral" value="Continuar" action="{!regresar}"/>
+        </div>
+    </apex:outputPanel>
+	<apex:outputPanel id="assignmentButtonsError" rendered="{!setErrores.size <> 0}">
+		<div style="width: max-content; margin: 0 auto;">
+			<h1>Hubo errores al rechazar los registros: </h1>
+			{!setErrores}
+			<apex:commandButton styleClass="slds-button slds-button_neutral" value="Continuar" action="{!regresar}"/>
+        </div>
+    </apex:outputPanel>    
+	</apex:form>
+</apex:page>

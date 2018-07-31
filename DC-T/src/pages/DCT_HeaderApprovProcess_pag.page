@@ -1,0 +1,43 @@
+<apex:page title="TEST" showHeader="true" sidebar="false" standardStylesheets="false" standardController="ProcessInstanceStep" >
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="x-ua-compatible" content="ie=edge" />
+            <apex:includeLightning />
+            <apex:includeScript value="/support/console/39.0/integration.js" />
+            <apex:slds />
+        </head>
+        <body>
+            <apex:form id="headerForm">
+                <div class="slds-page-header">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media slds-no-space slds-grow">
+                                <div class="slds-media__figure">
+                                    <svg class="slds-icon slds-icon-standard-case" aria-hidden="true">
+                                        <use xlink:href="{!URLFOR($Resource.SLDS,'icons/standard-sprite/svg/symbols.svg#approval')}" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                                    </svg>
+                                </div>
+                                <div class="slds-media__body">
+                                    <!-- <apex:sectionHeader subtitle="{!Cliente__c.Name}" title="{!Cliente__c.RecordType.Name}"/> -->
+                                    <!-- <p class="slds-text-title--caps slds-line-height--reset">{!Cliente__c.RecordType.Name}</p> -->
+                                    <p class="slds-page-header__title slds-truncate" title="{!ProcessInstanceStep.StepStatus}">{!IF(ProcessInstanceStep.StepStatus=='Approved', 'Aprobado', 'Rechazado')}</p>
+                                </div>
+                                <div class="slds-media__figure slds-media__figure--reverse">
+									<div class="slds-button-group" role="group">				
+										<!-- <apex:outputLink rendered="{!Cliente__c.RecordType.Name == 'Cliente Cautivo' }" value="{!URLFOR($Action.Cliente__c.DCTDataSheet, Cliente__c.Id)}" styleClass="slds-button slds-button--neutral">
+											Aprobar
+										</apex:outputLink>
+										<apex:outputLink rendered="{!$Profile.Name== 'JEC' || $Profile.Name== 'Administrador del sistema' }" value="{!URLFOR($Action.Cliente__c.Edit, Cliente__c.Id)}" styleClass="slds-button slds-button--neutral">
+											Rechazar
+										</apex:outputLink> -->
+									</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </apex:form>
+        </body>
+    </html>
+</apex:page>

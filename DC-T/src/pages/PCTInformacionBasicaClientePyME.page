@@ -1,0 +1,306 @@
+<apex:page standardController="Account" extensions="AccountExtension">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+
+    <script >
+        
+        $j = jQuery.noConflict();
+        $j(document).ready(function() {
+        $j('a').attr("target","_blank");
+        });
+
+    </script> 
+    
+    <!-- RESPONSABLES -->
+    <apex:form >
+        <apex:pageBlock id="pBResponsables">
+            <apex:pageBlockSection columns="1" collapsible="true" title="Responsables">
+                <!--<apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}"  onclick="window.open('/a0S/e?CF00Ng0000001g0dk={!Account.Name}&CF00Ng0000001g0dk_lkid={!Account.Id}&retURL=%2F{!Account.Id}','_blank');" value="Nuevo Responsable"/> -->      
+                <apex:pageBlockTable value="{!elementosAMostrarResponsables}" var="resp" id="tableResp">
+                    <apex:column headervalue="Número de Responsable"><apex:outputLink target="_blank" value="/{!resp.Id}">{!resp.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!resp.NombreResponsable__c}"/>
+                    <apex:column value="{!resp.Funcion__c}"/>
+                    <apex:column value="{!resp.Correoelectronico__c}"/>
+                    <apex:column value="{!resp.TelefonoExtension__c}"/>
+                    <apex:column value="{!resp.Celular__c}"/>
+                    <apex:column value="{!resp.CUC__c}"/>
+                    <apex:column value="{!resp.Sector__c}"/>
+                    <apex:column value="{!resp.Subsector__c }"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" action="{!anteriorResponsables}" value="Anterior" reRender="pBResponsables" rendered="{!IF(OR(totalIndicesResponsables==0,indiceActualResponsables==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" action="{!siguienteResponsables}" value="Siguiente" reRender="pBResponsables" rendered="{!IF(OR(totalIndicesResponsables==0,indiceActualResponsables==totalIndicesResponsables),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form> 
+    
+    <!-- DATOS BASICOS DEL CLIENTE-->
+    <apex:form id="fDatosBasicosCliente">
+        
+        <apex:actionFunction name="guardarAFDBC" action="{!guardarCambios}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC(); redireccionarSiAplicaDBC('{!huboError}');"/>
+        <apex:actionFunction name="cancelarAFDBC" action="{!reset}"/>
+        
+        <apex:actionFunction name="cambioDatosAFDBC" action="{!cambios}" reRender="scriptDatosBasicosCliente"/>
+        
+        <apex:actionFunction name="actdesactTrece" action="{!cambiarModoCampo13}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactCatorce" action="{!cambiarModoCampo14}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactQuince" action="{!cambiarModoCampo15}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactDieciseis" action="{!cambiarModoCampo16}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactDiecisiete" action="{!cambiarModoCampo17}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactDieciocho" action="{!cambiarModoCampo18}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactDiecinueve" action="{!cambiarModoCampo19}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactVeinte" action="{!cambiarModoCampo20}" reRender="pbDatosBasicosCliente" oncomplete="cambioDatosDBC();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+
+        
+        <script id="scriptDatosBasicosCliente">
+        
+            function redireccionarSiAplicaDBC(huboError)
+            {
+                if(huboError == 'false')
+                {
+                    window.open('/{!Account.Id}','_parent');
+                }
+            }
+
+            function cambioDatosDBC()
+            {
+                var cambios = '{!hanHabidoCambios}';
+                if(cambios == 'false')
+                {
+                    var botonGuardarDBC1 = document.getElementById('btnGuardarDBC1');
+                    var botonGuardarDBC2 = document.getElementById('btnGuardarDBC2');
+                    var botonCancelarDBC1 = document.getElementById('btnCancelarDBC1');
+                    var botonCancelarDBC2 = document.getElementById('btnCancelarDBC2');
+                    
+                    botonGuardarDBC1.style.visibility = 'visible';
+                    botonGuardarDBC2.style.visibility = 'visible';
+                    botonCancelarDBC1.style.visibility = 'visible';
+                    botonCancelarDBC2.style.visibility = 'visible';
+                    
+                    cambioDatosAFDBC();
+                }        
+            }   
+            
+        </script>
+        
+        <apex:pageBlock id="pbDatosBasicosCliente">
+            
+            <input id="btnGuardarDBC1" type="button" onclick="guardarAFDBC();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+            <input id="btnCancelarDBC1" type="button" onclick="cancelarAFDBC();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+            
+            <apex:messages id="mensajesDBC" styleClass="errorMsg"/>
+                             
+            <apex:pageBlockSection columns="2" title="Datos Básicos de Cliente">
+
+                <apex:pageBlockSectionItem rendered="{!lecturaCampoTrece}" helpText="{!$ObjectType.Account.fields.Facturacion__c.inlineHelpText}">
+                    <apex:outputLabel value="Facturación" rendered="{!lecturaCampoTrece}"/>
+                    <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" ondblclick="{!IF(perfilValidoEscritura,'actdesactTrece('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!Account.Facturacion__c}" rendered="{!lecturaCampoTrece}"/>
+                </apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem rendered="{!escrituraCampoTrece}" helpText="{!$ObjectType.Account.fields.Facturacion__c.inlineHelpText}">  
+                  <apex:outputLabel value="Facturación" rendered="{!escrituraCampoTrece}"/>
+                  <apex:inputField onkeydown="if(event.keyCode==13){this.blur();}" onblur="actdesactTrece('lectura');" value="{!Account.Facturacion__c}" rendered="{!escrituraCampoTrece}"/>                
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem />
+
+                <apex:pageBlockSectionItem rendered="{!lecturaCampoCatorce}" helpText="{!$ObjectType.Account.fields.GastoTIC__c.inlineHelpText}">
+                    <apex:outputLabel value="Gasto TIC" rendered="{!lecturaCampoCatorce}"/>
+                    <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" ondblclick="{!IF(perfilValidoEscritura,'actdesactCatorce('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!Account.GastoTIC__c}" rendered="{!lecturaCampoCatorce}"/>
+                </apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem rendered="{!escrituraCampoCatorce}" helpText="{!$ObjectType.Account.fields.GastoTIC__c.inlineHelpText}">  
+                    <apex:outputLabel value="Gasto TIC" rendered="{!escrituraCampoCatorce}"/>
+                    <apex:inputField onkeydown="if(event.keyCode==13){this.blur();}" onblur="actdesactCatorce('lectura');" value="{!Account.GastoTIC__c}" rendered="{!escrituraCampoCatorce}"/>                
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!lecturaCampoQuince}" helpText="{!$ObjectType.Account.fields.TelcelTIC__c.inlineHelpText}">
+                    <apex:outputLabel value="% Telcel (TIC)" rendered="{!lecturaCampoQuince}"/>
+                    <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" ondblclick="{!IF(perfilValidoEscritura,'actdesactQuince('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!Account.TelcelTIC__c}" rendered="{!lecturaCampoQuince}"/>
+                </apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem rendered="{!escrituraCampoQuince}" helpText="{!$ObjectType.Account.fields.TelcelTIC__c.inlineHelpText}">  
+                    <apex:outputLabel value="% Telcel (TIC)" rendered="{!escrituraCampoQuince}"/>
+                    <apex:inputField onkeydown="if(event.keyCode==13){this.blur();}" onblur="actdesactQuince('lectura');" value="{!Account.TelcelTIC__c}" rendered="{!escrituraCampoQuince}"/>                
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!lecturaCampoDieciseis}" helpText="{!$ObjectType.Account.fields.GastoMovilidad__c.inlineHelpText}">
+                    <apex:outputLabel value="Gasto Movilidad" rendered="{!lecturaCampoDieciseis}"/>
+                    <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" ondblclick="{!IF(perfilValidoEscritura,'actdesactDieciseis('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;" value="{!Account.GastoMovilidad__c}" rendered="{!lecturaCampoDieciseis}"/>
+                </apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem rendered="{!escrituraCampoDieciseis}" helpText="{!$ObjectType.Account.fields.GastoMovilidad__c.inlineHelpText}">  
+                    <apex:outputLabel value="Gasto Movilidad" rendered="{!escrituraCampoDieciseis}"/>
+                    <apex:inputField onkeydown="if(event.keyCode==13){this.blur();}"  onblur="actdesactDieciseis('lectura');" value="{!Account.GastoMovilidad__c}" rendered="{!escrituraCampoDieciseis}"/>                
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!lecturaCampoDiecisiete}" helpText="{!$ObjectType.Account.fields.TelcelMovilidad__c.inlineHelpText}">
+                    <apex:outputLabel value="% Telcel (Movilidad)" rendered="{!lecturaCampoDiecisiete}"/>
+                    <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" ondblclick="{!IF(perfilValidoEscritura,'actdesactDiecisiete('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;" value="{!Account.TelcelMovilidad__c}" rendered="{!lecturaCampoDiecisiete}"/>
+                </apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem rendered="{!escrituraCampoDiecisiete}" helpText="{!$ObjectType.Account.fields.TelcelMovilidad__c.inlineHelpText}">  
+                    <apex:outputLabel value="% Telcel (Movilidad)" rendered="{!escrituraCampoDiecisiete}"/>
+                    <apex:inputField onkeydown="if(event.keyCode==13){this.blur();}" onblur="actdesactDiecisiete('lectura');" value="{!Account.TelcelMovilidad__c}" rendered="{!escrituraCampoDiecisiete}"/>                
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem rendered="{!lecturaCampoDieciocho}" helpText="{!$ObjectType.Account.fields.Plantilla__c.inlineHelpText}">
+                    <apex:outputLabel value="Plantilla" rendered="{!lecturaCampoDieciocho}"/>
+                    <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" ondblclick="{!IF(perfilValidoEscritura,'actdesactDieciocho('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;" value="{!Account.Plantilla__c}" rendered="{!lecturaCampoDieciocho}"/>
+                </apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem rendered="{!escrituraCampoDieciocho}" helpText="{!$ObjectType.Account.fields.Plantilla__c.inlineHelpText}">  
+                    <apex:outputLabel value="Plantilla" rendered="{!escrituraCampoDieciocho}"/>
+                    <apex:inputField onkeydown="if(event.keyCode==13){this.blur();}" onblur="actdesactDieciocho('lectura');" value="{!Account.Plantilla__c}" rendered="{!escrituraCampoDieciocho}"/>                
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem />
+
+                <apex:pageBlockSectionItem rendered="{!lecturaCampoDiecinueve}" helpText="{!$ObjectType.Account.fields.Sitios__c.inlineHelpText}">
+                    <apex:outputLabel value="Sitios" rendered="{!lecturaCampoDiecinueve}"/>
+                    <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" ondblclick="{!IF(perfilValidoEscritura,'actdesactDiecinueve('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;" value="{!Account.Sitios__c}" rendered="{!lecturaCampoDiecinueve}"/>
+                </apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem rendered="{!escrituraCampoDiecinueve}" helpText="{!$ObjectType.Account.fields.Sitios__c.inlineHelpText}">  
+                    <apex:outputLabel value="Sitios" rendered="{!escrituraCampoDiecinueve}"/>
+                    <apex:inputField onkeydown="if(event.keyCode==13){this.blur();}" onblur="actdesactDiecinueve('lectura');" value="{!Account.Sitios__c}" rendered="{!escrituraCampoDiecinueve}"/>                
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem />
+
+                <apex:pageBlockSectionItem rendered="{!lecturaCampoVeinte}" helpText="{!$ObjectType.Account.fields.Unidadesmovilidad__c.inlineHelpText}">
+                    <apex:outputLabel value="Unidades de Movilidad" rendered="{!lecturaCampoVeinte}"/>
+                    <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" ondblclick="{!IF(perfilValidoEscritura,'actdesactVeinte('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;" value="{!Account.Unidadesmovilidad__c}" rendered="{!lecturaCampoVeinte}"/>
+                </apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem rendered="{!escrituraCampoVeinte}" helpText="{!$ObjectType.Account.fields.Unidadesmovilidad__c.inlineHelpText}">  
+                    <apex:outputLabel value="Unidades de Movilidad" rendered="{!escrituraCampoVeinte}"/>
+                    <apex:inputField onkeydown="if(event.keyCode==13){this.blur();}" onblur="actdesactVeinte('lectura');" value="{!Account.Unidadesmovilidad__c}" rendered="{!escrituraCampoVeinte}"/>                
+                </apex:pageBlockSectionItem>
+
+            </apex:pageBlockSection>
+            
+            <input id="btnGuardarDBC2" type="button" onclick="guardarAFDBC();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+            <input id="btnCancelarDBC2" type="button" onclick="cancelarAFDBC();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+            
+        </apex:pageBlock>
+
+    </apex:form>
+   
+    <!-- CONOCIMIENTO DEL CLIENTE -->
+    <apex:form id="fConocimientoCliente">
+        
+        <apex:actionFunction id="afGuardar" name="guardarAF" action="{!guardarCambios}" reRender="pbConocimientoCliente" oncomplete="cambioDatos(); redireccionarSiAplica('{!huboError}')"/>
+        <apex:actionFunction name="cancelarAF" action="{!reset}"/>
+        
+        <apex:actionFunction name="cambioDatosAF" action="{!cambios}" reRender="scriptConocimientoCliente" />
+        
+        <apex:actionFunction name="actdesactUno" action="{!cambiarModoCampo1}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactDos" action="{!cambiarModoCampo2}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactTres" action="{!cambiarModoCampo3}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        
+        <script id="scriptEstrategia">
+        
+            function redireccionarSiAplica(huboError)
+            {
+                if(huboError == 'false')
+                {
+                    window.open('/{!Account.Id}','_parent');
+                }
+            }
+
+            function cambioDatos()
+            {
+                var cambios = '{!hanHabidoCambios}';
+                if(cambios == 'false')
+                {
+                    var botonGuardar1 = document.getElementById('btnGuardar1');
+                    var botonGuardar2 = document.getElementById('btnGuardar2');
+                    var botonCancelar1 = document.getElementById('btnCancelar1');
+                    var botonCancelar2 = document.getElementById('btnCancelar2');
+                    
+                    botonGuardar1.style.visibility = 'visible';
+                    botonGuardar2.style.visibility = 'visible';
+                    botonCancelar1.style.visibility = 'visible';
+                    botonCancelar2.style.visibility = 'visible';
+                    
+                    cambioDatosAF();
+                }        
+            }   
+            
+        </script>
+        
+        <apex:pageBlock id="pbConocimientoCliente">
+            
+            <input id="btnGuardar1" type="button" onclick="guardarAF();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+            <input id="btnCancelar1" type="button" onclick="cancelarAF();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+            
+            <apex:messages id="mensajes" styleClass="errorMsg"/>
+            
+            <apex:pageBlockSection columns="2" id="pbCampos" title="Conocimiento del Cliente">
+                
+                <apex:pageBlockSection id="pBSICampoUno" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoUno}" helpText="{!$ObjectType.Account.fields.ActividadCliente__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoUnoLabel" value="Actividad del Cliente" rendered="{!lecturaCampoUno}"/>
+                        <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" id="lecturaCampoUno" ondblclick="{!IF(perfilValidoEscritura,'actdesactUno('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!Account.ActividadCliente__c}" rendered="{!lecturaCampoUno}"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem rendered="{!escrituraCampoUno}" helpText="{!$ObjectType.Account.fields.ActividadCliente__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoUnoLabel" value="Actividad del Cliente" rendered="{!escrituraCampoUno}"/>
+                      <apex:inputField id="escrituraCampoUno" onblur="actdesactUno('lectura');" value="{!Account.ActividadCliente__c}" rendered="{!escrituraCampoUno}"/>                
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>  
+                
+                <apex:pageBlockSection >
+                    <apex:outputtext value=""/>          
+                </apex:pageBlockSection> 
+                
+                <apex:pageBlockSection id="pBSICampoTres" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoTres}" helpText="{!$ObjectType.Account.fields.RetoNegocioEstrategiaCliente__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoTresLabel" value="Retos de Negocio Estrategia del Cliente" rendered="{!lecturaCampoTres}"/>
+                        <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" id="lecturaCampoTres"  ondblclick="{!IF(perfilValidoEscritura,'actdesactTres('&escritura&')','')}" styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!Account.RetoNegocioEstrategiaCliente__c}" rendered="{!lecturaCampoTres}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!escrituraCampoTres}" helpText="{!$ObjectType.Account.fields.RetoNegocioEstrategiaCliente__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoTresLabel" value="Retos de Negocio Estrategia del Cliente" rendered="{!escrituraCampoTres}"/>
+                      <apex:inputField id="escrituraCampoTres" onblur="actdesactTres('lectura');" value="{!Account.RetoNegocioEstrategiaCliente__c}" rendered="{!escrituraCampoTres}"/>                
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection> 
+            
+                <apex:pageBlockSection id="pBSICampoDos" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoDos}" helpText="{!$ObjectType.Account.fields.InterlocutorConocimientoCliente__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoDosLabel" value="Interlocutor" rendered="{!lecturaCampoDos}"/>
+                        <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" id="lecturaCampoDos"  ondblclick="{!IF(perfilValidoEscritura,'actdesactDos('&escritura&')','')}" styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!IF(Account.InterlocutorConocimientoCliente__c==null,'Sin asignar',Account.InterlocutorConocimientoCliente__r.Name)}" rendered="{!lecturaCampoDos}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!escrituraCampoDos}" helpText="{!$ObjectType.Account.fields.InterlocutorConocimientoCliente__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoDosLabel" value="Interlocutor" rendered="{!escrituraCampoDos}"/>
+                      <apex:inputField id="escrituraCampoDos" onchange="cambioDatos();" value="{!Account.InterlocutorConocimientoCliente__c}" rendered="{!escrituraCampoDos}"/>                
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+                
+            </apex:pageBlockSection>
+            
+            <input id="btnGuardar2" type="button" onclick="guardarAF();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+            <input id="btnCancelar2" type="button" onclick="cancelarAF();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+            
+        </apex:pageBlock>
+        
+        
+    </apex:form>    
+    
+    
+</apex:page>

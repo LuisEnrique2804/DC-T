@@ -1,0 +1,43 @@
+<apex:page standardController="Opportunity" tabStyle="Opportunity" id="idP">
+
+<script type="text/javascript">
+ function chgStage()
+        {
+            document.getElementById('{!$Component.idP.idF.idPB.idPBS.oppStage}').value = "Perdida";
+            return true;
+        }
+ function chgMotivo()
+        {
+            document.getElementById('{!$Component.idP.idF.idPB.idPBS.oppMotivo}').value = "";
+            document.getElementById('{!$Component.idP.idF.idPB.idPBS.oppFaseAnteior}').value = 
+            document.getElementById('{!$Component.idP.idF.idPB.idPBS.oppStage}').value;
+            return true;
+        }
+</script>
+
+<apex:sectionHeader title="Cerrar Embudo" subtitle="{!opportunity.name}"/>
+
+    <Apex:form id="idF">      
+        <Apex:pageBlock title="Razones de cierre" id="idPB">   
+            <apex:pageBlockButtons >
+                <apex:commandButton rendered="{!IF(AND(Opportunity.StageName != 'Perdida',Opportunity.OportunidadAprobacion__c == FALSE), TRUE, FALSE)}"  action="{!save}" value="Perdido"/>
+                <apex:commandButton action="{!cancel}" value="Regresar Embudo"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="idPBS" rendered="{!IF(AND(Opportunity.StageName != 'Perdida',Opportunity.OportunidadAprobacion__c == FALSE), TRUE, FALSE)}" columns="1">
+                <apex:inputField label="Causa" value="{!Opportunity.EstatusOportunidad__c}" required="true" onchange="chgMotivo();"/>
+                <apex:inputField id="oppMotivo" value="{!Opportunity.Motivocierreperdida__c}" required="true" onchange="chgStage();"/>
+                <apex:inputField id="oppDescrpcion" value="{!Opportunity.DescripcionPerdida__c}" required="true" onchange="chgStage();"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Información de embudo" rendered="{!Opportunity.StageName == 'Perdida'}" columns="1">
+                <apex:outputField value="{!Opportunity.StageName}"/>
+                <apex:outputField value="{!Opportunity.Motivocierreperdida__c}"/>
+                <apex:outputField value="{!Opportunity.DescripcionPerdida__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection rendered="{!Opportunity.OportunidadAprobacion__c == TRUE}"  columns="1">
+                <apex:pageMessage summary="No se puede cerrar la oportunidad mientras se encuentra en un proceso de aprobación,
+                    favor de intentar una vez que el proceso este aprobado y/o rechazado" severity="warning" strength="3" />
+                <apex:pageMessages />
+            </apex:pageBlockSection>
+        </Apex:pageBlock>
+    </Apex:form>
+</apex:page>

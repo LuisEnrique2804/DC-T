@@ -1,0 +1,25 @@
+<apex:page standardController="SeguimientoOportunidades__c">
+<apex:pageBlock >
+<apex:pageBlockSection columns="1" collapsible="true" title="Coordenadas de la Oportunidad">
+<apex:pageBlockTable value="{!SeguimientoOportunidades__c}" var="so">
+<apex:column value="{!so.Fechainicio__c}"/>
+<apex:column value="{!so.Fase__c}"/>
+<apex:column value="{!so.Proximaaccion__c}"/>
+<apex:column value="{!so.Fechaproximaaccion__c}"/>
+<apex:column value="{!so.LineasR9__c}"/>
+<apex:column value="{!so.LineasR1a8__c}"/>
+<apex:column value="{!so.LineasDAT__c}"/>
+<apex:column value="{!so.Fechacierre__c}"/>
+<apex:column value="{!so.P__c}"/>
+
+<apex:column headerValue="Embudo">
+     <apex:outputLink value="/{!so.Embudo__c}" target="_top">{!so.Embudo__r.Name}</apex:outputLink>
+</apex:column>
+
+</apex:pageBlockTable>
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+
+
+</apex:page>

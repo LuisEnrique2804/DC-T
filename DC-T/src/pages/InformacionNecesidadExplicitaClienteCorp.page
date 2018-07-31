@@ -1,0 +1,13 @@
+<apex:page standardController="SeguimientoOportunidades__c">
+
+
+<apex:pageBlock >
+<apex:pageBlockSection columns="1" collapsible="true" title="Requerimientos">
+<apex:outputField value="{!SeguimientoOportunidades__c.RequerimientosProyecto__c}"/>
+<apex:outputField value="{!SeguimientoOportunidades__c.RFP__c}"/>
+<apex:outputField value="{!SeguimientoOportunidades__c.Requerimientospropuesta__c}"/>
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+
+</apex:page>

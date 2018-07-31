@@ -1,0 +1,97 @@
+<apex:page standardController="Product2" showHeader="false" sidebar="false" extensions="DCT_ComercialDirectory_ctr">
+  <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+	<head>
+	  <apex:includeScript value="/support/console/41.0/integration.js"/>
+	  <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+	  <apex:includeScript value="/soap/ajax/40.0/connection.js"/>
+	  <!-- <apex:stylesheet value="{!URLFOR($Resource.SLDS, 'assets/styles/salesforce-lightning-design-system-vf.css')}" /> -->
+	  <apex:slds />
+	  <script type="text/javascript">
+		function ProductModal() {
+		  console.log('Partida');
+		  $('#rejectionprocedureheading').html('Nuevo Producto');
+		  $('#rejectionprocedure').show();
+		  $('#rejectionprocedurebackground').show();
+		}
+		function closeModal() {
+		  $('#rejectionprocedure').hide();
+		  $('#rejectionprocedurebackground').hide();
+		}
+		function saveAllRejections() {
+		  var coment = $('[id$="comentsprocedure"]').val();
+		  jQuery('[id$=HiddenField3]').val(coment);
+		  executeAllRejections();
+		}
+		function jsRefresh(estatus){
+		  var sEstatus = estatus;
+		  console.log('***sEstatus: '+sEstatus);
+		  //alert('Estatus: ' + sEstatus);
+		  if (!sEstatus){
+			  console.log('Luis');
+			  afRefreshTable();
+			  console.log('Enrique');
+		  }//Fin si sEstatus == 'false'
+		}
+	  </script>
+	</head>
+	<body class="slds-scope">
+	
+	  <apex:form >
+		<apex:actionFunction name="afRefreshTable" action="{!refreshTable}" />
+		<apex:actionFunction name="CreateProducto" action="{!watchField2}" reRender="main"/>
+	  </apex:form>
+	  
+	  <apex:form id="theForm2">	  
+	  <apex:outputPanel id="main">
+		<div style="width: 100%; margin: 0 auto;">
+		  <div style="width: max-content; margin: 0 auto;">
+			<apex:outputLink onclick="CreateProducto(); return false;" styleClass="slds-button slds-button_brand" >
+			  Asociar Cliente
+			</apex:outputLink>
+		  </div>
+		  <br/>
+	        <apex:pageMessages />		  
+			<apex:actionFunction name="saveProduct" action="{!saveProduct}" rerender="theForm2" />
+			  <apex:outputPanel rendered="{!blnIsOnclick2}">			
+				<label class="slds-form-element__label">
+				  Cliente
+				</label>
+				<apex:inputField style="" styleClass="slds-combobox__input" value="{!DCTnewProduct.DCTCommercialDirectory__c}"/>
+	            <apex:commandButton styleClass="slds-button slds-button_brand" action="{!saveProduct}" value="Guardar" oncomplete="JavaScript:jsRefresh({!blnIsOnclick2}); return true;" rerender="theForm2"/>			            
+			  </apex:outputPanel>
+			  <br/>			  
+			  <apex:outputPanel rendered="{!lstDirProd.size == 0}">
+				No hay Productos para esta cuenta
+			  </apex:outputPanel>
+			  <apex:outputPanel rendered="{!lstDirProd.size <> 0}">
+				<table class="slds-table slds-table_bordered">
+				  <thead>
+					<tr class="slds-text-title_caps">
+					  <apex:repeat value="{!$ObjectType.DCTDirectoryProductRelationship__c.FieldSets.Conjunto_de_campos_2}" var="field">
+						<th scope="col" style="text-align: center;">
+						  <div class="slds-truncate" title="{!field.label}">{!field.label}</div>
+						</th>
+					  </apex:repeat>
+					</tr>
+				  </thead>
+				  <tbody>
+					<apex:repeat value="{!lstDirProd}" var="iterator">
+					  <tr class="slds-text-title_caps">
+						<apex:repeat value="{!$ObjectType.DCTDirectoryProductRelationship__c.FieldSets.Conjunto_de_campos_2}" var="field">
+						  <td data-label="{!iterator[field]}" style="text-align: center;">
+							<div class="slds-truncate" title="{!iterator[field]}">
+							  <apex:outputField value="{!iterator[field]}"/>
+							</div>
+						  </td>
+						</apex:repeat>
+					  </tr>
+					</apex:repeat>
+				  </tbody>
+				</table>
+			  </apex:outputPanel>			  
+		  </div>	
+	  </apex:outputPanel>
+	</apex:form>
+	</body> 
+  </html>
+</apex:page>

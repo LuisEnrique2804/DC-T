@@ -1,0 +1,243 @@
+<apex:page showHeader="false" sidebar="false" standardController="Account" extensions="DCT_NewCustomLead_ext" standardStylesheets="false">
+  <html>
+    <head>
+      <meta charset="utf-8"/>
+      <apex:slds />
+    </head>
+    <body>
+      <apex:actionStatus id="processing">
+        <apex:facet name="start">
+          <div class="slds-spinner_container slds-is-fixed">
+            <div class="slds-spinner--brand slds-spinner slds-spinner--medium" role="alert">
+              <span class="slds-assistive-text">Processing</span>
+              <div class="slds-spinner__dot-a"></div>
+              <div class="slds-spinner__dot-b"></div>
+            </div>
+          </div>
+        </apex:facet>
+      </apex:actionStatus>
+      <!-- <div class="demo-only" style="height: 740px;"> -->
+      <div >
+        <!-- <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class=" slds-modal slds-fade-in-open slds-scrollable"> -->
+        <section class="slds-scrollable">
+          <div>
+            <apex:form id="mainForm">
+              <apex:actionFunction name="redirectToDC" action="{!redirectToDC}" status="processing"/>
+              <apex:actionFunction name="RefreshDataLegacy" action="{!changeStatus}" reRender="mainForm"/>
+              <footer class="slds-modal__footer">
+                <div style="width: max-content; margin: 0 auto;">
+                  <header>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Nuevo prospecto</h2>
+                  </header>
+                </div>
+              </footer>
+              <div class="slds-p-around_medium" id="modal-content-id-1">
+                <apex:outputPanel id="OPResults">
+                  <apex:outputPanel id="ErrorMsgs" rendered="{!lstErrorMsgs.size <> 0}">
+                    <div class="slds-notify_container" style="position:relative;">
+                      <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+                        <apex:repeat value="{!lstErrorMsgs}" var="msg">
+                          {!msg} 
+                          <br/>
+                        </apex:repeat>
+                      </div>
+                    </div>
+                  </apex:outputPanel> 
+                  <apex:outputPanel id="SuccessMsgs" rendered="{!lstSuccessMsgs.size <> 0}">
+                    <div class="slds-notify_container" style="position:relative;">
+                      <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+                        <apex:repeat value="{!lstSuccessMsgs}" var="msg">
+                          {!msg} 
+                          <br/>
+                        </apex:repeat>
+                      </div> 
+                    </div>
+                  </apex:outputPanel>
+                  <apex:outputPanel rendered="{!blnSuccessfulProcedure}">
+                    <script type="text/javascript">
+                      setTimeout(redirectToDC,5000);
+                    </script>
+                  </apex:outputPanel>
+                </apex:outputPanel>
+                <div class="demo-only">
+                  <div class="slds-form slds-form_compound">
+                    <fieldset class="slds-form-element">
+                      <legend class="slds-form-element__label slds-text-title_caps">Datos generales</legend>
+                      <div class="slds-form-element__group">
+                        <div class="slds-form-element__row">
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">
+                              <abbr class="slds-required" title="requerido">*</abbr>
+                              Persona Jurídica
+                            </label>
+                            <apex:inputField styleClass="slds-input" value="{!accountRecord.DTC_LegalEntity__c}" onchange="RefreshDataLegacy()"/> 
+                          </div>
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">
+                              <abbr class="slds-required" title="requerido">*</abbr>
+                              RFC
+                            </label>
+                            <apex:inputField styleClass="slds-input" value="{!accountRecord.RFC__c}"/> 
+                          </div>
+                        </div>
+                        <apex:outputPanel id="legalEntity" rendered="{!AND(NOT(blnIsMoralEntity), blnIsNaturalEntity)}">
+                          <div class="slds-form-element__row">
+                            <div class="slds-form-element slds-size_1-of-2">
+                              <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="requerido">*</abbr>
+                                Apellido Paterno
+                              </label>
+                              <apex:inputField styleClass="slds-input" value="{!accountRecord.DCTLastName__c}"/> 
+                            </div>
+                            <div class="slds-form-element slds-size_1-of-2">
+                              <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="requerido">*</abbr>
+                                Apellido Materno
+                              </label>
+                              <apex:inputField styleClass="slds-input" value="{!accountRecord.DCTMotherLastName__c}"/>
+                            </div>
+                          </div>
+                          <div class="slds-form-element__row">
+                            <div class="slds-form-element slds-size_1-of-2">
+                              <label class="slds-form-element__label">
+                                <abbr class="slds-required" title="requerido">*</abbr>
+                                Nombre(s)
+                              </label>
+                              <apex:inputField styleClass="slds-input" value="{!accountRecord.DCTName__c}"/> 
+                            </div>
+                          </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel id="legalEntity2" rendered="{!AND(blnIsMoralEntity, NOT(blnIsNaturalEntity))}">
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">
+                              <abbr class="slds-required" title="requerido">*</abbr>
+                              Razón Social
+                            </label>
+                            <apex:inputField styleClass="slds-input" value="{!accountRecord.DCTControlFieldName__c}"/>
+                          </div>
+                        </apex:outputPanel>
+                        <div class="slds-form-element__row">
+                          <div class="slds-form-element slds-size_1-of-2">
+                          </div>
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">                               
+                              Fecha de Registro
+                            </label>
+                            <div class="slds-text-body_regular"> 
+                              <div class="slds-input" disabled="true">
+                                {!DAY(TODAY())}/{!MONTH(TODAY())}/{!YEAR(TODAY())}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="slds-form-element__row">
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">                               
+                              Jefe de Ventas
+                            </label>
+                            <div class="slds-text-body_regular"> 
+                              <div class="slds-input" disabled="true">
+                                {!IF(ISBLANK(strManagerName),'No especificado',strManagerName)}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">                               
+                              Tipo de Cliente
+                            </label>
+                            <div class="slds-text-body_regular"> 
+                              <div class="slds-input" disabled="true">
+                                Prospecto
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="slds-form-element__row">                                          
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label"> 
+                              <abbr class="slds-required" title="requerido">*</abbr>                              
+                              Canal de Atención
+                            </label>
+                            <!-- <apex:inputField styleClass="slds-input" value="{!accountRecord.DCTCareChannel__c}"/> -->
+                            <div class="slds-text-body_regular"> 
+                              <div class="slds-input" disabled="true">
+                                {!IF(ISBLANK(strCareChannel),'No especificado',strCareChannel)}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">
+                              <abbr class="slds-required" title="requerido">*</abbr>
+                              Segmento
+                            </label>
+                            <apex:inputField styleClass="slds-input" value="{!accountRecord.Segmento__c}"/>
+                          </div>
+                        </div>
+                        <div class="slds-form-element__row">                                        
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">
+                              <abbr class="slds-required" title="requerido">*</abbr>
+                              Tipo de Activación
+                            </label>
+                            <apex:inputField styleClass="slds-input" value="{!accountRecord.DCT_TypeOfProcedure__c}"/>
+                          </div>
+                          <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label">
+                              <abbr class="slds-required" title="requerido">*</abbr>
+                              Sector
+                            </label>
+                            <apex:inputField styleClass="slds-input" value="{!accountRecord.Sector__c}"/>
+                          </div>
+                        </div>
+                        <div class="slds-form-element__row">                                        
+                          <div class="slds-form-element slds-size_1-of-2">                                            
+                          </div>
+                          <div class="slds-form-element slds-size_1-of-2">                                            
+                            <label class="slds-form-element__label">
+                              <abbr class="slds-required" title="requerido">*</abbr>
+                              Subsector
+                            </label>
+                            <apex:inputField styleClass="slds-input" value="{!accountRecord.Subsector__c}"/>
+                          </div>
+                        </div>
+                      </div>    
+                    </fieldset>              
+                  </div>
+                </div>  
+                <apex:outputPanel id="OPResults2">
+                  <apex:outputPanel id="ErrorMsgs2" rendered="{!lstErrorMsgs.size <> 0}">
+                    <div class="slds-notify_container" style="position:relative;">
+                      <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+                        <apex:repeat value="{!lstErrorMsgs}" var="msg">
+                          {!msg} 
+                          <br/>
+                        </apex:repeat>
+                      </div>
+                    </div>
+                  </apex:outputPanel> 
+                  <apex:outputPanel id="SuccessMsgs2" rendered="{!lstSuccessMsgs.size <> 0}">
+                    <div class="slds-notify_container" style="position:relative;">
+                      <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+                        <apex:repeat value="{!lstSuccessMsgs}" var="msg">
+                          {!msg} 
+                          <br/>
+                        </apex:repeat>
+                      </div> 
+                    </div>
+                  </apex:outputPanel>     
+                </apex:outputPanel>                
+              </div>
+              <footer class="slds-modal__footer">
+                <div style="width: max-content; margin: 0 auto;">
+                  <apex:commandButton styleClass="slds-button slds-button_neutral" value="Cancelar" action="{!cancel}"/>
+                  <apex:commandButton action="{!performSaving}" styleClass="slds-button slds-button_brand" value="Guardar" reRender="mainForm" status="processing" />
+                </div>
+              </footer>
+            </apex:form>
+          </div>
+        </section>
+        
+      </div>
+    </body>
+  </html>
+</apex:page>

@@ -1,0 +1,20 @@
+<apex:page showHeader="true" sidebar="true" standardController="Cliente__c" extensions="DCT_Distributor_ctr" action="{!ActualizaDistribuidoresWs}">
+	<html>
+		<head>
+			<meta charset="utf-8" />
+            <meta http-equiv="x-uaonke-compatible" content="ie=edge" />
+			<apex:slds />
+			<title></title>
+		</head>
+		<body>
+			<apex:form >
+				 <apex:actionFunction name="fuerzaVenta" action="{!fuerzaVentaChange}" />
+				<label class="slds-form-element__label" for="input-04">Tipo de Servicio</label>
+	    	    <apex:selectList value="{!FzaVenta}" multiselect="false" styleClass="slds-select" size="1" style="display: inline-block;" onchange="fuerzaVenta();">
+	        	    <apex:selectOptions value="{!items}"/>
+	        	</apex:selectList><p/>
+		    </apex:form>
+		</body>
+	</html>
+	
+</apex:page>

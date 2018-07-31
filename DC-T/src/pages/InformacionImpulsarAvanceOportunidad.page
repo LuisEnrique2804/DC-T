@@ -1,0 +1,54 @@
+<apex:page standardController="SeguimientoOportunidades__c" extensions="SeguimientoOportunidadListasExtension" showHeader="false" sidebar="false">
+   
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+
+    <script >
+        $j = jQuery.noConflict();
+        $j(document).ready(function() {
+        $j('a').attr("target","_blank");
+        });
+    </script > 
+    
+    <apex:form >
+        <apex:pageBlock id="pbSoportes">
+            <apex:pageblocksection columns="1" collapsible="true" title="Soporte dentro de Telcel">  
+                <apex:commandButton onclick="window.open('/a0Z/e?CF00N1500000H1kRh={!SeguimientoOportunidades__c.Name}&CF00N1500000H1kRh_lkid={!SeguimientoOportunidades__c.Id}&retURL=%2F{!SeguimientoOportunidades__c.Id}','_blank');" value="Nuevo Soporte Dentro de Telcel"/>                
+                <apex:pageBlockTable value="{!elementosAMostrarSoportes}" var="sp" id="pbTablaDinamica">
+                    <apex:column headervalue="Número de Soporte Dentro de Telcel"><apex:outputLink target="_blank" value="/{!sp.Id}">{!sp.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!sp.Nombre__c}"/>
+                    <apex:column value="{!sp.Posicion__c}"/>
+                    <apex:column value="{!sp.Area__c}"/>
+                    <apex:column value="{!sp.Email__c}"/>
+                    <apex:column value="{!sp.TelefonoExtension__c}"/>
+                    <apex:column value="{!sp.Celular__c}"/>
+                    <apex:column value="{!sp.Descripcion__c}"/>
+                    <apex:column value="{!sp.Notificacion__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" id="cLAnterior" action="{!anteriorSoportes}" value="Anterior" reRender="pbSoportes" rendered="{!IF(OR(totalIndicesSoportes==0,indiceActualSoportes==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" id="cLSiguiente" action="{!siguienteSoportes}" value="Siguiente" reRender="pbSoportes" rendered="{!IF(OR(totalIndicesSoportes==0,indiceActualSoportes==totalIndicesSoportes),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageblocksection>
+        </apex:pageblock>  
+    </apex:form>
+    
+    <apex:form >                
+        <apex:pageBlock id="pbDirectrices">
+            <apex:pageblocksection columns="1" collapsible="true" title="Directriz Telcel">  
+                <apex:commandButton rendered="{!$Profile.Name != 'JEC'}" onclick="window.open('/a0M/e?CF00N1500000H1kRW={!SeguimientoOportunidades__c.Name}&CF00N1500000H1kRW_lkid={!SeguimientoOportunidades__c.Id}&CF00N1500000H1kRj={!SeguimientoOportunidades__c.PlanCliente__r.Name}&CF00N1500000H1kRj_lkid={!SeguimientoOportunidades__c.PlanCliente__c}&retURL=%2F{!SeguimientoOportunidades__c.Id}','_blank');" value="Nueva Directiz Telcel"/>
+                <apex:pageBlockTable value="{!elementosAMostrarDirectrices}" var="dt">
+                    <apex:column headervalue="Número Directriz Telcel"><apex:outputLink target="_blank" value="/{!dt.Id}">{!dt.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!dt.Fecha__c}"/>
+                    <apex:column value="{!dt.Quien__c}"/>
+                    <apex:column value="{!dt.Directriz__c}"/>
+                    <apex:column value="{!dt.Notificacion__c}"/>
+                </apex:pageBlockTable>
+            </apex:pageblocksection>
+            <apex:panelGrid columns="2">
+                <apex:commandLink target="_parent" action="{!anteriorDirectrices}" value="Anterior" reRender="pbDirectrices" rendered="{!IF(OR(totalIndicesDirectrices==0,indiceActualDirectrices==1),'false','true')}"/>
+                <apex:commandLink target="_parent" action="{!siguienteDirectrices}" value="Siguiente" reRender="pbDirectrices" rendered="{!IF(OR(totalIndicesDirectrices==0,indiceActualDirectrices==totalIndicesDirectrices),'false','true')}"/>
+            </apex:panelGrid>
+        </apex:pageblock>  
+    </apex:form>        
+  
+</apex:page>

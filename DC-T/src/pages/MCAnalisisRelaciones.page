@@ -1,0 +1,64 @@
+<apex:page standardController="AnalisisRelaciones__c" showHeader="false" >
+    <body>    
+        <apex:form >    
+            <apex:pageBlock title="Análisis de Relaciones">
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!save}" value="Guardar"/>
+                    <apex:commandButton action="{!cancel}" value="Cancelar"/>
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection title="Información Análisis de Relaciones" collapsible="false">
+                    <apex:outputField value="{!AnalisisRelaciones__c.PersonasTelcel__c}"/>
+                    <apex:outputField value="{!AnalisisRelaciones__c.InterlocutoresCliente__c}"/>                                
+                </apex:pageBlockSection> 
+                <apex:pageBlockSection title="Información de Tabla de Valoración" collapsible="false">  
+                </apex:pageBlockSection>
+                <table >
+                    <tr>
+                        <td width="60%" style="padding: 5px;" > <b>Tabla de Valoración</b></td> 
+                        <td align ="center" width="40%" style="padding: 5px;"> <b>Valoración</b> </td> 
+                    </tr>
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Mis conversaciones con él se centran en nuevas oportunidades de negocio.</b></td> 
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.ConversacionesOportunidadesNegocio__c}"/></td> 
+                    </tr> 
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Tiene reputación frente a su superior de buen trabajo y, además, con valor agregado.</b></td> 
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.ReputacionFrenteSuperiorBuenTrabajo__c}"/></td> 
+                    </tr> 
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Creo que tiene una visión totalmente clara de su futuro dentro de su organización.</b></td> 
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.VisionClaraFuturoDentroOrganizacion__c}"/></td> 
+                    </tr> 
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Me ha facilitado el acceso a personas influyentes dentro de su organización.</b></td>
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.FacilitadoAccesoPersonasInfluyentes__c}"/></td> 
+                    </tr> 
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Tiene una estrategia clara para colocar a Telcel como la mejor alternativa.</b></td> 
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.EstrategiaClaraParaColocarTelcel__c}"/></td> 
+                    </tr>               
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Suele referirse a nuestra relación más allá en el tiempo de los proyectos actuales.</b></td> 
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.SueleReferirseNuestraRelacion__c}"/></td> 
+                    </tr>                 
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Ha sido abierto conmigo al contarme sus planes en su organización y en su equipo.</b></td>
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.HaSidoAbiertoConmigoContarmePlanes__c}"/></td> 
+                    </tr>
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Podría describir las etapas del Proceso de Venta actual, así como su avance.</b></td>
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.PodriaDescribirEtapasProcesoVentaActual__c}"/></td> 
+                    </tr>
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Me ha sorprendido su ayuda para recorrer las diferentes etapas del Proceso de Venta.</b></td> 
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.SorprendidoAyudaRecorrerDiferentesEtapas__c}"/></td> 
+                    </tr>
+                    <tr>
+                        <td width="60%" style="padding: 3px;"> <b>Puedo afirmar que nuestra relación trasciende la gestión actual.</b></td>
+                        <td align ="center" width="40%" style="padding: 3px;"> <apex:inputField value="{!AnalisisRelaciones__c.PuedoAfirmarNuestraRelacionTrasciende__c}"/></td> 
+                    </tr>
+                </table>        
+            </apex:pageBlock>
+        </apex:form>
+    </body>
+</apex:page>

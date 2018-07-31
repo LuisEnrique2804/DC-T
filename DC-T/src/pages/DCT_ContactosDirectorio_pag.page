@@ -1,0 +1,83 @@
+<apex:page lightningStylesheets="true" standardController="Cliente__c"  showHeader="false" sidebar="false" extensions="DCT_ContactosDirectorioCtrl" >
+
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <head>
+            <apex:includeScript value="/support/console/41.0/integration.js"/>
+            <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+            <apex:includeScript value="/soap/ajax/40.0/connection.js"/>
+            <apex:slds />
+        </head>
+        <body>
+			<!-- REQUIRED SLDS WRAPPER -->
+			<div class="slds-scope">
+                <!-- Detalle de las lineas que tiene -->
+                <div style="width: max-content; margin: 0 auto;">
+                    <apex:variable value="{!0}" var="lines"/>
+                    <apex:repeat value="{!lContactos}" var="iterator">              
+                        <apex:variable value="{!lines+1}" var="lines"/>
+                    </apex:repeat>
+                    <apex:outputPanel rendered="{!lines == 0}">
+                        No hay Contactos del Directorio para esta cuenta
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!lines <> 0}">
+                        <table class="slds-table slds-table_bordered">
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="LÍNEAS ACTIVAS">NOMBRE</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="LÍNEAS SOLICITADAS">PUESTO</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="ESTATUS">TIPO CONTACTO</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="ESTATUS">TELÉFONO FIJO</div>
+                                    </th>                                               
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="ESTATUS">TELÉFONO MÓVIL</div>
+                                    </th>                                               
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="TOTAL DE LINEAS AUTORIZADAS">NIP</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="TOTAL DE LINEAS AUTORIZADAS">CORREO ELECTRÓNICO</div>
+                                    </th>                                       
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!lContactos}" var="contacto">
+                                    <tr class="slds-text-title_caps">                                                   
+                                        <td data-label="{!contacto.Name}">
+                                            <apex:outputField value="{!contacto.Name}"/>                                            
+                                        </td>
+                                        <td data-label="{!contacto.Posicion__c}">
+                                            <div class="slds-truncate" title="{!contacto.Posicion__c}">{!contacto.Posicion__c}</div>
+                                        </td>
+                                        <td data-label="{!contacto.DCTTypeContact__c}">
+                                            <div class="slds-truncate" title="{!contacto.DCTTypeContact__c}">{!contacto.DCTTypeContact__c}</div>
+                                        </td>
+                                        <td data-label="{!contacto.Phone}">
+                                            <div class="slds-truncate" title="{!contacto.Phone}">{!contacto.Phone}</div>
+                                        </td>
+                                        <td data-label="{!contacto.MobilePhone}">
+                                            <div class="slds-truncate" title="{!contacto.MobilePhone}">{!contacto.MobilePhone}</div>
+                                        </td>
+                                        <td data-label="{!contacto.DCTNIP__c}">
+                                            <div class="slds-truncate" title="{!contacto.DCTNIP__c}">{!contacto.DCTNIP__c}</div>
+                                        </td>
+                                        <td data-label="{!contacto.DCTNIP__c}">
+                                            <div class="slds-truncate" title="{!contacto.DCTNIP__c}">{!contacto.Email}</div>
+                                        </td>                                                                                                                                                                               
+                                    </tr>
+                                </apex:repeat>
+                            </tbody>
+                        </table>
+                    </apex:outputPanel>                             
+                </div>
+                <!-- fin detalle de las lineas que tiene -->
+        	</div>                      
+        </body>
+    </html>
+</apex:page>

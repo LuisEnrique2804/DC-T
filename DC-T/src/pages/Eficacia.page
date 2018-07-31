@@ -1,0 +1,86 @@
+<apex:page controller="Eficacia" doctype="html-5.0">
+	<apex:form id="idForm1">
+		<apex:pageMessages />
+		<apex:pageBlock id="pgbl01" title="Reporte de Eficacia">
+			<apex:pageBlockButtons id="pgblkbut01">
+				<apex:commandButton title="Regresar"  value="Regresar" onclick="history.go(-1);"/>
+				<apex:commandButton title="GenerarReporte"  value="Generar Reporte" action="{!getReport}"/>
+			</apex:pageBlockButtons>
+			<apex:pageBlock title="Rango de fechas">
+				<apex:pageBlockSection columns="2">
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel for="fInicio" value="Fecha Inicio: " />
+						<apex:inputField Id="fInicio" value="{!objRango.Fecha_Inicio__c}" required="true"/>
+						<!-- <apex:inputText Id="fInicio" value="{!dInicio}" onfocus="DatePicker.pickDate(false, this, false);"/> -->
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel for="fFin" value="Fecha Fin: " />
+						<apex:inputField Id="fFin" value="{!objRango.Fecha_Fin__c}" required="true"/>
+						<!-- <apex:inputText Id="fFin" value="{!dFin}"  onfocus="DatePicker.pickDate(false, this, false);"/> -->
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+			
+			
+			<apex:pageBlock title="Ejecutar como">
+				<apex:pageBlockSection columns="4" id="PorUsuario">
+					<apex:pageBlockSectionItem >
+							<apex:outputLabel value="Director: " rendered="{!bDirector}"/>
+							<apex:selectList size="1" value="{!sDirector}" rendered="{!bDirector}" id="Director">
+								<apex:selectOptions value="{!lstDirectores}"/>
+								<apex:actionSupport event="onchange" action="{!ObtenerSubDirectores}" />
+							</apex:selectList>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Sub-Director: " rendered="{!bSubDirector}"/>
+						<apex:selectList size="1" value="{!sSubDirector}" rendered="{!bSubDirector}" id="SubDirector">
+							<apex:selectOptions value="{!lstSubdirectores}"/>
+							<apex:actionSupport event="onchange" action="{!ObtenerGerentes}" />
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >    
+						<apex:outputLabel value="Gerente: " rendered="{!bGerente}"/>
+						<apex:selectList size="1" value="{!sGerente}" rendered="{!bGerente}" id="Gerente">
+							<apex:selectOptions value="{!lstGerentes}"/>
+							<apex:actionSupport event="onchange" action="{!ObtenerJECS}" />
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >    
+						<apex:outputLabel value="JECs: " rendered="{!bJECS}"/>
+						<apex:selectList size="1" value="{!sJEC}" rendered="{!bJECS}" id="JEC">
+							<apex:selectOptions value="{!lstJECS}"/>
+							<apex:actionSupport event="onchange" action="{!OppJecs}" />
+						</apex:selectList>
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+                
+			
+			<apex:pageBlockSection columns="1">
+				<apex:pageBlockTable Id="Contenedor" value="{!lstReporte}" var="objDetalle">
+					<apex:column headerValue="Fase">
+						<apex:outputText value="{!objDetalle.sFase}"/> 
+					</apex:column>
+					<apex:column headerValue="Oportunidad">
+						<apex:outputText value="{!objDetalle.sOp}"/>
+					</apex:column>
+					<apex:column headerValue="Aproximación">
+						<apex:outputText value="{!objDetalle.sAp}"/>
+					</apex:column>
+					<apex:column headerValue="Contacto">
+						<apex:outputText value="{!objDetalle.sCt}"/>
+					</apex:column>
+					<apex:column headerValue="Proyecto">
+						<apex:outputText value="{!objDetalle.sPr}"/>
+					</apex:column>
+					<apex:column headerValue="Propuesta">
+						<apex:outputText value="{!objDetalle.sPp}"/>
+					</apex:column>
+					<apex:column headerValue="Resultado">
+						<apex:outputText value="{!objDetalle.sRes}"/>
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

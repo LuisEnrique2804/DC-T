@@ -1,0 +1,178 @@
+<apex:page standardController="Account" extensions="AccountExtension">
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+    
+    <script >
+    $j = jQuery.noConflict();
+    $j(document).ready(function() {
+    $j('a').attr("target","_blank");
+    });
+   
+    </script > 
+    
+    <apex:form id="fInformacionAnalisisEstrategico">
+    
+        <apex:actionFunction id="afGuardar" name="guardarAF" action="{!guardarCambios}" reRender="pbInformacionAnalisisEstrategico" oncomplete="cambioDatos(); redireccionarSiAplica('{!huboError}')"/>
+        <apex:actionFunction name="cancelarAF" action="{!reset}"/>
+        
+        <apex:actionFunction name="cambioDatosAF" action="{!cambios}" reRender="scriptInformacionAnalisisEstrategico"/>
+        
+        <apex:actionFunction name="actdesactSiete" action="{!cambiarModoCampo7}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactOcho" action="{!cambiarModoCampo8}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <!--<apex:actionFunction name="actdesactNueve" action="{!cambiarModoCampo9}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction> -->
+        <apex:actionFunction name="actdesactDiez" action="{!cambiarModoCampo10}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <!--<apex:actionFunction name="actdesactOnce" action="{!cambiarModoCampo11}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="actdesactDoce" action="{!cambiarModoCampo12}" reRender="pbCampos" oncomplete="cambioDatos();">
+            <apex:param name="modo" value=""/>
+        </apex:actionFunction>-->
+        
+        <script id="scriptInformacionAnalisisEstrategico">
+        
+            function redireccionarSiAplica(huboError)
+            {
+                if(huboError == 'false')
+                {
+                    window.open('/{!Account.Id}','_parent');
+                }
+            }
+
+            function cambioDatos()
+            {
+                var cambios = '{!hanHabidoCambios}';
+                if(cambios == 'false')
+                {
+                    var botonGuardar1 = document.getElementById('btnGuardar1');
+                    var botonGuardar2 = document.getElementById('btnGuardar2');
+                    var botonCancelar1 = document.getElementById('btnCancelar1');
+                    var botonCancelar2 = document.getElementById('btnCancelar2');
+                    
+                    botonGuardar1.style.visibility = 'visible';
+                    botonGuardar2.style.visibility = 'visible';
+                    botonCancelar1.style.visibility = 'visible';
+                    botonCancelar2.style.visibility = 'visible';
+                    
+                    cambioDatosAF();
+                }        
+            }   
+            
+        </script>
+        
+        <apex:pageBlock id="pbInformacionAnalisisEstrategico">
+        
+            <input id="btnGuardar1" type="button" onclick="guardarAF();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+            <input id="btnCancelar1" type="button" onclick="cancelarAF();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+            
+            <apex:messages id="mensajes" styleClass="errorMsg"/>
+            
+            <apex:pageBlockSection columns="2" id="pbCampos" title="Alineamiento de Objetivos">
+                
+                <apex:pageBlockSection id="pBSICampoSiete" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoSiete}" helpText="{!$ObjectType.Account.fields.DelClienteTelcel__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoSieteLabel" value="Del Cliente con Telcel" rendered="{!lecturaCampoSiete}"/>
+                        <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}"  id="lecturaCampoSiete"  ondblclick="{!IF(perfilValidoEscritura,'actdesactSiete('&escritura&')','')}" styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!Account.DelClienteTelcel__c}" rendered="{!lecturaCampoSiete}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!escrituraCampoSiete}" helpText="{!$ObjectType.Account.fields.DelClienteTelcel__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoSieteLabel" value="Del Cliente con Telcel" rendered="{!escrituraCampoSiete}"/>
+                      <apex:inputField id="escrituraCampoSiete" onblur="actdesactSiete('lectura');" value="{!Account.DelClienteTelcel__c}" rendered="{!escrituraCampoSiete}"/>                
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection> 
+                
+                <apex:pageBlockSection > </apex:pageBlockSection>
+                
+                <apex:pageBlockSection id="pBSICampoOcho" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoOcho}" helpText="{!$ObjectType.Account.fields.InterlocutorAlineamiento__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoOchoLabel" value="Interlocutor" rendered="{!lecturaCampoOcho}"/>
+                        <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}"  id="lecturaCampoOcho"  ondblclick="{!IF(perfilValidoEscritura,'actdesactOcho('&escritura&')','')}" styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!IF(Account.InterlocutorAlineamiento__c==null,'Sin asignar',Account.InterlocutorAlineamiento__r.Name)}" rendered="{!lecturaCampoOcho}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!escrituraCampoOcho}" helpText="{!$ObjectType.Account.fields.InterlocutorAlineamiento__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoOchoLabel" value="Interlocutor" rendered="{!escrituraCampoOcho}"/>
+                      <apex:inputField id="escrituraCampoOcho" onchange="cambioDatos();" value="{!Account.InterlocutorAlineamiento__c}" rendered="{!escrituraCampoOcho}"/>                
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection id="pBSICampoNueve" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoNueve}" helpText="{!$ObjectType.Account.fields.Fecha__c.inlineHelpText}">
+                       <apex:outputLabel id="lecturaCampoNueveLabel" value="Fecha" rendered="{!lecturaCampoNueve}"/>
+                        <!--<apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" id="lecturaCampoNueve"  ondblclick="{!IF(perfilValidoEscritura,'actdesactNueve('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!DAY(Account.Fecha__c)}{!IF(Account.Fecha__c!=NULL,'/','')}{!MONTH(Account.Fecha__c)}{!IF(Account.Fecha__c!=NULL,'/','')}{!YEAR(Account.Fecha__c)}" rendered="{!lecturaCampoNueve}"/> -->
+                        <apex:outputLabel id="lecturaCampoNueve" value="{!DAY(Account.Fecha__c)}{!IF(Account.Fecha__c!=NULL,'/','')}{!MONTH(Account.Fecha__c)}{!IF(Account.Fecha__c!=NULL,'/','')}{!YEAR(Account.Fecha__c)}"/>
+                    </apex:pageBlockSectionItem>
+                    <!--<apex:pageBlockSectionItem rendered="{!escrituraCampoNueve}" helpText="{!$ObjectType.Account.fields.Fecha__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoNueveLabel" value="Fecha" rendered="{!escrituraCampoNueve}"/>
+                      <apex:inputField id="escrituraCampoNueve" onchange="actdesactNueve('lectura');" value="{!Account.Fecha__c}" rendered="{!escrituraCampoNueve}"/>                
+                    </apex:pageBlockSectionItem> -->
+                </apex:pageBlockSection>  
+                
+                <apex:pageBlockSection id="pBSICampoDiez" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoDiez}" helpText="{!$ObjectType.Account.fields.DeTelcelCliente__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoDiezLabel" value="De Telcel con el Cliente" rendered="{!lecturaCampoDiez}"/>
+                        <apex:outputLabel title="{!IF(perfilValidoEscritura,'editar','')}" id="lecturaCampoDiez"  ondblclick="{!IF(perfilValidoEscritura,'actdesactDiez('&escritura&')','')}"  styleClass="{!IF(perfilValidoEscritura,'inlineEditWriteOn','')}" style="cursor:{!IF(perfilValidoEscritura,'pointer','default')}; background-color:transparent;"  value="{!Account.DeTelcelCliente__c}" rendered="{!lecturaCampoDiez}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!escrituraCampoDiez}" helpText="{!$ObjectType.Account.fields.DeTelcelCliente__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoDiezLabel" value="De Telcel con el Cliente" rendered="{!escrituraCampoDiez}"/>
+                      <apex:inputField id="escrituraCampoDiez" onblur="actdesactDiez('lectura');" value="{!Account.DeTelcelCliente__c}" rendered="{!escrituraCampoDiez}"/>                
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection> 
+                
+                <apex:pageBlockSection > </apex:pageBlockSection>
+                
+                <apex:pageBlockSection id="pBSICampoOnce" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoOnce}" helpText="{!$ObjectType.Account.fields.VoBoNombre__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoOnceLabel" value="VoBo Nombre"/>
+                        <apex:outputLabel id="lecturaCampoOnce" value="{!Account.VoBoNombre__c}" rendered="{!lecturaCampoOnce}"/>
+                    </apex:pageBlockSectionItem>
+                    <!--<apex:pageBlockSectionItem rendered="{!escrituraCampoOnce}" helpText="{!$ObjectType.Account.fields.VoBoNombre__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoOnceLabel" value="VoBo Nombre" rendered="{!escrituraCampoOnce}"/>
+                      <apex:inputField id="escrituraCampoOnce" onblur="actdesactOnce('lectura');" value="{!Account.VoBoNombre__c}" rendered="{!escrituraCampoOnce}"/>                
+                    </apex:pageBlockSectionItem>-->
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection id="pBSICampoDoce" columns="1">
+                    <apex:pageBlockSectionItem rendered="{!lecturaCampoDoce}" helpText="{!$ObjectType.Account.fields.VoBoFecha__c.inlineHelpText}">
+                        <apex:outputLabel id="lecturaCampoDoceLabel" value="VoBo Fecha" rendered="{!lecturaCampoDoce}"/>
+                        <apex:outputLabel id="lecturaCampoDoce" value="{!DAY(Account.VoBoFecha__c)}{!IF(Account.VoBoFecha__c!=NULL,'/','')}{!MONTH(Account.VoBoFecha__c)}{!IF(Account.VoBoFecha__c!=NULL,'/','')}{!YEAR(Account.VoBoFecha__c)}"/>
+                    </apex:pageBlockSectionItem>
+                <!--    <apex:pageBlockSectionItem rendered="{!escrituraCampoDoce}" helpText="{!$ObjectType.Account.fields.VoBoFecha__c.inlineHelpText}">  
+                      <apex:outputLabel id="escrituraCampoDoceLabel" value="VoBo Fecha" rendered="{!escrituraCampoDoce}"/>
+                      <apex:inputField id="escrituraCampoDoce" onchange="actdesactDoce('lectura');" value="{!Account.VoBoFecha__c}" rendered="{!escrituraCampoDoce}"/>                
+                    </apex:pageBlockSectionItem>-->
+                </apex:pageBlockSection>  
+            
+            </apex:pageBlockSection>
+        
+            <input id="btnGuardar2" type="button" onclick="guardarAF();" class="btn" style="margin-left:31%; visibility:hidden;" value="Guardar"/>
+            <input id="btnCancelar2" type="button" onclick="cancelarAF();" class="btn" style="margin-left:3px; visibility:hidden;" value="Cancelar"/>
+            
+        </apex:pageBlock>
+    
+    </apex:form>
+    
+
+    <!-- COMPETENCIA TELCEL--> 
+    <apex:form >   
+        <apex:pageBlock id="pBCompetencia" >
+            <apex:pageBlockSection columns="1" collapsible="true" title="Competencia Telcel">
+                    <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a0E/e?CF00N1500000H1kRQ={!Account.Name}&CF00N1500000H1kRQ_lkid={!Account.Id}&retURL=%2F{!Account.Id}','_blank');" value="Nueva Competencia Telcel"/>
+                <apex:pageBlockTable value="{!elementosAMostrarCompetencia}" var="ct" >
+                    <apex:column headervalue="Competidor"><apex:outputLink target="_blank" value="/{!ct.Id}">{!ct.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!ct.VentajaCompetitiva__c}"/>
+                    <apex:column value="{!ct.Debilidad__c}"/>
+                    <apex:column value="{!ct.ApoyoenCliente__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" action="{!anteriorCompetencia}" value="Anterior" reRender="pBCompetencia" rendered="{!IF(OR(totalIndicesCompetencia==0,indiceActualCompetencia==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" action="{!siguienteCompetencia}" value="Siguiente" reRender="pBCompetencia" rendered="{!IF(OR(totalIndicesCompetencia==0,indiceActualCompetencia==totalIndicesCompetencia),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+   </apex:form>          
+</apex:page>

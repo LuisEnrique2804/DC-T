@@ -1,0 +1,17 @@
+<apex:page showHeader="true" sidebar="true" standardController="Cliente__c" extensions="DCT_NewLeadFromCustomAccount_ctr">
+
+	<apex:form >
+
+		<apex:actionFunction name="redirectToLeadCreation" action="{!goToNewLeadCreationPage}"/>
+
+		<script type="text/javascript">
+			
+			window.onload = function(){
+				redirectToLeadCreation();
+			} 
+
+		</script>
+
+	</apex:form>
+ 
+</apex:page>

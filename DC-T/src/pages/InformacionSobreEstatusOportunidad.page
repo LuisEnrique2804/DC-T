@@ -1,0 +1,116 @@
+<apex:page standardController="SeguimientoOportunidades__c">
+<apex:pageBlock >
+<apex:pageBlockSection columns="1" collapsible="true" title="Coordenadas de la Oportunidad">
+<apex:pageBlockTable value="{!SeguimientoOportunidades__c}" var="so">
+<apex:column value="{!so.Fechainicio__c}"/>
+<apex:column value="{!so.Fase__c}"/>
+<apex:column value="{!so.Proximaaccion__c}"/>
+<apex:column value="{!so.Fechaproximaaccion__c}"/>
+<apex:column value="{!so.LineasR9__c}"/>
+<apex:column value="{!so.LineasR1a8__c}"/>
+<apex:column value="{!so.LineasDAT__c}"/>
+<apex:column value="{!so.Fechacierre__c}"/>
+<apex:column value="{!so.P__c}"/>
+
+<apex:column headerValue="Embudo">
+     <apex:outputLink value="/{!so.Embudo__c}" target="_top">{!so.Embudo__r.Name}</apex:outputLink>
+</apex:column>
+
+</apex:pageBlockTable>
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock >
+<apex:pageBlockSection columns="1" collapsible="true" title="Objetivo de Telcel">
+<apex:outputField value="{!SeguimientoOportunidades__c.RelevanciaOportnunidad__c}"/><br />
+<apex:outputField value="{!SeguimientoOportunidades__c.Rentabilidad__c}"/>
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock >
+<apex:pageBlockSection columns="1" collapsible="true" title="Competencia en la Oportunidad">
+
+<html>
+<table border="0" width="100%">
+<tr>
+<th width="30%"></th>
+<th bgcolor="#a9a9a9" width="35%"><font color = "FFFFFF">COMPETIDOR</font></th>
+<th bgcolor="#a9a9a9" width="35%"><font color = "FFFFFF">TELCEL</font></th>
+</tr>
+
+<tr />
+
+<tr>
+<td  />
+<td><b><font color="#00008b">{!SeguimientoOportunidades__c.Competidor__c}</font></b></td>
+<td />
+</tr>
+
+<tr>
+<td bgcolor="#a9a9a9">
+<b><font color = "FFFFFF">Ventajas Competitivas</font></b>
+</td>
+<td>
+{!SeguimientoOportunidades__c.VentajaCompetitivaCompetidor__c}
+</td>
+<td>
+{!SeguimientoOportunidades__c.VentajaCompetitivaTelcel__c}
+</td>
+</tr>
+
+<tr>
+<td bgcolor="#a9a9a9">
+<b><font color = "FFFFFF">Vulnerabilidad</font></b>
+</td>
+<td>
+{!SeguimientoOportunidades__c.VulnerabilidadCompetidor__c}
+</td>
+<td>
+{!SeguimientoOportunidades__c.VulnerabilidadTelcel__c}
+</td>
+</tr>
+
+<tr>
+<td bgcolor="#a9a9a9">
+<b><font color = "FFFFFF">Apoyo en el Cliente</font></b>
+</td>
+<td>
+{!SeguimientoOportunidades__c.Apoyocliente__c}
+</td>
+<td>
+{!SeguimientoOportunidades__c.ApoyoclienteTelcel__c}
+</td>
+</tr>
+
+<tr>
+<td bgcolor="#a9a9a9">
+<b><font color = "FFFFFF">Estrategia (Tipo)</font></b>
+</td>
+<td>
+{!SeguimientoOportunidades__c.EstrategiaCompetidor__c}
+</td>
+<td>
+{!SeguimientoOportunidades__c.EstrategiaTelcel__c}
+</td>
+</tr>
+
+<tr>
+<td bgcolor="#a9a9a9">
+<b><font color = "FFFFFF">Descripción</font></b>
+</td>
+<td>
+{!SeguimientoOportunidades__c.DescripcionCompetidor__c}
+</td>
+<td>
+{!SeguimientoOportunidades__c.DescripcionTelcel__c}
+</td>
+</tr>
+
+</table>
+</html>
+
+
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:page>

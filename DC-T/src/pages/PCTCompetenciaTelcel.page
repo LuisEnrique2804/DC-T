@@ -1,0 +1,30 @@
+<apex:page standardController="Account">
+
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+
+<script >
+$j = jQuery.noConflict();
+$j(document).ready(function() {
+$j('a').attr("target","_parent");
+});
+</script > 
+
+
+<apex:pageBlock >
+<apex:pageBlockSection columns="1" collapsible="true" title="Competencia Telcel">
+
+<apex:form >
+<apex:commandButton onclick="window.open('/a01/e?CF00N1500000DCv6f={!Account.Name}&CF00N1500000DCv6f_lkid={!Account.Id}&retURL=%2F{!Account.Id}','_top');" value="Nueva Competencia Telcel">
+</apex:commandButton>
+</apex:form>
+
+<apex:pageBlockTable value="{!Account.CompetenciaTelcel__r}" var="ct" >
+<apex:column headervalue="Competidor"><apex:outputLink target="_parent" value="/{!ct.Id}">{!ct.Name}</apex:outputLink></apex:column>
+<apex:column value="{!ct.VentajaCompetitiva__c}"/>
+<apex:column value="{!ct.Debilidad__c}"/>
+<apex:column value="{!ct.ApoyoenCliente__c}"/>
+</apex:pageBlockTable>
+</apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:page>

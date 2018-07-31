@@ -1,0 +1,401 @@
+<apex:page standardController="Cliente__c" showHeader="false" sidebar="false" extensions="DCT_Product_ctr" action="{!creaConsecutivoWebSer}">
+  <html >
+    <head>
+<!--       <apex:includeScript value="/support/console/41.0/integration.js"/>
+      <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+      <apex:includeScript value="/soap/ajax/40.0/connection.js"/> -->
+      <apex:slds />
+      <script type="text/javascript">
+        function ProductModal() {
+          console.log('Partida');
+          $('#rejectionprocedureheading').html('Nuevo Producto');
+          $('#rejectionprocedure').show();
+          $('#rejectionprocedurebackground').show();
+        }
+        function closeModal() {
+          $('#rejectionprocedure').hide();
+          $('#rejectionprocedurebackground').hide();
+        }
+        function jsSaveProduct() {
+          AfsaveProducts();
+        }
+        function Refresh(){
+          console.log('Luis');
+          afRefreshTable();
+          console.log('Enrique');
+        }
+        function jsRefresh(estatus){
+		  //alert('Estatus: ' + sEstatus);
+		  if (sEstatus == 'true'){
+	          console.log('Luis');
+	          afRefreshTable();
+	          console.log('Enrique');
+		  }//Fin si sEstatus == 'false'
+        }
+        function jsActualizaGrupoPlan(idMercado){
+		  if (idMercado == '2')
+	          afActualizaGrupoPlan();
+        }
+        function jsEliminarProducto(idProducto){
+          //alert('PRODUCTO: ' + idProducto);
+          var idProductoPaso = idProducto;
+		  if (idProductoPaso != null && idProductoPaso != ''){
+  			if(confirm("Estas seguro de eliminar este producto?")){
+	          	afEliminarProducto(idProductoPaso);
+	          	return true;    			
+  			}else
+    			return false;
+		  }//Fin si idProductoPaso != null && idProductoPaso != ''
+        }
+      </script>
+    </head>
+    <body class="slds-scope">
+
+         <apex:actionStatus id="processing">
+                <apex:facet name="start">
+                    <div class="slds-spinner_container slds-is-fixed">
+                        <div class="slds-spinner--brand slds-spinner slds-spinner--medium" role="alert">
+                            <span class="slds-assistive-text">Processing</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+    
+      <apex:form >
+        <apex:actionFunction name="AfsaveProducts" action="{!saveProduct}"/>
+        <apex:actionFunction name="afActualizaGrupoPlan" action="{!actualizaGrupoPlan}" rerender="tipoMercado,GrupoPlan"/>
+        <apex:actionFunction name="afRefreshTable" action="{!refreshTable}" />
+        <apex:actionFunction name="CreatePlan" action="{!DespliegaCamposNuevoPlan}" reRender="main"/>
+        <apex:actionFunction name="CreateProducto" action="{!watchField2}" reRender="main"/>
+      </apex:form>
+      
+      <apex:outputPanel id="main">
+        <apex:form id="theForm1">
+
+			<apex:actionFunction name="afEliminarProducto" action="{!eliminarProducto}" status="processing" reRender="theForm1" >
+				<apex:param name="provId" value="" assignTo="{!provId}"/>
+			</apex:actionFunction>        
+            <apex:actionFunction name="savePlan" action="{!savePlans}" rerender="msgs0OP,ouPanelError,theform2" />
+                    
+	        <apex:outputPanel id="producctos">      
+	        <div style="width: 90%; margin: 0 auto;">
+	          <div style="width: max-content; margin: 0 auto;">
+           	    <apex:commandButton styleClass="slds-button slds-button_brand" action="{!watchField2}" reRender="main" value="Nuevo Producto" rendered="{!AND(DirComFzaVta.DCTStatus__c == 'Activo', ($Profile.Name== 'JEC' || $Profile.Name == 'Administrador del sistema'))}" status="processing" />	          
+<!-- 	            <apex:outputLink onclick="CreateProducto(); return false;" styleClass="slds-button slds-button_brand" rendered="{!DirComFzaVta.DCTStatus__c == 'Activo'}">
+	              Nuevo Producto
+	            </apex:outputLink> -->
+	          </div>
+	          <br/>
+			  <apex:outputPanel rendered="{!blnIsOnclick2}">
+	              <label class="slds-form-element__label">Producto</label>
+	              <apex:inputText style="" styleClass="slds-combobox__input" value="{!sProductoBusqueda}"/>
+	              &nbsp;&nbsp;&nbsp;
+	              <apex:commandButton styleClass="slds-button slds-button_brand" action="{!buscaProducto}" value="Buscar" rerender="theForm1, oupDatosPlanes" status="processing"/>
+	              &nbsp;&nbsp;&nbsp;
+	              <apex:commandButton styleClass="slds-button slds-button_brand" action="{!cancelarBusqueda}" value="Cancelar" rerender="theForm1, oupDatosPlanes" status="processing"/>	              
+			  </apex:outputPanel>
+			  <!-- Despliega la lista de productos encontrados -->			  
+			  <apex:outputPanel rendered="{!lwrpProductoSelecionados.size > 0}">			  
+          	  	<br/><br/>			    
+	            <table class="slds-table slds-table_bordered" >
+	              <thead>
+	                <tr class="slds-text-title_caps" style="text-align: left;">
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title=""></div>
+	                    </th>	                
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title="Nombre">Nombre</div>
+	                    </th>
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title="Nombre">Clave</div>
+	                    </th>	                    
+	                    <th scope="col">
+	                      <div class="slds-truncate" title="Familia">Especial</div>
+	                    </th>
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title="Familia">Familia</div>
+	                    </th>
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title="Familia">Descripción</div>
+	                    </th>
+	                </tr>
+	              </thead>
+	              <tbody>
+						<apex:repeat value="{!lwrpProductoSelecionados}" var="producto">
+							<tr class="slds-text-title_caps">
+								<td >
+									<apex:inputCheckbox value="{!producto.bSelect}"/>
+                                </td>							                                                   
+								<td data-label="{!producto.producto.Name}">
+                                    <div class="slds-truncate" title="{!producto.producto.Name}">{!producto.producto.Name}</div>
+                                </td>
+								<td data-label="{!producto.producto.Name}">
+                                    <div class="slds-truncate" title="{!producto.producto.DCTKey__c}">{!producto.producto.DCTKey__c}</div>
+                                </td>                                
+                                <td data-label="{!producto.producto.DCT_IsSpecialProduct__c}" style="text-align: center;">
+                                    <div class="slds-truncate" title="{!producto.producto.DCT_IsSpecialProduct__c}">
+										<apex:outputField value="{!producto.producto.DCT_IsSpecialProduct__c}"/>                                    
+                                    </div>
+                                </td>
+                                <td data-label="{!producto.producto.Family}">
+                                    <div class="slds-truncate" title="{!producto.producto.Family}">{!producto.producto.Family}</div>
+                                </td>
+                                <td data-label="{!producto.producto.Description}">
+                                    <div class="slds-truncate" title="{!producto.producto.Description}">{!producto.producto.Description}</div>
+                                </td>
+                            </tr>
+						</apex:repeat>
+	              </tbody>
+	            </table>
+		        <br/>
+	        	<div style="width: 90%; margin: 0 auto; text-align: center;">		        
+	            	<apex:commandButton styleClass="slds-button slds-button_brand" action="{!saveProduct}" value="Guardar" rendered="{!$Profile.Name== 'JEC'|| $Profile.Name == 'Administrador del sistema'}"  rerender="theForm1" status="processing"/>
+	        	</div>
+	            <br/>
+	          </apex:outputPanel>
+	      	  <apex:pageMessages />	          
+	          <apex:outputPanel rendered="{!AND(lstProdSelecc.size == 0, !blnIsOnclick2)}">
+	            No hay Productos para esta cuenta
+	          </apex:outputPanel>
+			  <apex:outputPanel rendered="{!AND(lstProdSelecc.size > 0, !blnIsOnclick2)}">
+	            <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered slds-no-row-hover" >
+	              <thead>
+	                <tr class="slds-text-title_caps" style="text-align: left;">
+						<td style="text-align: center;">
+	                      <div class="slds-truncate" title=""></div>
+						</td>	                
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title="Nombre">Nombre</div>
+	                    </th>
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title="Nombre">Clave</div>
+	                    </th>	                    
+	                    <th scope="col">
+	                      <div class="slds-truncate" title="Familia">Especial</div>
+	                    </th>
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title="Familia">Familia</div>
+	                    </th>
+	                    <th scope="col" >
+	                      <div class="slds-truncate" title="Familia">Descripción</div>
+	                    </th>
+	                </tr>
+	              </thead>
+	              <tbody>
+						<apex:repeat value="{!lstProdSelecc}" var="producto">
+							<tr class="slds-text-title_caps">
+								<td style="text-align: center;">
+									<apex:image rendered="{!$Profile.Name== 'JEC'|| $Profile.Name == 'Administrador del sistema'}" onclick="Javascript:jsEliminarProducto('{!producto.ID}');" value="{!URLFOR($Resource.SLDS,'icons/utility/close_60.png')}" style="height: 15px; width: 15px; cursor: pointer;" title="eliminar"/>
+								</td>
+								<td data-label="{!producto.Producto__r.Name}">
+                                    <div class="slds-truncate" title="{!producto.Producto__r.Name}">{!producto.Producto__r.Name}</div>
+                                </td>
+								<td data-label="{!producto.Producto__r.Name}">
+                                    <div class="slds-truncate" title="{!producto.Producto__r.DCTKey__c}">{!producto.Producto__r.DCTKey__c}</div>
+                                </td>                                
+                                <td data-label="{!producto.Producto__r.DCT_IsSpecialProduct__c}">
+                                    <div class="slds-truncate" title="{!producto.Producto__r.DCT_IsSpecialProduct__c}">
+										<apex:outputField value="{!producto.Producto__r.DCT_IsSpecialProduct__c}"/>                                    
+                                    </div>
+                                </td>
+                                <td data-label="{!producto.Producto__r.Family}">
+                                    <div class="slds-truncate" title="{!producto.Producto__r.Family}">{!producto.Producto__r.Family}</div>
+                                </td>
+                                <td data-label="{!producto.Producto__r.Description}">
+                                    <div class="slds-truncate" title="{!producto.Producto__r.Description}">{!producto.Producto__r.Description}</div>
+                                </td>
+                            </tr>
+						</apex:repeat>
+	              </tbody>
+	            </table>
+	          </apex:outputPanel>
+	        </div>
+        </apex:outputPanel>        
+        </apex:form>        
+        <br/>
+        <br/>
+        <div style="width: 100%; margin: 0 auto;">
+          <apex:form id="theform2">
+            <div style="width: max-content; margin: 0 auto;">
+           	  <apex:commandButton styleClass="slds-button slds-button_brand" action="{!DespliegaCamposNuevoPlan}" reRender="main" value="Nuevo Plan" rendered="{!AND(DirComFzaVta.DCTStatus__c == 'Activo', ($Profile.Name== 'JEC' || $Profile.Name == 'Administrador del sistema'))}" status="processing" />            
+<!--               <apex:outputLink onclick="CreatePlan(); return false;" styleClass="slds-button slds-button_brand" rendered="{!DirComFzaVta.DCTStatus__c == 'Activo'}" status="processing">
+                Nuevo Plan
+              </apex:outputLink> -->
+            </div>
+            <br/>
+	        <apex:pageMessages />            
+            <apex:outputPanel rendered="{!blnIsOnclick}" id="oupDatosPlanes">
+            <table class="slds-table slds-table_bordered">
+              <thead>
+                <tr class="slds-text-title_caps">
+                    <!-- <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate">
+                        <label class="slds-form-element__label">
+                          Tipo Mercado
+                        </label>
+                      </div>
+                    </th> -->
+                    <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate">
+                        <label class="slds-form-element__label">
+                          Grupo Plan
+                        </label>
+                      </div>
+                    </th>
+                    <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate">
+                        <label class="slds-form-element__label">
+                          Plazos
+                        </label>
+                      </div>
+                    </th>
+                    <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate">
+                        <label class="slds-form-element__label">
+                          Planes
+                        </label>
+                      </div>
+                    </th>
+                </tr>
+              </thead>
+              <tbody>
+                  <tr class="slds-text-title_caps">
+                      <!-- <td data-label="Tipo Mercado" style="text-align: center;">
+                        <div class="slds-truncate" title="Tipo Mercado">
+                            <apex:selectList value="{!sTipoMercado}" title="TipoMercado" size="1" id="tipoMercado">
+                                <apex:selectOptions value="{!slTipoMercado}" />
+                                <apex:actionSupport event="onchange" action="{!actualizaGrupoPlan}" rerender="GrupoPlan,Planes,TipoServ,msgs0OP" status="actGrupPlan" oncomplete="JavaScript:jsActualizaGrupoPlan('{!sTipoMercado}'); return true;" />
+                            </apex:selectList>
+                        </div>
+                        <br/>
+                        <apex:actionStatus id="actGrupPlan" startText=" (Actualzando Grupos para el plan...)" stopText=""/>
+                      </td> -->
+                      <td data-label="Grupo Plan" style="text-align: center;">
+                        <div class="slds-truncate" title="Grupo Plan">
+                            <apex:selectList value="{!sGrupoPlan}" title="GrupoPlan" size="1" id="GrupoPlan">
+                                <apex:selectOptions value="{!slGrupoPlan}" />
+                                <apex:actionSupport event="onchange" action="{!actualizaPlazos}" rerender="Plazos,Planes,TipoServ,msgs0OP" status="actPlazos" oncomplete="jsDespDoc();" />
+                                <apex:actionStatus id="actPlazos" startText=" (Actualzando los plazos y planes...)" stopText=""/>                       
+                            </apex:selectList>
+                        </div>
+                      </td>
+                      <td data-label="Plazos" style="text-align: center;">
+                        <div class="slds-truncate" title="Plazos">
+                            <apex:selectList value="{!sPlazos}" title="Plazos" size="1" id="Plazos">
+                                <apex:selectOptions value="{!selPlazos}" />
+                                <apex:actionSupport event="onchange" action="{!actualizaPlanes}" rerender="Planes,TipoServ,msgs0OP" status="actPlanes" oncomplete="jsDespDoc();" />
+                                <apex:actionStatus id="actPlanes" startText=" (Actualzando los planes...)" stopText=""/>                       
+                            </apex:selectList>
+                        </div>
+                      </td>
+                      <td data-label="Planes" style="text-align: center;">
+                        <div class="slds-truncate" title="Planes">
+                            <apex:selectList value="{!sPlanes}" title="Planes" size="1" id="Planes">
+                                <apex:selectOptions value="{!selPlanes}" />
+<!--                                 <apex:actionSupport event="onchange" action="{!actualizaGuiaPlanes}" rerender="TipoServ,msgs0OP" status="actGuiaPlanes" oncomplete="jsDespDoc();" />
+                                <apex:actionStatus id="actGuiaPlanes" startText=" (Actualzando la guia del Plan...)" stopText=""/>                        -->
+                            </apex:selectList>
+                        </div>
+                      </td>
+                  </tr>
+                  <tr class="slds-text-title_caps">
+                      <td data-label="Tarifa" style="text-align: left;" colspan="4">
+                        <div class="slds-truncate" title="Tatifa">
+                            <label class="slds-form-element__label">
+                              Tarifa
+                            </label>   
+                            <apex:selectList value="{!sTarifas}" title="Tarifa" size="1" id="Tarifa">
+                                <apex:selectOptions value="{!selTarifas}" />                                
+                            </apex:selectList>
+                        </div>
+                      </td>                  
+                  </tr>
+                  
+                  <!-- <tr class="slds-text-title_caps">
+                      <td data-label="Tipo de Servicio" style="text-align: left;" colspan="4">
+                        <div class="slds-truncate" title="TipoServ">
+                            <label class="slds-form-element__label">
+                              Tipo de Servicio
+                            </label>                                            
+                            <apex:selectList value="{!sGuiaPlanes}" title="TipoServ" size="1" id="TipoServ">
+                                <apex:selectOptions value="{!selGuiaPlanes}" />
+                                <apex:actionSupport event="onchange" action="{!validaTipoServ}" rerender="DetPlan,msgs0OP" status="actGuiaPlanes" oncomplete="jsDespDoc();" />                                
+                            </apex:selectList>
+                        </div>
+                      </td>                  
+                  </tr> -->
+              </tbody>
+            </table>            
+            <br/>   
+            <div style="width: max-content; margin: 0 auto; text-align: center;">           
+               <apex:commandButton styleClass="slds-button slds-button_brand" action="{!savePlans}" value="Guardar" rendered="{!DirComFzaVta.DCTStatus__c == 'Activo'}" oncomplete="JavaScript:jsRefresh({!blnIsOnclick}); return true;" rerender="theform2"/>
+	              &nbsp;&nbsp;&nbsp;
+	           <apex:commandButton styleClass="slds-button slds-button_brand" action="{!cancelarNuevoPlan}" value="Cancelar" rerender="theform2" status="processing"/>	                                          
+            </div>
+          </apex:outputPanel>            
+          <br/>
+          <apex:outputPanel rendered="{!lstDCTPlan.size == 0}" id="oupNoPlanes">
+            No Hay Planes Asociados con Esta Cuenta
+          </apex:outputPanel>
+          <apex:outputPanel rendered="{!lstDCTPlan.size <> 0}">
+            <table class="slds-table slds-table_bordered">
+              <thead>
+                <tr class="slds-text-title_caps">
+                  <apex:repeat value="{!$ObjectType.DCTAuthorizedLines__c.FieldSets.DCTPLanTable}" var="field">
+                    <th scope="col" style="text-align: center;">
+                      <div class="slds-truncate" title="{!field.label}">{!field.label}</div>
+                    </th>
+                  </apex:repeat>
+                </tr>
+              </thead>
+              <tbody>
+                <apex:repeat value="{!lstDCTPlan}" var="iterator">
+                  <tr class="slds-text-title_caps">
+                    <apex:repeat value="{!$ObjectType.DCTAuthorizedLines__c.FieldSets.DCTPLanTable}" var="field">
+                      <td data-label="{!iterator[field]}" style="text-align: center;">
+                        <div class="slds-truncate" title="{!iterator[field]}">
+                          <apex:outputField value="{!iterator[field]}"/>
+                        </div>
+                      </td>
+                    </apex:repeat>
+                  </tr>
+                </apex:repeat>
+              </tbody>
+            </table>
+          </apex:outputPanel>
+          </apex:form>          
+        </div>
+        <div style="height: 940px; display:none" id="rejectionprocedure">
+          <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <button type="button" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="closeModal();">
+                  <svg class="slds-button__icon slds-button__icon_small" aria-hidden="true">
+                    <use xlink:href="{! URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#close') }" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                  </svg>
+                  <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 id="rejectionprocedureheading" class="slds-text-heading_small slds-hyphenate"></h2>
+              </header>
+              <div class="slds-modal__content slds-p-around_large rejectionprocedurecontent" id="rejectionprocedurecontent" styleClass="width: '100%'">
+                <apex:form >
+                  <apex:pageBlock >
+                    <apex:pageBlockSection >
+                      <apex:inputField style="" styleClass="slds-combobox__input" value="{!DCTnewProduct.DCTProduct__c}"/>
+                    </apex:pageBlockSection>
+                  </apex:pageBlock>
+                </apex:form>
+              </div>
+              <footer class="slds-modal__footer">
+                <button class="slds-button slds-button_brand" onclick="saveAllRejections();">Guardar</button>
+              </footer>
+            </div>
+          </section>
+          <div class="slds-backdrop slds-backdrop_open" id="rejectionprocedurebackground" style="display:none;"></div>
+        </div>
+      </apex:outputPanel>
+    </body> 
+  </html>
+</apex:page>

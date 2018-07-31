@@ -1,0 +1,60 @@
+<apex:page standardController="Account" showHeader="false" sidebar="false">
+	<html>
+		<head>
+			<apex:slds />
+		</head>
+		<body class="slds-scope" style="width: 100%;">
+			<div style="width: 100%; margin: 0 auto;">
+				<apex:variable value="{!0}" var="lines"/>
+				<apex:repeat value="{!Account.Lineas_Autorizadas__r}" var="iterator">
+					<apex:variable value="{!lines+1}" var="lines"/>
+				</apex:repeat>
+				<div style="width: max-content; margin: 0 auto;">
+					<apex:outputLink value="{!URLFOR($Action.DCTAuthorizedLines__c.New)}" styleClass="slds-button slds-button_brand">
+						Nueva línea
+					</apex:outputLink>
+				</div>
+				<br/>
+				<apex:outputPanel rendered="{!lines == 0}">
+					No hay líneas autorizadas para esta cuenta
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!lines <> 0}">
+					<table class="slds-table slds-table_bordered">
+					 	<thead>
+					    	<tr class="slds-text-title_caps">
+					    		<th scope="col">
+					        		<div class="slds-truncate" title="Nombre del plan">Nombre del plan</div>
+					      		</th>
+					    		<apex:repeat value="{!$ObjectType.DCTAuthorizedLines__c.FieldSets.ActiveLinesTable}" var="field">
+					    			<th scope="col">
+						        		<div class="slds-truncate" title="{!field.label}">{!field.label}</div>
+						      		</th>
+					    		</apex:repeat>
+					    	</tr>
+						</thead>
+						<tbody>
+							<apex:repeat value="{!Account.Lineas_Autorizadas__r}" var="iterator">
+								<tr class="slds-text-title_caps">
+									<th scope="row" data-label="Authorized line name" style="text-align: center;">
+									    <div class="slds-truncate" title="{!iterator.Name}">
+										    <apex:outputLink value="{!URLFOR($Action.DCTAuthorizedLines__c.View, iterator.Id)}">
+										    	{!iterator.Name}
+										    </apex:outputLink>
+									    </div>
+									</th>
+							 		<apex:repeat value="{!$ObjectType.DCTAuthorizedLines__c.FieldSets.ActiveLinesTable}" var="field">
+					    			 	<td data-label="{!iterator[field]}" style="text-align: center;">
+									        <div class="slds-truncate" title="{!iterator[field]}">
+									        	<apex:outputField value="{!iterator[field]}"/>
+									        </div>
+									    </td>
+					    			</apex:repeat>
+								</tr>
+							</apex:repeat>
+						</tbody>
+					</table>
+				</apex:outputPanel>
+			</div>
+		</body> 
+	</html>
+</apex:page>

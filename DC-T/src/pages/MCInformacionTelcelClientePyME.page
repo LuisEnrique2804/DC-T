@@ -1,0 +1,169 @@
+<apex:page standardController="MapaCliente__c" extensions="MapaClienteExtension">
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+        <script>
+            $j = jQuery.noConflict();
+            $j(document).ready(function() {
+            $j('a').attr("target","_blank");
+            });
+
+            function redireccionaGuardado(){
+            var referrer = document.referrer;
+            window.open(referrer, '_top');
+            }
+        </script> 
+    
+    <apex:form >
+        <apex:pageBlock id="pBInversionTIC">
+            <apex:pageBlockSection columns="1" collapsible="true" title="Inversión en Servicios TIC (Cliente) y Facturación (Telcel)">
+                <apex:pageBlockTable value="{!elementosAMostrarInversionTIC}" var="isticfe">
+                    <apex:column headervalue="Nombre"><apex:outputLink target="_blank" value="/{!isticfe.Id}">{!isticfe.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!isticfe.PlataformasTIC__c }"/>
+                    <apex:column value="{!isticfe.CompetenciaTelcel__c }"/>
+                    <apex:column value="{!isticfe.InversionCliente__c  }"/>
+                    <apex:column value="{!isticfe.ProductosServiciosSolucionesTelcel__c }"/>
+                    <apex:column value="{!isticfe.FactTelcel__c  }"/>
+                    <apex:column value="{!isticfe.PorcentajeTelcel__c  }"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                     <apex:commandLink target="_parent" action="{!anteriorInversionTIC}" value="Anterior" reRender="pBInversionTIC" rendered="{!IF(OR(totalIndicesInversionTIC==0,indiceActualInversionTIC==1),'false','true')}"/>
+                     <apex:commandLink target="_parent" action="{!siguienteInversionTIC}" value="Siguiente" reRender="pBInversionTIC" rendered="{!IF(OR(totalIndicesInversionTIC==0,indiceActualInversionTIC==totalIndicesInversionTIC),'false','true')}"/>
+                </apex:panelGrid>
+                <apex:pageBlockTable value="{!MapaCliente__c}" var="mcpsst">
+                    <apex:column headervalue="--------------------"/>
+                    <apex:column headervalue="-----------------------------------"/>
+                    <apex:column value="{!mcpsst.SumaInversionTotalCliente__c  }"/>
+                    <apex:column headervalue="-----------------------------"/>
+                    <apex:column value="{!mcpsst.SumaInversionTelcel__c  }"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+
+    <!--<apex:form > 
+        <apex:pageBlock id="pBInversionTradicional" >
+            <apex:pageBlockSection columns="1" collapsible="true" title="Inversión en Servicios Tradicionales (Líneas)">
+                <apex:pageBlockTable value="{!elementosAMostrarInversionTradicional}" var="ist">
+                    <apex:column headervalue="Nombre"><apex:outputLink target="_blank" value="/{!ist.Id}">{!ist.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!ist.PlataformaServiciosTradicionales__c}"/>
+                    <apex:column headervalue="Líneas Telcel" value="{!ist.LineasTelcel__c }"/>
+                    <apex:column headervalue="Facturación Telcel" value="{!ist.FacturacionTelcel__c }"/>
+                    <apex:column headervalue="Competidor" value="{!ist.Competidor__c}"/>
+                    <apex:column headervalue="Líneas Competidor" value="{!ist.LineasCompetidor__c }"/>
+                    <apex:column headervalue="Facturación Competidor" value="{!ist.FacturacionCompetidor__c }"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                         <apex:commandLink target="_parent" action="{!anteriorInversionTradicional}" value="Anterior" reRender="pBInversionTradicional" rendered="{!IF(OR(totalIndicesInversionTradicional==0,indiceActualInversionTradicional==1),'false','true')}"/>
+                         <apex:commandLink target="_parent" action="{!siguienteInversionTradicional}" value="Siguiente" reRender="pBInversionTradicional" rendered="{!IF(OR(totalIndicesInversionTradicional==0,indiceActualInversionTradicional==totalIndicesInversionTradicional),'false','true')}"/>
+                    </apex:panelGrid>
+                <apex:pageBlockTable value="{!MapaCliente__c}" var="mcitc">
+                    <apex:column value="{!mcitc.GranTotalLineas__c}"/>
+                    <apex:column value="{!mcitc.GranTotalFacturacion__c}"/>
+                    <apex:column value="{!mcitc.SumaLineasTelcel__c}"/>
+                    <apex:column value="{!mcitc.SumaFacturacionTelcel__c}"/>
+                    <apex:column headervalue="-----------------"/>
+                    <apex:column value="{!mcitc.SumaLineasCompetidor__c }"/>
+                    <apex:column value="{!mcitc.SumaFacturacionCompetidor__c }"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form> -->
+    
+    <apex:form >
+        <apex:pageBlock id="pBCompetidores" >
+            <apex:pageBlockSection title="Servicios Tradicionales" collapsible="true" Columns="1">
+                <apex:pageBlockTable value="{!MapaCliente__c.ServiciosTradicionales__r}" var="st">
+                    <apex:column headervalue="Nombre"><apex:outputLink target="_blank" value="/{!st.Id}">{!st.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!st.Plataforma__c}"/>
+                    <apex:column value="{!st.LineasTelcel__c}"/>
+                    <apex:column value="{!st.FacturacionTelcel__c}"/>
+                    <apex:column value="{!st.LineasCompetidor__c}"/>
+                    <apex:column value="{!st.FacturacionCompetidor__c}"/>                    
+                </apex:pageBlockTable>
+                <apex:pageBlockTable value="{!MapaCliente__c}" var="mcitc">
+                    <apex:column headervalue="-----------------"/>
+                    <apex:column value="{!mcitc.GranTotalLineasTelcel__c}"/>
+                    <apex:column value="{!mcitc.GranTotalFacturacionTelcel__c}"/>
+                    <apex:column value="{!mcitc.GranTotalLineasCompetidor__c}"/>
+                    <apex:column value="{!mcitc.GranTotalFacturacionCompetidor__c}"/>
+                </apex:pageBlockTable>
+                <apex:pageBlockTable value="{!elementosAMostrarCompetidores}" var="cp" >
+                    <apex:column value="{!cp.Plataforma__c}"/>
+                    <apex:column value="{!cp.Name}"/>
+                    <apex:column value="{!cp.LineasCompetidor__c}"/>
+                    <apex:column value="{!cp.Facturacion__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" action="{!anteriorCompetidores}" value="Anterior" reRender="pBCompetidores" rendered="{!IF(OR(totalIndicesCompetidores==0,indiceActualCompetidores==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" action="{!siguienteCompetidores}" value="Siguiente" reRender="pBCompetidores" rendered="{!IF(OR(totalIndicesCompetidores==0,indiceActualCompetidores==totalIndicesCompetidores),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageBlockSection>    
+        </apex:pageBlock>    
+    </apex:form>
+
+    <apex:form >
+        <apex:pageBlock id="pBContrataciones" >
+            <apex:pageBlockSection columns="1" collapsible="true" title="Contrataciones Especiales">
+                    <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a0I/e?CF00N1500000H1kRU={!MapaCliente__c.Name}&CF00N1500000H1kRU_lkid={!MapaCliente__c.Id}&retURL=%2F{!MapaCliente__c.Id}','_blank');" value="Nueva Contración Especial"/>
+                <apex:pageBlockTable value="{!elementosAMostrarContrataciones}" var="cep">
+                    <apex:column headervalue="Número de Cotratación Especial"><apex:outputLink target="_blank" value="/{!cep.Id}">{!cep.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!cep.Descripcion__c}"/>
+                    <apex:column value="{!cep.Monto__c}"/>
+                    <apex:column value="{!cep.Vigencia__c}"/>
+                    <apex:column value="{!cep.Condiciones__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                    <apex:commandLink target="_parent" action="{!anteriorContrataciones}" value="Anterior" reRender="pBContrataciones" rendered="{!IF(OR(totalIndicesContrataciones==0,indiceActualContrataciones==1),'false','true')}"/>
+                    <apex:commandLink target="_parent" action="{!siguienteContrataciones}" value="Siguiente" reRender="pBContrataciones" rendered="{!IF(OR(totalIndicesContrataciones==0,indiceActualContrataciones==totalIndicesContrataciones),'false','true')}"/>
+                </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <!--            
+    <apex:form >
+        <apex:pageBlock mode="inlineEdit">
+            <apex:pageBlockButtons >
+                <apex:commandButton onclick="redireccionaGuardado()" action="{!save}" id="saveButton" value="Guardar" style="display:none"/>
+                <apex:commandButton onclick="resetInlineEdit()" id="cancelButton" value="Cancelar" style="display:none"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" collapsible="true" title="Proceso de Compra" > 
+                <apex:outputfield value="{!MapaCliente__c.ProcesoCompra__c}">
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" event="ondblclick"
+                    changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>  
+
+    <apex:pageBlock >
+        <apex:pageBlockSection columns="1" collapsible="true" title="Centros de Decisión">
+            <apex:form >
+                <apex:commandButton onclick="window.open('/a0L/e?CF00Ng0000001fvo4={!MapaCliente__c.Name}&CF00Ng0000001fvo4_lkid={!MapaCliente__c.Id}&retURL=%2F{!MapaCliente__c.Id}','_top');" value="Nuevo Centro de Decisión">
+                </apex:commandButton>
+            </apex:form>
+            <apex:pageBlockTable value="{!MapaCliente__c.CentrosDecisiones__r}" var="cd">
+                <apex:column headervalue="Número de Centro de Decisión"><apex:outputLink target="_parent" value="/{!cd.Id}">{!cd.Name}</apex:outputLink></apex:column>
+                <apex:column value="{!cd.Donde__c}"/>
+                <apex:column value="{!cd.EntornoQue__c}"/>
+                <apex:column value="{!cd.Criterio__c}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock> -->
+
+    <apex:form >    
+        <apex:pageBlock id="pBIncidencias">
+            <apex:pageBlockSection columns="1" collapsible="true" title="Incidencias Relevantes">
+            <apex:commandButton rendered="{!$Profile.Name = 'JEC' || $Profile.Name = 'Administrador del sistema'}" onclick="window.open('/a0O/e?CF00N1500000H1kRY={!MapaCliente__c.Name}&CF00N1500000H1kRY_lkid={!MapaCliente__c.Id}&retURL=%2F{!MapaCliente__c.Id}','_blank');" value="Nueva Incidencia Relevante"/>
+                <apex:pageBlockTable value="{!elementosAMostrarIncidencias}" var="ir">
+                    <apex:column headervalue="Número de Incidencia Relevante"><apex:outputLink target="_blank" value="/{!ir.Id}">{!ir.Name}</apex:outputLink></apex:column>
+                    <apex:column value="{!ir.Fecha__c}"/>
+                    <apex:column value="{!ir.Incidencia__c}"/>
+                </apex:pageBlockTable>
+                <apex:panelGrid columns="2">
+                            <apex:commandLink target="_parent" action="{!anteriorIncidencias}" value="Anterior" reRender="pBIncidencias" rendered="{!IF(OR(totalIndicesIncidencias==0,indiceActualIncidencias==1),'false','true')}"/>
+                            <apex:commandLink target="_parent" action="{!siguienteIncidencias}" value="Siguiente" reRender="pBIncidencias" rendered="{!IF(OR(totalIndicesIncidencias==0,indiceActualIncidencias==totalIndicesIncidencias),'false','true')}"/>
+                    </apex:panelGrid>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

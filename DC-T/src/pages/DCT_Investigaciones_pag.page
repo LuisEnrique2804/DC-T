@@ -1,0 +1,345 @@
+<apex:page standardController="Cliente__c" extensions="DCT_InvestigacionesCtrl" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0" >
+	<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+		<head>
+  		<meta charset="utf-8" />
+  		<meta http-equiv="x-ua-compatible" content="ie=edge" />
+  		<title>Datos de administración: Investigaciones</title>
+  		<meta name="viewport" content="width=device-width, initial-scale=1" />
+  		<!-- Import the Design System style sheet -->
+  		<apex:slds />
+		</head>
+		<body>
+  		<!-- REQUIRED SLDS WRAPPER -->
+			<div class="slds-scope">
+				<apex:actionStatus id="processing">
+					<apex:facet name="start">
+			  		<div class="slds-spinner_container slds-is-fixed">
+							<div class="slds-spinner--brand slds-spinner slds-spinner--medium" role="alert">
+					  		<span class="slds-assistive-text">Processing</span>
+				  			<div class="slds-spinner__dot-a"></div>
+					  		<div class="slds-spinner__dot-b"></div>
+							</div>
+				  	</div>
+					</apex:facet>
+				</apex:actionStatus>	
+				<apex:form id="mainForm" style="width:100%;">  
+					<!-- MASTHEAD -->
+					<apex:actionFunction name="performAppFullRefresh" action="{!fullRefresh}"/>    
+					<!-- success -->    
+					<apex:outputPanel id="SuccessMsgs" rendered="{!bMsgFinalSuccess}">
+			 			<div class="slds-notify_container" style="position:relative;">
+							<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+								{!sMsgFinal}
+							</div> 
+						</div> 
+						<script type="text/javascript">
+							setTimeout(performAppFullRefresh,3000);
+						</script>
+					</apex:outputPanel>
+					<!-- error -->
+					<apex:outputPanel id="ErrorsMsgs" rendered="{!bMsgFinalError}">
+						<div class="slds-notify_container" style="position:relative;">
+							<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">			
+								{!sMsgFinal}
+							</div> 
+						</div>		
+					</apex:outputPanel>	    
+					<!-- PRIMARY CONTENT WRAPPER -->
+					<div class="slds-p-horizontal--medium">
+						<ul id="contact-list" class="slds-has-dividers--bottom-space"></ul>
+						<div class="slds-form slds-form_compound">		
+							<fieldset class="slds-form-element">
+								<legend class="slds-form-element__label slds-text-title_caps">Datos generales</legend>		
+								<div class="slds-form-element__group">				
+									<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size_1-of-2">
+											<label class="slds-form-element__label">
+												Leyenda Investigación
+											</label>
+											<BR/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTResearchLegend__c}" /> 
+										</div>
+										<div class="slds-form-element slds-size_2-of-2">
+											<label class="slds-form-element__label">
+												Pedir Autorización
+											</label>
+											<div style="margin-left: 10px;">
+												<div>
+													<apex:inputField value="{!DatosDirComercial.DCTAskAuthorization__c}" rendered="{!AND(DatosDirComercial.DCTResearchLegend__c != 'Procede Activación', DatosDirComercial.DCTResearchLegend__c != 'Procede Activación si cuenta con antecedentes en M2K', DatosDirComercial.DCTResultVerification__c != 'CANCELADO', DatosDirComercial.DCTResultVerification__c != 'POS. CON ADEUDO')}" />
+													<apex:outputField value="{!DatosDirComercial.DCTAskAuthorization__c}"  rendered="{!DatosDirComercial.DCTResearchLegend__c == 'Procede Activación'}" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												Resultado Verificación
+											</label>
+											<BR/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTResultVerification__c}" /> 
+										</div>
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												<abbr class="slds-required" title="requerido">*</abbr>
+												Tipo de Autorización
+											</label>
+											<BR/>
+											<!-- <apex:selectList value="{!sTipoAutor}" title="TipoAutor" size="1" id="TipoAutor" rendered="{!sIdUserActualPerfil == 'CoordinacionAdministrativa'}" >
+												<apex:selectOptions value="{!slTipoAutor}" />                       
+											</apex:selectList> -->							
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTTypeAuthorization__c}" rendered="{!sIdUserActualPerfil != 'CoordinacionAdministrativa'}"/>
+										</div>
+									</div>
+									<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												<abbr class="slds-required" title="requerido">*</abbr>						
+												Motivo de Rechazo
+											</label>
+											<BR/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTReasonRejection__c}" /> 
+										</div>
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												Comentarios de Investigación							
+											</label>
+											<!-- <apex:inputTextarea rows="1" styleClass="slds-input" value="{!sCommInvestiga}" rendered="{!sIdUserActualPerfil = 'CoordinacionAdministrativa'}"/> -->						 
+											<BR/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTCommentsInvestigation__c}" rendered="{!sIdUserActualPerfil != 'CoordinacionAdministrativa'}"/>
+										</div>
+									</div>
+									<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												<abbr class="slds-required" title="requerido">*</abbr>						
+												Investigación
+											</label>
+											<BR/>
+											<!-- <apex:selectList value="{!sTipoInvest}" title="TipoInvest" size="1" id="tipoInvest" rendered="{!sIdUserActualPerfil == 'CoordinacionAdministrativa'}" >
+												<apex:selectOptions value="{!slTipoInvest}" />                       
+											</apex:selectList> -->
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTInvestigation__c}" rendered="{!sIdUserActualPerfil != 'CoordinacionAdministrativa'}"/>							
+										</div>
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												Fecha de Autorización Vo.Bo Subdirector
+											</label>
+											<BR/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTAuthorizationDateVoBoManagement__c}"/>
+										</div>
+									</div>
+									<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												Total de Lineas Autorizadas	Investigación
+											</label>
+											<BR/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTTotLineasAutorInvest__c}" /> 							 
+										</div>
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												Total de Lineas Activas
+											</label>
+											<BR/>
+											<apex:outputText styleClass="slds-input" value="{!iTotLineasActivas}"/>
+										</div>
+									</div>
+								</div>			
+							</fieldset>		
+						</div>
+						<BR/>
+						<div style="width: max-content; margin: 0 auto;">
+							<apex:commandLink action="{!LoadActualizaImvestigacionesWs}" rendered="{!bDespliegaBoton}" styleClass="slds-button slds-button_brand" rerender="mainForm" status="processing" >
+								Guardar
+							</apex:commandLink>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<apex:commandLink action="{!NuevaLinea}" rendered="{!AND(bDespligaBtnNvaLinea, !bExisProcAproba)}" styleClass="slds-button slds-button_brand" rerender="mainForm" status="processing">
+								Nueva línea
+							</apex:commandLink>
+						</div>
+						<!-- Despliega los msg de error -->
+						<apex:outputPanel id="msgError">
+							<apex:outputPanel id="ErrorMsgs" rendered="{!lErrorres.size <> 0}">
+								<BR/>
+								<div class="slds-notify_container" style="position:relative;">
+									<div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+										<apex:repeat value="{!lErrorres}" var="msg">
+											{!msg} 
+											<br/>
+										</apex:repeat>
+									</div>
+								</div>
+							</apex:outputPanel> 
+							<apex:outputPanel id="SuccessMsgsLin" rendered="{!bExitoIns}">
+								<BR/>            
+								<div class="slds-notify_container" style="position:relative;">
+									<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+										{!sExitoIns}<br/>
+									</div> 
+								</div>
+							</apex:outputPanel>
+						</apex:outputPanel>
+						<!-- Para la nueva linea -->
+						<apex:outputPanel id="oupNuevaLinea" rendered="{!bNuevaLinea}">
+							<BR/><BR/>				
+							<fieldset class="slds-form--compound slds-form--compound--horizontal">
+								<legend class="slds-form-element__label slds-text-title--caps slds-text-align--center">Líneas Autorizadas</legend>
+								<table class="slds-table slds-table_bordered">
+									<tbody>
+									<tr class="slds-text-title_caps">
+										<th scope="col">
+											<div class="slds-truncate" style="text-align: right;" title="Líneas activas">Líneas activas</div>
+										</th>	
+										<td data-label="Líneas activas" style="text-align: left;">
+											<div class="slds-truncate" title="Líneas activas">
+												<apex:inputField value="{!dctNuevaLinea.DCTActiveLines__c}" rendered="{!!bTieneLineasActivas}"/>
+												<apex:outputLabel value="{!iTotLineasActivas}" rendered="{!bTieneLineasActivas}"/>
+											</div>
+										</td>
+									</tr>
+																		
+									<tr class="slds-text-title_caps">
+										<th scope="col">
+											<div class="slds-truncate" style="text-align: right;" title="Solicitadas por">Solicitadas por</div>
+										</th>	
+										<td data-label="Líneas activas" style="text-align: left;">
+											<div class="slds-truncate" title="Solicitadas por">
+												<div class="slds-truncate" title="Plazo">{!sSolicitadasPor}</div>
+											</div>
+										</td>
+									</tr>
+									<tr class="slds-text-title_caps">
+										<th scope="col">
+											<div class="slds-truncate" style="text-align: right;" title="Líneas activas">Líneas solicitadas</div>
+										</th>	
+										<td data-label="Líneas activas" style="text-align: left;">
+											<div class="slds-truncate" title="Líneas activas">
+												<apex:inputField value="{!dctNuevaLinea.DCTAuthorizedLines__c}" />
+											</div>
+										</td>
+									</tr>
+<!-- 									<tr class="slds-text-title_caps">
+										<th scope="col">
+											<div class="slds-truncate" style="text-align: right;" title="Autorizadas por">Autorizadas por</div>
+										</th>	
+										<td data-label="Líneas activas" style="text-align: left;">
+											<div class="slds-truncate" title="Líneas activas">
+												<div class="slds-truncate" title="Autorizadas por">{!dctNuevaLinea.Aprobador__r.Name}</div>
+											</div>
+										</td>
+									</tr> -->
+									<tr class="slds-text-title_caps">
+										<th scope="col">
+											<div class="slds-truncate" style="text-align: right;" title="Usuario universal">Usuario universal</div>
+										</th>	
+										<td data-label="Líneas activas" style="text-align: left;">
+											<div class="slds-truncate" title="Usuario universal">
+												<div class="slds-truncate" title="Usuario universal">{!sUsuarioUniversal}</div>
+											</div>
+										</td>
+									</tr>
+									<tr class="slds-text-title_caps">
+										<th scope="col">
+											<div class="slds-truncate" style="text-align: right;" title="Fecha autorización">Fecha autorización</div>
+										</th>	
+										<td data-label="Líneas activas" style="text-align: left;">
+											<div class="slds-truncate" title="Fecha autorización">
+												<div class="slds-truncate" title="Fecha autorización"></div>
+											</div>
+										</td>
+									</tr>
+									</tbody>						
+								</table>
+							</fieldset>
+							<BR/>
+							<div style="width: max-content; margin: 0 auto;">
+								<apex:commandLink action="{!Cancelar}" styleClass="slds-button slds-button_brand" rerender="mainForm" status="processing">
+									Cancelar
+								</apex:commandLink>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<apex:commandLink action="{!GuardarNuavLinea}" styleClass="slds-button slds-button_brand" rerender="mainForm" status="processing">
+									Guardar
+								</apex:commandLink>
+							</div>
+						</apex:outputPanel>		
+						<!-- Fin de nueva linea -->						
+						<!-- Detalle de las lineas que tiene -->
+						<apex:outputPanel id="DetalleLineas" rendered="{!!bNuevaLinea}">
+							<BR/><BR/>
+							<div style="width: max-content; margin: 0 auto;">	
+								<apex:variable value="{!0}" var="lines"/>
+								<!-- <apex:repeat value="{!Cliente__c.Lineas_Autorizadas__r}" var="iterator"> -->
+								<apex:repeat value="{!lDCTAuthorizedLines}" var="iterator">				
+									<apex:variable value="{!lines+1}" var="lines"/>
+								</apex:repeat>
+								<apex:outputPanel rendered="{!lines == 0}">
+									No hay líneas autorizadas para esta cuenta
+								</apex:outputPanel>
+								<apex:outputPanel rendered="{!lines <> 0}">
+									<table class="slds-table slds-table_bordered">
+										<thead>
+											<tr class="slds-text-title_caps">
+												<th scope="col">
+													<div class="slds-truncate" title="LÍNEAS ACTIVAS">LÍNEAS ACTIVAS</div>
+												</th>
+												<th scope="col">
+													<div class="slds-truncate" title="LÍNEAS SOLICITADAS">LÍNEAS SOLICITADAS</div>
+												</th>
+												<th scope="col">
+													<div class="slds-truncate" title="ESTATUS">ESTATUS</div>
+												</th>
+												<th scope="col">
+													<div class="slds-truncate" title="ESTATUS">FECHA</div>
+												</th>												
+												<th scope="col">
+													<div class="slds-truncate" title="ESTATUS">AUTORIZADO POR</div>
+												</th>												
+												<th scope="col">
+													<div class="slds-truncate" title="TOTAL DE LINEAS AUTORIZADAS">TOTAL DE LINEAS AUTORIZADAS</div>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- <apex:repeat value="{!Cliente__c.Lineas_Autorizadas__r}" var="iterator"> -->
+											<apex:repeat value="{!lDCTAuthorizedLines}" var="iterator">										
+												<tr class="slds-text-title_caps">													
+													<th data-label="{!iterator.DCTActiveLines__c}">
+														<div class="slds-truncate" title="{!iterator.DCTActiveLines__c}">{!iterator.DCTActiveLines__c}</div>
+													</th>
+													<th data-label="{!iterator.DCTAuthorizedLines__c}">
+														<div class="slds-truncate" title="{!iterator.DCTAuthorizedLines__c}">{!iterator.DCTAuthorizedLines__c}</div>
+													</th>
+													<th data-label="{!iterator.Status__c}">
+														<div class="slds-truncate" title="{!iterator.Status__c}">{!iterator.Status__c}</div>
+													</th>
+													<th data-label="{!iterator.DCTAuthorizationDate__c}">
+														<div class="slds-truncate" title="{!iterator.DCTAuthorizationDate__c}">
+															<apex:outputText value="{0, date, dd/MM/yyyy}">
+															    <apex:param value="{!iterator.DCTAuthorizationDate__c}"/>
+															</apex:outputText>
+														</div>
+													</th>
+													<th data-label="{!sAutirizadasPor}">
+														<div class="slds-truncate" title="{!sAutirizadasPor}">{!iterator.Aprobador__r.Name}</div>
+													</th>
+													<th data-label="{!iterator.DCTTotalAuthorizedLines__c}">
+														<div class="slds-truncate" title="{!iterator.DCTTotalAuthorizedLines__c}">{!iterator.DCTTotalAuthorizedLines__c}</div>
+													</th>													
+												</tr>
+											</apex:repeat>
+										</tbody>
+									</table>
+								</apex:outputPanel>
+							</div>
+						</apex:outputPanel>
+						<!-- fin detalle de las lineas que tiene -->
+					</div>
+				</apex:form>    
+			</div>
+		  <!-- / REQUIRED SLDS WRAPPER -->    
+		  <!-- JAVASCRIPT -->
+		  <!-- / JAVASCRIPT -->
+		</body>
+	</html>
+</apex:page>

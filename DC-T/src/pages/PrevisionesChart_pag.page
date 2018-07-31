@@ -1,0 +1,50 @@
+<apex:page controller="PrevisionesChart_ctr" id="idPage"> 
+    <script type="text/javascript">
+function renderer(klass, item) {
+    var type = item.storeItem.get('strLabelCol');
+    var val = item.storeItem.get('decCol1');
+
+    var e = window.event;
+    var t = e.target || e.srcElement;
+
+    t.onclick=function(event){
+        
+        var strTipoInforme=item.storeItem.get('strTipoInforme');
+        //alert(strTipoInforme);
+        //window.parent.location = "/001g000000kJzkAAAS";
+        displayReport(strTipoInforme);
+        //alert('prrr');
+    };
+    this.setTitle(type);
+}
+function redirect()
+{
+    //alert(document.getElementById("idPage:form1:hid01").value);
+    window.open(document.getElementById("idPage:form1:hid01").value);
+}
+</script>
+    <apex:form id="form1" >
+        <apex:inputHidden value="{!strURL}" id="hid01"/>
+        <apex:outputLink value="/{!LinkReport}" target="_parent">Informe</apex:outputLink>
+        <apex:actionFunction name="displayReport" action="{!getInforme}" reRender="form1" oncomplete="redirect();">
+            <apex:param id="param1" name="param1" value="" assignTo="{!strTipoInforme}" />
+         </apex:actionFunction>   
+        <apex:chart height="300" width="100%" data="{!DataChart}"  legend="true">
+            <apex:legend position="bottom"  />
+            
+            <apex:axis type="Numeric" position="left" fields="decCol1,decCol2,decCol3"
+                    />
+            <apex:axis type="Category" position="bottom" fields="strLabelCol"
+                    title="Fecha Estimada de Cierre"/>
+            <apex:barSeries orientation="vertical" axis="left" stacked="false"
+                    xField="strLabelCol" yField="decCol1,decCol2,decCol3"
+                    title="Presup.,Prev.(Ganadas + Abiertas),Ganadas" 
+                    >
+                    <apex:chartTips rendererFn="renderer"/>
+                    <apex:chartLabel display="outside" orientation="horizontal" />
+            </apex:barSeries>
+
+        </apex:chart>
+     </apex:form>   
+    
+</apex:page>
