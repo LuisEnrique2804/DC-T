@@ -2450,15 +2450,17 @@
         "mmState": "clean"
     },
     "DCT_NewCustomLead_ext.cls": {
-        "createdById": "00515000005zWt2AAE",
-        "createdByName": "Avanxo Admin",
-        "createdDate": "2018-02-20T23:00:58.000Z",
-        "fileName": "unpackaged/classes/DCT_NewCustomLead_ext.cls",
-        "fullName": "DCT_NewCustomLead_ext",
         "id": "01p11000000iyDNAAY",
-        "lastModifiedById": "00511000005RFIxAAO",
-        "lastModifiedByName": "Integraciones Telcel",
-        "lastModifiedDate": "2018-07-24T00:18:10.000Z",
+        "name": "DCT_NewCustomLead_ext",
+        "createdDate": "2018-02-20T23:00:58.000+0000",
+        "createdById": "00515000005zWt2AAE",
+        "namespacePrefix": null,
+        "lastModifiedById": "00515000005zWt2AAE",
+        "lastModifiedDate": "2018-07-31T22:44:41.000+0000",
+        "fullName": "DCT_NewCustomLead_ext",
+        "fileName": "unpackaged/classes/DCT_NewCustomLead_ext.cls",
+        "createdByName": "Avanxo Admin",
+        "lastModifiedByName": "Avanxo Admin",
         "manageableState": "unmanaged",
         "type": "ApexClass",
         "mmState": "clean"
@@ -3357,6 +3359,22 @@
         "lastModifiedDate": "2018-03-05T20:20:39.000Z",
         "manageableState": "unmanaged",
         "type": "ApexTrigger",
+        "mmState": "clean"
+    },
+    "DTC_NewCustomLead_tst.cls": {
+        "id": "01p11000001BHYjAAO",
+        "name": "DTC_NewCustomLead_tst",
+        "createdDate": "2018-07-31T16:24:54.000+0000",
+        "createdById": "00515000005zWt2AAE",
+        "namespacePrefix": null,
+        "lastModifiedById": "00515000005zWt2AAE",
+        "lastModifiedDate": "2018-07-31T22:58:17.000+0000",
+        "fullName": "DTC_NewCustomLead_tst",
+        "fileName": "unpackaged/classes/DTC_NewCustomLead_tst.cls",
+        "createdByName": "Avanxo Admin",
+        "lastModifiedByName": "Avanxo Admin",
+        "manageableState": "unmanaged",
+        "type": "ApexClass",
         "mmState": "clean"
     }
 }

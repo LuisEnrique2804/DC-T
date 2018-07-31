@@ -85,12 +85,23 @@ public class DCT_NewCustomLead_ext {
 		initOrCleanUpMsg();
 		//Valida los campos obligatorios y estrucctura
 		if(validateInputs()){
-			
+			System.debug(loggingLevel.Error, '*** accountRecord: ' + accountRecord);
 			//Consulta las regiones para ver si existen registros en los ciclos			 
-			for (DCTRegion__c regiones : [SELECT Id, RFC__c, Name, DCTBillingCycle__c, EstatusCobranza__c 
-				FROM DCTRegion__c WHERE RFC__c = :accountRecord.RFC__c AND Name = :accountRecord.Name  ORDER BY CreatedDate ASC]){
-				lRegiones.add(regiones);
+			if(accountRecord.DTC_LegalEntity__c == 'Física' || accountRecord.DTC_LegalEntity__c == 'FÍsica con Actividad Empresarial.') {
+				String strconcaName = accountRecord.DCTLastName__c+' '+accountRecord.DCTMotherLastName__c+' '+accountRecord.DCTName__c;
+				for (DCTRegion__c regiones : [SELECT Id, RFC__c, Name, DCTBillingCycle__c, EstatusCobranza__c 
+					FROM DCTRegion__c WHERE RFC__c = :accountRecord.RFC__c AND Name = :strconcaName  ORDER BY CreatedDate ASC]){
+					System.debug(loggingLevel.Error, '*** regiones: ' + regiones);
+					lRegiones.add(regiones);
+				}
+			} else if (accountRecord.DTC_LegalEntity__c == 'Moral' || accountRecord.DTC_LegalEntity__c == 'Gubernamental') {
+				for (DCTRegion__c regiones : [SELECT Id, RFC__c, Name, DCTBillingCycle__c, EstatusCobranza__c 
+					FROM DCTRegion__c WHERE RFC__c = :accountRecord.RFC__c AND Name = :accountRecord.DCTControlFieldName__c  ORDER BY CreatedDate ASC]){
+					System.debug(loggingLevel.Error, '*** regiones: ' + regiones);
+					lRegiones.add(regiones);
+				}
 			}
+			System.debug(loggingLevel.Error, '*** lRegiones: ' + lRegiones.isEmpty());
 			//Ve si existen regiones donde validar
 			if (!lRegiones.isEmpty()){
 				//VCalida los ciclos ciclos 20, 60, 61, 63, 31, 32, 41 y 42
@@ -112,7 +123,7 @@ public class DCT_NewCustomLead_ext {
 					NoExisRazonSocialExisreRFC(blnIsCiclo23);
 				}//Fin si blnIsCiclo23
 			}//Fin si !lRegiones.isEmpty()
-
+			System.debug(loggingLevel.Error, '*** lRegiones: ' + lRegiones);
 			//No hay regitro duplicado
 			if (lRegiones.isEmpty() || (!blnIsCicloOk && !blnIsCiclo23)){
 				duplicatedValidationWrapper = validateIfDuplicatedAccount();
@@ -249,209 +260,6 @@ public class DCT_NewCustomLead_ext {
 					lstErrorMsgs.add('La razón social ya se encuentra registrada con otros dos ejecutivos.');//'La razón social ya se encuentra registrada.'
 				}				
 			}//Fin si !bDuplicado
-
-
-			
-			/*DuplicateValidationResultWrapper duplicatedValidationWrapper = validateIfDuplicatedAccount();
-			System.debug(loggingLevel.Error, '*** duplicatedValidationWrapper: ' + duplicatedValidationWrapper);
-			if(duplicatedValidationWrapper.blnIsValid){
-				if(ProspectRegionIsEmpty()) {
-					Map<String,Map<String,RecordType>> mapRTsByDevName = TLCL_Utils_cls.getRecordTypes('DeveloperName');
-					if(accountRecord.Segmento__c == 'Corporativo'){
-						accountRecord.RecordTypeId = mapRTsByDevName.get('Account').get('PlanClienteTelcelCorporativo').Id;
-					}
-					if(accountRecord.Segmento__c == 'Empresarial'){
-						accountRecord.RecordTypeId = mapRTsByDevName.get('Account').get('PlanClienteTelcelEmpresarial').Id; 
-					}
-					if(accountRecord.Segmento__c == 'PyME'){
-						accountRecord.RecordTypeId = mapRTsByDevName.get('Account').get('PlanClienteTelcelPyME').Id;
-					}
-					accountRecord.DCT_RegistrationDate__c = Date.today();
-					accountRecord.TipoCliente__c = 'Prospecto';
-					if(accountRecord.DTC_LegalEntity__c == 'Física' || accountRecord.DTC_LegalEntity__c == 'FÍsica con Actividad Empresarial.') {
-						accountRecord.Name = accountRecord.DCTLastName__c+' '+accountRecord.DCTMotherLastName__c+' '+accountRecord.DCTName__c;
-					}
-					if(accountRecord.DTC_LegalEntity__c == 'Moral' || accountRecord.DTC_LegalEntity__c == 'Gubernamental') {
-						accountRecord.Name = accountRecord.DCTControlFieldName__c;
-					}
-					strName = accountRecord.Name.trim();
-					String emailRegex = '^[^.,ÁáÉéÍíÓóÚú]+';
-					Matcher InputEmail = Pattern.compile(emailRegex).matcher(strName);
-					Boolean BlnMtchStr = InputEmail.matches();
-					System.debug(loggingLevel.Error, '*** BlnMtchStr: ' + BlnMtchStr);
-					if(!BlnMtchStr ) {
-						lstErrorMsgs.add('Validar la información, la Razón Social no debe contener puntos, comas ni acentos.');
-						blnIsEverythingOk = false;
-					}
-					String strTest = accountRecord.Name.toUpperCase();
-					
-					accountRecord.Name = strTest;
-					accountRecord.RFC__c = accountRecord.RFC__c.toUpperCase();
-					accountRecord.Estatus__c = 'Activo';
-					accountRecord.DCT_NewClient__c = true;
-					System.debug(loggingLevel.Error, '*** blnIsEverythingOk: ' + blnIsEverythingOk);
-					if(blnIsEverythingOk) {	
-						System.debug(loggingLevel.Error, '*** accountRecord: ' + accountRecord);
-						Database.SaveResult sr = Database.insert(accountRecord,false);
-						if(sr.isSuccess()){
-							lstSuccessMsgs.add('El prospecto ha sido creado de manera exitosa.');
-							blnSuccessfulProcedure = true;
-							System.debug(loggingLevel.Error, '*** El prospecto: ');
-						}else{
-							for(Database.Error iterator:sr.getErrors()){
-								lstErrorMsgs.add(iterator.getMessage());    
-							}        
-						}
-					}	
-				} 
-				else {
-					if(!blnIsCicloOk) {						
-						System.debug(loggingLevel.Error, '*** Solo se crea el directorio: '+ accountRecord.Name);
-						if(accountRecord.DTC_LegalEntity__c == 'Física' || accountRecord.DTC_LegalEntity__c == 'FÍsica con Actividad Empresarial.') {
-							accountRecord.Name = accountRecord.DCTLastName__c+' '+accountRecord.DCTMotherLastName__c+' '+accountRecord.DCTName__c;
-						}
-						if(accountRecord.DTC_LegalEntity__c == 'Moral' || accountRecord.DTC_LegalEntity__c == 'Gubernamental') {
-							accountRecord.Name = accountRecord.DCTControlFieldName__c;
-						}
-						strName = accountRecord.Name.trim();
-						String emailRegex = '^[^.,ÁáÉéÍíÓóÚú]+';
-						Matcher InputEmail = Pattern.compile(emailRegex).matcher(strName);
-						Boolean BlnMtchStr = InputEmail.matches();
-						System.debug(loggingLevel.Error, '*** BlnMtchStr: ' + BlnMtchStr);
-						if(!BlnMtchStr ) {
-							lstErrorMsgs.add('Validar la información, el prospecto no debe contener puntos(.), comas(,) ni acentos.');
-							blnIsEverythingOk = false;
-						}
-						String strTest = accountRecord.Name.toUpperCase();
-						System.debug(loggingLevel.Error, '*** blnIsEverythingOk: ' + blnIsEverythingOk);
-						try{lstAccsRFC = [SELECT Id, Name, RFC__c, Owner.ManagerId FROM Account WHERE RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC LIMIT 1];}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
-			            System.debug(loggingLevel.Error, '*** lstAccsRFC: ' + lstAccsRFC);
-			            for (Account pct : lstAccsRFC){
-			            	mapIdUsrIdManagerActRFC.put(pct.RFC__c, pct);
-			            	mapRFCOwnerManager.put(pct.RFC__c, pct.Owner.ManagerId);
-			            } 
-			            System.debug(loggingLevel.Error, '*** mapIdUsrIdManagerActRFC: ' + mapIdUsrIdManagerActRFC);
-			            System.debug(loggingLevel.Error, '*** mapRFCOwnerManager: ' + mapRFCOwnerManager);
-			            System.debug(loggingLevel.Error, '*** UserInfo.id: ' + UserInfo.getUserId());
-			            try{lstUserManager = [SELECT Id, ManagerId, Manager.ManagerId FROM User WHERE Id = :UserInfo.getUserId()];}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
-			            //Si tiene algo la lista de lstUserManager recorrela y metela en 
-			            for (User usuario : lstUserManager){
-			            	mapIdUsrIdManager.put(usuario.Id, usuario);
-			            } 
-			            System.debug(loggingLevel.Error, '*** mapIdUsrIdManager: ' + mapIdUsrIdManager);
-						accountRecord.Name = strTest;
-						Cliente__c customerTemp = new Cliente__c();
-						//customerTemp.Cliente__c = accountRecord.Id;
-						customerTemp.Name = accountRecord.Name;
-						customerTemp.OwnerId = accountRecord.OwnerId;
-						//Se agrega el RFc a la creacion de directorio comercial
-						customerTemp.RFC1__c = accountRecord.RFC__c;
-						customerTemp.OwnerId = UserInfo.getUserId();
-						customerTemp.DCTRegistrationDateBack__c= System.today();
-						customerTemp.DCTSalesManagerBack__c= strManagerName;
-						customerTemp.DCTLegalPersonBack__c= accountRecord.DTC_LegalEntity__c;
-						customerTemp.DCTSectorBack__c= accountRecord.Sector__c;
-						customerTemp.DCTSegmentback__c= accountRecord.Segmento__c;
-						customerTemp.DCTSubsectorback__c= accountRecord.Subsector__c;
-						customerTemp.DCTActivationTypeback__c= accountRecord.DCT_TypeOfProcedure__c; 
-						customerTemp.DCTCustomerTypeback__c= 'Prospecto';
-						System.debug(loggingLevel.Error, '*** blnFirsProcess: ' + blnFirsProcess);
-						if(!blnFirsProcess) {
-							customerTemp.DCTDuplicateRecordRejected__c = true;
-							//customerTemp.DCTDuplicateRecordRejected__c = false;
-						}
-						//customerTemp.DCTVicePrincipal__c = lstUserManager[i].Manager.ManagerId;
-						//customerTemp.DCTVicePrincipal__c = accountRecord.Manager.ManagerId;  
-						System.debug(loggingLevel.Error, '*** customerTemp: ' + customerTemp);
-						System.debug(loggingLevel.Error, '*** accountRecord.RFC__c: ' + accountRecord.RFC__c);
-						System.debug(loggingLevel.Error, '*** mapIdUsrIdManagerActRFC: ' + mapIdUsrIdManagerActRFC);      
-						customerTemp.DCTApproverManager__c= mapIdUsrIdManager.get(UserInfo.getUserId()).ManagerId;//Gestor del propietario de la nueva cuenta
-	                    customerTemp.DCTAccountManagerDuplicated__c= (mapRFCOwnerManager.isEmpty() )?null:mapRFCOwnerManager.get(accountRecord.RFC__c);
-
-						//Crea los clientes
-					  	lstGeneratedCustomers.add(customerTemp);
-						if(blnIsEverythingOk) {	
-							System.debug(loggingLevel.Error, '*** lstGeneratedCustomers: ' + lstGeneratedCustomers);
-							Database.SaveResult[] sr = Database.insert(lstGeneratedCustomers,false);
-							for(Database.SaveResult iteratorSR: sr) {
-								if(iteratorSR.isSuccess()) {
-						      	lstSuccessMsgs.add('El RFC o la razón social ya se encuentrran registrados tu registro se envio a validacion y/o aprobación.');//Registro de aprobacion pendiente por gerencia de cobranza
-						      	blnSuccessfulProcedure = true;
-						      	setIdDirCom.add(iteratorSR.getId());
-								}
-							}
-						}	
-					  	if(blnFirsProcess) {
-							for(Cliente__c iterator:lstGeneratedCustomers){
-							    System.debug(loggingLevel.Error, '*** Paso1: ');
-							    approvalClass(iterator.id);
-							}
-					  	}
-					} else {
-						lstErrorMsgs.add('El RFC ya esta registrado con un ciclo de facturación: '+ strCiclo+'.');
-					}
-				  
-				}
-			}else{
-				List<DCTAssignmentDuplicateAccount__c> lstAssigsDuplicatedAccounts = new List<DCTAssignmentDuplicateAccount__c>();
-				List<DCTAssignmentDuplicateAccount__c> lstAssigsDuplicatedAccounts2 = new List<DCTAssignmentDuplicateAccount__c>();
-				if(accountRecord.DTC_LegalEntity__c == 'Física' || accountRecord.DTC_LegalEntity__c == 'FÍsica con Actividad Empresarial.') {
-					String strconcaName = accountRecord.DCTLastName__c+' '+accountRecord.DCTMotherLastName__c+' '+accountRecord.DCTName__c;
-					//strQueryOverDupplicateAccAssignmentSttmnt = 'SELECT '+String.join(new List<String>(SObjectType.DCTAssignmentDuplicateAccount__c.Fields.getMap().keySet()),', ')+' FROM DCTAssignmentDuplicateAccount__c WHERE CustomIdentifier__c = \''+strconcaName+'-'+userInstance.UserName+'\' ';
-					strQueryOverDupplicateAccAssignmentSttmnt = 'SELECT '+String.join(new List<String>(SObjectType.DCTAssignmentDuplicateAccount__c.Fields.getMap().keySet()),', ')+' FROM DCTAssignmentDuplicateAccount__c WHERE CustomIdentifier__c = \''+strconcaName+'\' ';
-				}
-				if(accountRecord.DTC_LegalEntity__c == 'Moral' || accountRecord.DTC_LegalEntity__c == 'Gubernamental') {
-					System.debug(loggingLevel.Error, '*** accountRecord.DCTControlFieldName__c: ' + accountRecord.DCTControlFieldName__c);
-					strQueryOverDupplicateAccAssignmentSttmnt = 'SELECT '+String.join(new List<String>(SObjectType.DCTAssignmentDuplicateAccount__c.Fields.getMap().keySet()),', ')+' FROM DCTAssignmentDuplicateAccount__c WHERE CustomIdentifier__c = \''+accountRecord.DCTControlFieldName__c+'\' ';
-				}
-				lstAssigsDuplicatedAccounts = Database.query(strQueryOverDupplicateAccAssignmentSttmnt);
-				System.debug(loggingLevel.Error, '*** lstAssigsDuplicatedAccounts: ' + lstAssigsDuplicatedAccounts);
-				if(!lstAssigsDuplicatedAccounts.isEmpty()) {	
-					for(DCTAssignmentDuplicateAccount__c iterator: lstAssigsDuplicatedAccounts) {
-						if(!iterator.Assigneduser__c) {
-							lstAssigsDuplicatedAccounts2.add(iterator);
-						}
-					}
-				}	
-				System.debug(loggingLevel.Error, '*** lstAssigsDuplicatedAccounts2: ' + lstAssigsDuplicatedAccounts2);
-				if(lstAssigsDuplicatedAccounts2.isEmpty()){
-					System.debug(loggingLevel.Error, '*** duplicatedValidationWrapper: ' + duplicatedValidationWrapper);
-					if(duplicatedValidationWrapper.lstDupAccs.size()>0 || duplicatedValidationWrapper.lstDupProsp.size()>0 || duplicatedValidationWrapper.lstDupRegs.size()>0){
-						id idPCT = (duplicatedValidationWrapper.lstDupAccs.size()>0)?duplicatedValidationWrapper.lstDupAccs.get(0).Id:(duplicatedValidationWrapper.lstDupProsp.size()>0?duplicatedValidationWrapper.lstDupProsp.get(0).Id:(duplicatedValidationWrapper.lstDupRegs.size()>0?duplicatedValidationWrapper.lstDupRegs.get(0).Id:null));
-						String strIdOwner = (duplicatedValidationWrapper.lstDupAccs.size()>0)?duplicatedValidationWrapper.lstDupAccs.get(0).OwnerId:(duplicatedValidationWrapper.lstDupProsp.size()>0?duplicatedValidationWrapper.lstDupProsp.get(0).OwnerId:(duplicatedValidationWrapper.lstDupRegs.size()>0?duplicatedValidationWrapper.lstDupRegs.get(0).OwnerId:null));
-						System.debug(loggingLevel.Error, '*** strIdOwner: ' + strIdOwner);
-						lstClientid = [SELECT Id FROM Cliente__c WHERE Cliente__c = : idPCT LIMIT 1];
-						System.debug(loggingLevel.Error, '*** strIdOwner != UserInfo.getUserId(): ' + strIdOwner +'!='+ UserInfo.getUserId());
-						System.debug(loggingLevel.Error, '*** strIdOwner != UserInfo.getUserId(): ' + strIdOwner != UserInfo.getUserId());
-						if(strIdOwner != UserInfo.getUserId()) {
-							System.debug(loggingLevel.Error, '*** PAso123456: ');
-							System.debug(loggingLevel.Error, '*** blnWithOnlyMSM: ' + blnWithOnlyMSM);
-							if(blnWithOnlyMSM) {
-								Database.SaveResult sr = Database.insert(
-									new DCTAssignmentDuplicateAccount__c(
-										ExistingCustomer__c = (duplicatedValidationWrapper.lstDupAccs.size()>0)?duplicatedValidationWrapper.lstDupAccs.get(0).Id:null,
-										Assigneduser__c = false,
-										UsertobeAssigned__c = userInstance.Id,
-										DCTExistingAccount__c = (lstClientid.size()>0)? lstClientid[0].id:null
-									),
-									false
-								);
-								if(!sr.isSuccess()){
-									lstErrorMsgs.add(sr.getErrors()[0].getMessage());
-								}
-							}
-						}else {
-							System.debug(loggingLevel.Error, '*** AQUI ****');
-							lstErrorMsgs = new List<String>();
-							lstErrorMsgs.add('No puedes estar en la lista de espera de esta cuenta, debido a que ya la registraste previamente');
-						}
-					}
-				} else {
-					System.debug(loggingLevel.Error, '*** ===AQUI NO===: ');
-					lstErrorMsgs = new List<String>();
-					lstErrorMsgs.add('La razón social ya se encuentra registrada con otros dos ejecutivos.');//'La razón social ya se encuentra registrada.'
-				}
-			}*/
 			
 		}//Fin si validateInputs()
 		
@@ -713,15 +521,7 @@ public class DCT_NewCustomLead_ext {
 		blnIsCicloOk = false;
 		blnFirsProcess = false;
 		strCiclo = '';
-		/*System.debug(loggingLevel.Error, '*** blnExisteCiclo: ' + blnExisteCiclo);
-		System.debug(loggingLevel.Error, '*** setCsRejectCycles: ' + setCsRejectCycles);
-		System.debug(loggingLevel.Error, '*** setCsApproveCycles: ' + setCsApproveCycles);
-		System.debug(loggingLevel.Error, '*** setCsPayStatus: ' + setCsPayStatus);
-		System.debug(loggingLevel.Error, '*** setCsPayStatus: ' + setCsPayStatus.size());*/
 		for(DCTRegion__c iteratorRegion: lRegionesValidas) {
-			/*System.debug(loggingLevel.Error, '*** iteratorRegion.DCTBillingCycle__c: ' + iteratorRegion.DCTBillingCycle__c);
-			System.debug(loggingLevel.Error, '*** iteratorRegion.EstatusCobranza__c: ' + iteratorRegion.EstatusCobranza__c);
-			System.debug(loggingLevel.Error, '*** setCsPayStatus.contains(iteratorRegion.EstatusCobranza__c): ' + setCsPayStatus.contains(iteratorRegion.EstatusCobranza__c));*/
 			//Ve si el registo de la region existe en el ciclo setCiclosEstatus
 			if (!bCobranza){
 				if(setCiclosEstatus.contains(iteratorRegion.DCTBillingCycle__c)) {
@@ -748,7 +548,6 @@ public class DCT_NewCustomLead_ext {
 		duplicateResultWrapperInstance.lstDupAccs = new List<Account>();
 		duplicateResultWrapperInstance.lstDupRegs = new List<DCTRegion__c>();
 		duplicateResultWrapperInstance.lstDupProsp = new List<Cliente__c>();
-		System.debug(loggingLevel.Error, '*** 280492: ');
 		String                         strQueryOverAccsSttmnt ='';
 		List<Account>                  lstAccs                = new List<Account>();
 		List<Account>                  lstAccs2               = new List<Account>();
@@ -778,6 +577,7 @@ public class DCT_NewCustomLead_ext {
 			lstAccs =[SELECT Id, Name, RFC__c,TipoCliente__c, OwnerId FROM Account WHERE Name= :strconcaName /*OR RFC__c = :accountRecord.RFC__c*/  ORDER BY CreatedDate ASC];
 			lstRegion = [SELECT Id, RFC__c, Name, OwnerId FROM DCTRegion__c WHERE Name= :strconcaName OR RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
 			System.debug(loggingLevel.Error, '*** lstProspect: ' + lstProspect);
+			System.debug(loggingLevel.Error, '*** lstRegion: ' + lstRegion);
 			if(!lstAccs.isEmpty()) {
 				for(Account iterator:lstAccs){
 					if(iterator.TipoCliente__c == 'Prospecto') {
@@ -919,23 +719,6 @@ public class DCT_NewCustomLead_ext {
 					}
 				}
 			}	
-			//if(!lstRegion2.isEmpty()) {
-			//	for(DCTRegion__c iterator:lstRegion){
-			//		if( iterator.EstatusCobranza__c != 'PA' && iterator.EstatusCobranza__c != 'AF' && iterator.EstatusCobranza__c != 'DF' && iterator.EstatusCobranza__c != 'EM' && iterator.EstatusCobranza__c != 'SP' && iterator.EstatusCobranza__c != 'HL' && iterator.EstatusCobranza__c != 'SS' && iterator.EstatusCobranza__c != 'SU' && iterator.EstatusCobranza__c != 'FP' && iterator.EstatusCobranza__c != 'AB' && iterator.EstatusCobranza__c != 'SA' && iterator.EstatusCobranza__c != 'EA' && iterator.EstatusCobranza__c != 'PD') {
-			//			System.debug(loggingLevel.Error, '*** Entro a estatus de cobranza: ');
-			//			if(!mapRegByName.containsKey(iterator.Name)){
-			//				mapRegByName.put(iterator.Name, new List<DCTRegion__c>());
-			//			}
-			//			mapRegByName.get(iterator.Name).add(iterator);
-			//			if(!String.isBlank(iterator.RFC__c)){
-			//				if(!mapRegByRFC.containsKey(iterator.RFC__c)){
-			//					mapRegByRFC.put(iterator.RFC__c, new List<DCTRegion__c>());
-			//				}
-			//				mapRegByRFC.get(iterator.RFC__c).add(iterator);
-			//			}
-			//		}
-			//	}
-			//}
 			if(!lstRegion2.isEmpty()) {
 				for(DCTRegion__c iterator:lstRegion2){
 					System.debug(loggingLevel.Error, '*** iterator.EstatusCobranza__c: ' + iterator.EstatusCobranza__c);
@@ -1059,7 +842,8 @@ public class DCT_NewCustomLead_ext {
 						mapAccsByRFC.get(iterator.RFC__c).add(iterator);
 					}
 				}
-			}	
+			}
+			System.debug(loggingLevel.Error, '*** lstRegion2: ' + lstRegion2);	
 			if(!lstRegion2.isEmpty()) {
 				for(DCTRegion__c iterator:lstRegion2){
 					System.debug(loggingLevel.Error, '*** iterator.EstatusCobranza__c: ' + iterator.EstatusCobranza__c);
