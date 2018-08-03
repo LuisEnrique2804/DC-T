@@ -185,7 +185,8 @@ public class DCT_NewCustomLead_ext {
 					}//Fin si !NoExisRazonSocialExisreRFC ()
 				}//Fin si blnIsCiclo23
 			}//Fin si bDuplicado
-			
+			System.debug(loggingLevel.Error, '*** bDuplicado: ' + bDuplicado);
+			System.debug(loggingLevel.Error, '*** duplicatedValidationWrapper: ' + duplicatedValidationWrapper);
 			//Esta duplivado bDuplicado = false 
 			if (!bDuplicado && duplicatedValidationWrapper != null){
 				String strconcaName;
@@ -419,6 +420,7 @@ public class DCT_NewCustomLead_ext {
 		}	else {
 			try{dcInstance = [SELECT Id FROM Cliente__c WHERE id IN :setIdDirCom];}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
 		}
+		System.debug(loggingLevel.Error, '*** dcInstance: ' + dcInstance);
 		if(dcInstance.Id != null){
 			pr = new PageReference('/'+dcInstance.Id);
 			pr.setRedirect(true);	
@@ -573,10 +575,12 @@ public class DCT_NewCustomLead_ext {
 		if(accountRecord.DTC_LegalEntity__c == 'Física' || accountRecord.DTC_LegalEntity__c == 'FÍsica con Actividad Empresarial.') {
 			String strconcaName = accountRecord.DCTLastName__c+' '+accountRecord.DCTMotherLastName__c+' '+accountRecord.DCTName__c;
 			strconcaName = strconcaName.toUpperCase();
+			System.debug(loggingLevel.Error, '*** strconcaName: ' + strconcaName);
 			lstProspect =[SELECT Id, Name, RFC__c, RecordType.Name, OwnerId FROM Cliente__c WHERE DCTStatus__c = 'Activo' AND Name= :strconcaName /*OR RFC__c = :accountRecord.RFC__c*/  ORDER BY CreatedDate ASC];
 			lstAccs =[SELECT Id, Name, RFC__c,TipoCliente__c, OwnerId FROM Account WHERE Name= :strconcaName /*OR RFC__c = :accountRecord.RFC__c*/  ORDER BY CreatedDate ASC];
-			lstRegion = [SELECT Id, RFC__c, Name, OwnerId FROM DCTRegion__c WHERE Name= :strconcaName OR RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
+			lstRegion = [SELECT Id, RFC__c, Name, OwnerId,EstatusCobranza__c, DCTBillingCycle__c FROM DCTRegion__c WHERE Name= :strconcaName OR RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
 			System.debug(loggingLevel.Error, '*** lstProspect: ' + lstProspect);
+			System.debug(loggingLevel.Error, '*** lstAccs: ' + lstAccs);
 			System.debug(loggingLevel.Error, '*** lstRegion: ' + lstRegion);
 			if(!lstAccs.isEmpty()) {
 				for(Account iterator:lstAccs){
@@ -636,9 +640,9 @@ public class DCT_NewCustomLead_ext {
 			}
 		}
 		if(accountRecord.DTC_LegalEntity__c == 'Moral' || accountRecord.DTC_LegalEntity__c == 'Gubernamental') {
-			lstProspect =[SELECT Id, Name, RFC__c, RecordType.Name, OwnerId FROM Cliente__c WHERE DCTStatus__c = 'Activo' AND  Name= :accountRecord.DCTControlFieldName__c /*OR RFC__c = :accountRecord.RFC__c*/  ORDER BY CreatedDate ASC];
+			lstProspect =[SELECT Id, Name, RFC__c,RFC1__c, RecordType.Name, OwnerId FROM Cliente__c WHERE DCTStatus__c = 'Activo' AND  Name= :accountRecord.DCTControlFieldName__c /*OR RFC__c = :accountRecord.RFC__c*/  ORDER BY CreatedDate ASC];
 			lstAccs =[SELECT Id, Name, RFC__c,TipoCliente__c, OwnerId FROM Account WHERE Name= :accountRecord.DCTControlFieldName__c /*OR RFC__c = :accountRecord.RFC__c*/ ORDER BY CreatedDate ASC];
-			lstRegion = [SELECT Id, RFC__c, Name, EstatusCobranza__c, DCTBillingCycle__c, OwnerId FROM DCTRegion__c WHERE Name= :accountRecord.DCTControlFieldName__c AND RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
+			lstRegion = [SELECT Id, RFC__c, Name, EstatusCobranza__c, DCTBillingCycle__c, OwnerId FROM DCTRegion__c WHERE Name= :accountRecord.DCTControlFieldName__c OR RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
 			System.debug(loggingLevel.Error, '*** lstAccs: ' + lstAccs);
 			System.debug(loggingLevel.Error, '*** lstRegion: ' + lstRegion);
 			System.debug(loggingLevel.Error, '*** lstProspect: ' + lstProspect);
@@ -679,8 +683,10 @@ public class DCT_NewCustomLead_ext {
 			if(!lstProspect.isEmpty()) {
 				for(Cliente__c iterator:lstProspect){
 					System.debug(loggingLevel.Error, '*** iterator.RecordType.Name: ' + iterator.RecordType.Name);
+					System.debug(loggingLevel.Error, '*** accountRecord.RFC__c: ' + accountRecord.RFC__c);
+					System.debug(loggingLevel.Error, '*** iterator.RFC1__c: ' + iterator.RFC1__c);
 					if(iterator.RecordType.Name == 'Prospecto') {	
-						if(iterator.RFC__c == accountRecord.RFC__c) {
+						if(iterator.RFC__c == accountRecord.RFC__c || iterator.RFC1__c == accountRecord.RFC__c) {
 							lstProspect2.add(iterator);		
 							blnWithOnlyMSM = true;
 							blnIsProspect = true;
@@ -704,6 +710,7 @@ public class DCT_NewCustomLead_ext {
 		System.debug(loggingLevel.Error, '*** lstProspect5: ' + lstProspect5);
 		System.debug(loggingLevel.Error, '*** blnIsProspect: ' + blnIsProspect);
 		System.debug(loggingLevel.Error, '*** lstRegion2: ' + lstRegion2);
+		System.debug(loggingLevel.Error, '*** lstAccs2: ' + lstAccs2);
 		if(blnIsProspect) {
 			if(!lstAccs2.isEmpty()) {	
 				for(Account iterator:lstAccs2){

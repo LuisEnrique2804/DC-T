@@ -17,6 +17,7 @@ global with sharing class DCT_SISACactivaRest_ws  {
 		System.debug(loggingLevel.Error, '*** nisi: ' + nisi);	
 		
     	DCT_ResponseSISACactiva_cls response = DCT_SISACactivaRestAux_ws.sisact(method,rfc,legalName,entityLegal,nisi);
+    	System.debug(loggingLevel.Error, '******************************************');
 		System.debug(loggingLevel.Error, '*** response: ' + response);
 		String strResponseString = JSON.serialize(response);
 		System.debug(loggingLevel.Error, '*** strResponseString: ' + strResponseString);

@@ -31,7 +31,7 @@ global class DCT_ResponseSISACactiva_cls {
 		global String Rfc;
 		global String AdendumAnticipado;
 		global String PlazoDiasAdendum;
-		global Boolean BonificaPenalizacion;
+		global String BonificaPenalizacion;
 		global String UsuarioXO;
 		global String PuedeActivarVPN;
 		global String FuerzadeVentaActivarVPN;
@@ -53,7 +53,7 @@ global class DCT_ResponseSISACactiva_cls {
 		global String FuerzaVentaCambioSim;
 		global String AdendumAnticipado;
 		global String PlazoDiasAdendum;
-		global Boolean BonificaPenalizacion;
+		global String BonificaPenalizacion;
 		global String UsuarioXO;
 		global String PuedeActivarVPN;
 		global String FuerzadeVentaActivarVPN;
@@ -74,8 +74,8 @@ global class DCT_ResponseSISACactiva_cls {
 		global String FuerzaVentaCambioSim;
 		global String AdendumAnticipado;
 		global String PlazoDiasAdendum;
-		global Boolean BonificaPenalizacion;
-		global String UsuarioXOEjecutivo;
+		global String BonificaPenalizacion;
+		global String UsuarioXO;
 		global String PuedeActivarVPN;
 		global String FuerzadeVentaActivarVPN;
 	}
