@@ -21,9 +21,10 @@ global class DCT_assignmentNewOwner_sch implements Schedulable {
 		String stgStageName2 = system.Label.DCT_stgStageName2_lbl;//Perdida
 		String stgStageName3 = system.Label.DCT_stgStageName3_lbl;//Oportunidad
 		String stgRecordType = system.Label.DCT_stgRecordType_lbl;//Lead
-		String strQueryOverCases = 'SELECT Id, OwnerId, Name, RecordType.DeveloperName, DCTRegistrationDate__c,DCTExtensionValidity__c,'+ 
-		'Cliente__r.DCT_RegistrationDate__c, Cliente__c, Cliente__r.OwnerId,'+
-		' (SELECT Id, StageName FROM DirectorioComercial_Embudo__r WHERE StageName !=\''+stgStageName+'\' AND StageName !=\''+stgStageName2+'\' AND StageName !=\''+stgStageName3+'\') FROM Cliente__c '+
+		String strQueryOverCases = 'SELECT Id, OwnerId, Name, RecordType.DeveloperName, DCTRegistrationDate__c,'+ 
+		'DCTExtensionValidity__c, Cliente__r.DCT_RegistrationDate__c, Cliente__c, Cliente__r.OwnerId,'+
+		' (SELECT Id, StageName FROM DirectorioComercial_Embudo__r WHERE StageName !=\''+stgStageName+
+		'\' AND StageName !=\''+stgStageName2+'\' AND StageName !=\''+stgStageName3+'\') FROM Cliente__c '+
 		'WHERE RecordType.DeveloperName = \''+stgRecordType+'\'';
 		system.debug('***strQueryOverCases: '+strQueryOverCases);
 		DCT_assignmentNewOwner_bch bchInstace = new DCT_assignmentNewOwner_bch(strQueryOverCases);

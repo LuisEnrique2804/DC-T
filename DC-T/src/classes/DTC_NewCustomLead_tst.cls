@@ -2,6 +2,12 @@
 private class DTC_NewCustomLead_tst {
 
 	@TestSetup static void setup(){
+		DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('PlanCliente');
+		DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_Opportunity');
+		DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');
+		Map<String,Map<String,RecordType>> mapRTsByDevName = TLCL_Utils_cls.getRecordTypes('DeveloperName');
+		System.debug(loggingLevel.Error, '*** mapRTsByDevName: ' + mapRTsByDevName);
+
 		List<DCTRegion__c> lstregion = new List<DCTRegion__c>();
 		DCTRegion__c reg = new DCTRegion__c(
 			RFC__c = 'ABC123456EFG',
@@ -137,6 +143,59 @@ private class DTC_NewCustomLead_tst {
 			OwnerId = usr1.Id
 		);
 		insert regPros3;
+
+
+		Account acc4 = new Account(
+			Name = 'Pruebas6',
+			RFC__c = 'ABC123456EFO',
+			OwnerID = usr1.Id,
+			TipoCliente__c = 'Prospecto'
+		);
+		insert acc4;
+
+		//Cliente__c newClient4 = new Cliente__c(
+		//	Name = 'Pruebas6',
+		//	RFC1__c = 'ABC123456EFO',
+		//	//RecordType.Name
+		//	OwnerId = usr1.Id,
+		//	DCTStatus__c = 'Activo'
+		//);
+		//insert newClient4;
+
+		DCTRegion__c regPros4 = new DCTRegion__c(
+			RFC__c = 'ABC123456EFO',
+			Name = 'Pruebas6',
+			DCTBillingCycle__c = '97',
+			EstatusCobranza__c = 'FP',
+			OwnerId = usr1.Id
+		);
+		insert regPros4;
+
+		Account acc5 = new Account(
+			Name = 'Pruebas7',
+			RFC__c = 'ABC123456EFP',
+			OwnerID = usr1.Id,
+			TipoCliente__c = 'Cliente Cautivo'
+		);
+		insert acc5;
+
+		Cliente__c newClient5 = new Cliente__c(
+			Name = 'Pruebas7',
+			RFC1__c = 'ABC123456EFP',
+			RecordTypeId = mapRTsByDevName.get('Cliente__c').get('Cliente_Cautivo').Id,
+			OwnerId = usr1.Id,
+			DCTStatus__c = 'Activo'
+		);
+		insert newClient5;
+
+		//DCTRegion__c regPros5 = new DCTRegion__c(
+		//	RFC__c = 'ABC123456EFP',
+		//	Name = 'Pruebas7',
+		//	DCTBillingCycle__c = '20',
+		//	EstatusCobranza__c = 'FP',
+		//	OwnerId = usr1.Id
+		//);
+		//insert regPros5;
 	}
 	
 	@isTest static void DCT_NewLeadFromCustomAccount_ctr() {
@@ -254,6 +313,7 @@ private class DTC_NewCustomLead_tst {
 
 		DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
 		Test.startTest();
+			DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');
 			newProspect.performSaving();
 		Test.stopTest();
 	}
@@ -271,10 +331,10 @@ private class DTC_NewCustomLead_tst {
 
 		DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
 		Test.startTest();
+			DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');
 			newProspect.performSaving();
 		Test.stopTest();
 	}
-
 
 	@isTest static void DCT_NewCustomLead_ext_NewProspect_ProspectDuplicate() {
 		Account newLeadAcc = new Account(
@@ -314,58 +374,80 @@ private class DTC_NewCustomLead_tst {
 		Test.stopTest();
 	}
 
-	//@isTest static void DCT_NewCustomLead_ext_NewProspect_ProspectDuplicate4() {
-	//	Account newLeadAcc = new Account(
-	//		DTC_LegalEntity__c = 'Moral',
-	//		RFC__c = 'ABCD123456EFN',
-	//		DCTControlFieldName__c = 'Prueba2',
-	//		Segmento__c = 'Corporativo',
-	//		DCT_TypeOfProcedure__c = 'Lineas Nuevas',
-	//		Sector__c = 'Financiero',
-	//		Subsector__c = 'Afores'
-	//	);
+	@isTest static void DCT_NewCustomLead_ext_NewProspect_ProspectDuplicate3() {
+		Account newLeadAcc = new Account(
+			DTC_LegalEntity__c = 'Moral',
+			RFC__c = 'ABC123456EFO',
+			DCTControlFieldName__c = 'Pruebas6',
+			Segmento__c = 'Corporativo',
+			DCT_TypeOfProcedure__c = 'Lineas Nuevas',
+			Sector__c = 'Financiero',
+			Subsector__c = 'Afores'
+		);
 
-	//	DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
-	//	Test.startTest();
-	//		newProspect.performSaving();
-	//		newProspect.changeStatus();
-	//		newProspect.redirectToDC();
-	//	Test.stopTest();
-	//}
+		DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
+		Test.startTest();
+			DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');
+			newProspect.performSaving();
+			newProspect.changeStatus();
+			newProspect.redirectToDC();
+		Test.stopTest();
+	}
 
-	//@isTest static void DCT_NewCustomLead_ext_NewProspect_ProspectDuplicate5() {
-	//	Account newLeadAcc = new Account(
-	//		DTC_LegalEntity__c = 'Moral',
-	//		RFC__c = 'ABCD123456EF2',
-	//		DCTControlFieldName__c = 'Prueba2',
-	//		Segmento__c = 'Corporativo',
-	//		DCT_TypeOfProcedure__c = 'Lineas Nuevas',
-	//		Sector__c = 'Financiero',
-	//		Subsector__c = 'Afores'
-	//	);
+	@isTest static void DCT_NewCustomLead_ext_NewProspect_ProspectDuplicate4() {
+		Account newLeadAcc = new Account(
+			DTC_LegalEntity__c = 'Moral',
+			RFC__c = 'ABC123456EFP',
+			DCTControlFieldName__c = 'Pruebas7',
+			Segmento__c = 'Corporativo',
+			DCT_TypeOfProcedure__c = 'Lineas Nuevas',
+			Sector__c = 'Financiero',
+			Subsector__c = 'Afores'
+		);
 
-	//	DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
-	//	Test.startTest();
-	//		newProspect.performSaving();
-	//	Test.stopTest();
-	//}
+		DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
+		Test.startTest();
+			newProspect.performSaving();
+			newProspect.changeStatus();
+			newProspect.redirectToDC();
+		Test.stopTest();
+	}
 
-	//@isTest static void DCT_NewCustomLead_ext_NewProspect_ProspectDuplicate() {
-	//	Account newLeadAcc = new Account(
-	//		DTC_LegalEntity__c = 'Moral',
-	//		RFC__c = 'ABC123456EFL',
-	//		DCTControlFieldName__c = 'Prueba2',
-	//		Segmento__c = 'Corporativo',
-	//		DCT_TypeOfProcedure__c = 'Lineas Nuevas',
-	//		Sector__c = 'Financiero',
-	//		Subsector__c = 'Afores'
-	//	);
+	@isTest static void DCT_NewCustomLead_ext_NewProspect_ProspectDuplicate5() {
+		Account newLeadAcc = new Account(
+			DTC_LegalEntity__c = 'Moral',
+			RFC__c = 'ABC123456EFQ',
+			DCTControlFieldName__c = 'Pruebas7',
+			Segmento__c = 'Corporativo',
+			DCT_TypeOfProcedure__c = 'Lineas Nuevas',
+			Sector__c = 'Financiero',
+			Subsector__c = 'Afores'
+		);
 
-	//	DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
-	//	Test.startTest();
-	//		newProspect.performSaving();
-	//		newProspect.changeStatus();
-	//		newProspect.redirectToDC();
-	//	Test.stopTest();
-	//}
+		DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
+		Test.startTest();
+			newProspect.performSaving();
+			newProspect.changeStatus();
+			newProspect.redirectToDC();
+		Test.stopTest();
+	}
+
+	@isTest static void DCT_NewCustomLead_ext_NewProspect_ProspectDuplicate6() {
+		Account newLeadAcc = new Account(
+			DTC_LegalEntity__c = 'Física',
+			RFC__c = 'ABCD123456EFR',
+			DCTLastName__c = 'Pruebas',
+			DCTMotherLastName__c = 'Ejemplo',
+			DCTName__c = 'TestS',
+			Segmento__c = 'Corporativo',
+			DCT_TypeOfProcedure__c = 'Lineas Nuevas',
+			Sector__c = 'Financiero',
+			Subsector__c = 'Afores'
+		);
+
+		DCT_NewCustomLead_ext newProspect = new DCT_NewCustomLead_ext(new ApexPages.StandardController(newLeadAcc));
+		Test.startTest();
+			newProspect.performSaving();
+		Test.stopTest();
+	}
 }

@@ -72,6 +72,5 @@ trigger DCT_ComercialDirectory_tgr on Cliente__c (before update, after update, a
 	      		DCT_ComercialDirectory_cls.UpdateInvestgaciones(Trigger.newMap, Trigger.oldMap);
 			}//Fin si blnExecuteTrigger
 		}//Fin si Trigger.isUpdate
-	}//Fin si Trigger.isAfter
-	
+	}//Fin si Trigger.isAfter	
 }

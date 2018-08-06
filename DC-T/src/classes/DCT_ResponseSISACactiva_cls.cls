@@ -16,6 +16,7 @@ global class DCT_ResponseSISACactiva_cls {
 	}
 	global class Info2y8 {
 		global String LeyendaInvestigacion;
+		global String RazonSocial; 
 		global String FuerzaVentaAtiendenCliente;
 		global String FuerzaVentaEjecutivo;
 		global String FuerzaVentaServicioVoz;
@@ -27,14 +28,15 @@ global class DCT_ResponseSISACactiva_cls {
 		global String GrupoPlan;
 		global String FuerzaVentaPromocionVentaEmpleado;
 		global String FuerzaVentaRenovacionAdendum;
-		global String FuerzaVentaCambioSim;
+		global Boolean FuerzaVentaCambioSim;
 		global String Rfc;
-		global String AdendumAnticipado;
+		global Boolean AdendumAnticipado;
 		global String PlazoDiasAdendum;
-		global String BonificaPenalizacion;
+		global Boolean BonificaPenalizacion;
 		global String UsuarioXO;
-		global String PuedeActivarVPN;
+		global Boolean PuedeActivarVPN;
 		global String FuerzadeVentaActivarVPN;
+		//global String Integrador;
 	}
 	global class Info1y7 {
 		global String LeyendaInvestigacion;
@@ -50,13 +52,15 @@ global class DCT_ResponseSISACactiva_cls {
 		global String GrupoPlan;
 		global String FuerzaVentaPromocionVentaEmpleado;
 		global String FuerzaVentaRenovacionAdendum;
-		global String FuerzaVentaCambioSim;
-		global String AdendumAnticipado;
+		global Boolean FuerzaVentaCambioSim;
+		global String Rfc;
+		global Boolean AdendumAnticipado;
 		global String PlazoDiasAdendum;
-		global String BonificaPenalizacion;
+		global Boolean BonificaPenalizacion;
 		global String UsuarioXO;
-		global String PuedeActivarVPN;
+		global Boolean PuedeActivarVPN;
 		global String FuerzadeVentaActivarVPN;
+		//global String Integrador;
 	}
 	global class Info6y9 {
 		global String LeyendaInvestigacion;
@@ -71,12 +75,12 @@ global class DCT_ResponseSISACactiva_cls {
 		global String GrupoPlan;
 		global String FuerzaVentaPromocionVentaEmpleado;
 		global String FuerzaVentaRenovacionAdendum;
-		global String FuerzaVentaCambioSim;
-		global String AdendumAnticipado;
+		global Boolean FuerzaVentaCambioSim;
+		global Boolean AdendumAnticipado;
 		global String PlazoDiasAdendum;
-		global String BonificaPenalizacion;
+		global Boolean BonificaPenalizacion;
 		global String UsuarioXO;
-		global String PuedeActivarVPN;
+		global Boolean PuedeActivarVPN;
 		global String FuerzadeVentaActivarVPN;
 	}
 	global class Info3 {

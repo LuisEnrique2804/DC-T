@@ -460,7 +460,7 @@ public class DCT_ComercialDirectory_cls {
 					System.debug(loggingLevel.Error, '*** setRegion: ' + setRegion);
 					if(setRegion.size()>0) {
 						Approval.ProcessSubmitRequest procSubmReq = new Approval.ProcessSubmitRequest();
-					    procSubmReq.setComments('Favor de revisar el registro del prospecto, ya que se actualmente se cuenta con un adeudo.');
+					    procSubmReq.setComments('Favor de revisar el registro del prospecto, ya que actualmente se cuenta con un adeudo.');
 					    procSubmReq.setObjectId(idDC);
 					    procSubmReq.setProcessDefinitionNameOrId('DCTDuplicateRecord2');
 					    procSubmReq.setSkipEntryCriteria(true);
@@ -555,7 +555,8 @@ public class DCT_ComercialDirectory_cls {
 	}
 
 	public static void actualizaVigencia(Map<id,Cliente__c> directoryComercialNew, Map<id,Cliente__c> directoryComercialOld){
-		
+	    System.debug('EN DCT_ComercialDirectory_cls.actualizaVigencia...');
+	    			
 		Boolean bGanadas = false;
 		Map<String, Boolean> mapOppGanadas = new Map<String, Boolean>();
 		Map<String, String> mapIdUsrMgr = new Map<String, String>();
@@ -636,6 +637,8 @@ public class DCT_ComercialDirectory_cls {
 				directoryComercialNew.get(sIdDirCom).DCT_IdManagerOwnReg__c = mapIdUsrMgr.get(directoryComercialNew.get(sIdDirCom).OwnerId);
 				if (!setIdPerfilAdmin.contains(UserInfo.getProfileId()))
 					directoryComercialNew.get(sIdDirCom).DCTVicePrincipal__c = mapIdUsrMgr.get(directoryComercialNew.get(sIdDirCom).OwnerId);				 
+				if (setIdPerfilAdmin.contains(UserInfo.getProfileId()))
+					directoryComercialNew.get(sIdDirCom).DCTVicePrincipal__c = '00515000006uPtN';
 		    	System.debug('EN DCT_ComercialDirectory_cls.actualizaVigencia DCTVicePrincipal__c: ' + directoryComercialNew.get(sIdDirCom).DCTVicePrincipal__c + ' DCT_IdManagerOwnReg__c: ' + directoryComercialNew.get(sIdDirCom).DCT_IdManagerOwnReg__c + ' RecordTypeId: ' + directoryComercialNew.get(sIdDirCom).RecordTypeId);				
 			}
 			if (!mapIdUsrMgr.containsKey(directoryComercialNew.get(sIdDirCom).OwnerId)){
@@ -750,13 +753,6 @@ public class DCT_ComercialDirectory_cls {
 				//Si es positiva
 				if (ClientePaso.DCTResultVerificationEsp__c == 'POSITIVA')
 					DCT_Utils_cls.ActualizaInvestigacionesEsc1PosSI(ClientePaso.id, true);
-				/*//Si es negativa
-				if (ClientePaso.DCTResultVerificationEsp__c == 'NEGATIVA')
-					DCT_Utils_cls.ActualizaInvestigacionesEsc12Pos(ClientePaso.id, true);
-				//Si la investigación es DCTInvestigation__c
-				if (ClientePaso.DCTInvestigation__c != NULL
-					&& ClientePaso.DCTInvestigation__c == 'VI')
-					DCT_Utils_cls.ActualizaInvestigacionesEsc5VI(ClientePaso.id, true);*/
             }//Fin si mapRecTypeEmbudo.containsKey(opp.recordTypeId)
 		}//Fin del for para directoryComercialNew.KeySet()
 					
@@ -858,8 +854,10 @@ public class DCT_ComercialDirectory_cls {
 						sIdDirComInvesEsc12 += sIdDirCom + ',';
             	}//Fin si*/            	            	             		
             	//Escenario 3 NO TIENE INVESTIGACIÒN solicita aprobaciòn del subdirector            	
-            	else if (ClientePaso.DCTResultVerification__c == 'Sin Investigacion' 
-            		&& ClientePaso.DCTResearchLegend__c == 'Rechazar Activación'
+            	else if ( (ClientePaso.DCTResultVerification__c == null ||
+						ClientePaso.DCTResultVerification__c == 'Sin Investigacion')
+            		&& (ClientePaso.DCTResearchLegend__c == 'Rechazar Activación' ||
+            			ClientePaso.DCTResultVerification__c == null)
             		&& ClientePaso.DCTInvestigation__c == 'SI'
             		&& ClientePaso.DCTApprovalProcess__c == false
             		&& ClientePaso.DCTAskAuthorization__c == true            		
@@ -875,7 +873,7 @@ public class DCT_ComercialDirectory_cls {
             		&& ClientePaso.DCTResearchLegend__c == 'Rechazar Activación'
             		&& ClientePaso.DCTInvestigation__c == 'IT'
             		&& ClientePaso.DCTApprovalProcess__c == false
-            		&& ClientePaso.DCTAskAuthorization__c == false            		
+            		&& ClientePaso.DCTAskAuthorization__c == true            		
             		&& ClientePaso.DCTTypeAuthorization__c == 'Rechazado por Subdirector'
             		){
 					System.debug('EN DCT_ComercialDirectory_cls.updateInvestgaciones VAL 5...');            			

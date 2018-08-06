@@ -29,12 +29,11 @@ global class DCT_assignmentNewOwner_bch implements Database.Batchable<sObject>, 
 	global Database.QueryLocator start(Database.BatchableContext BC) {
 		 mapEmailSend90 = new Map<String, String>();
 		 mapEmailSend = new Map<String, String>();
+		 System.debug(loggingLevel.Error, '*** Database.getQueryLocator(query): ' + Database.getQueryLocator(query));
 		return Database.getQueryLocator(query);		
 	}
 	global void execute(Database.BatchableContext BC, List<sObject> scope) {
-
-		//DCT_assignmentNewOwner_cls.newOwner(scope);
-				
+		
 		List<Id>                               lstIdAcc           = new List<Id>();
 		List<Id>                               lstIdAccproc       = new List<Id>();
 		List<Id>                               lstIdNewOwner      = new List<Id>();

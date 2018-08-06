@@ -31,6 +31,8 @@ public class DCT_SISACactivaRestAux_ws {
 		List<DCT_ResponseSISACactiva_cls.Info5>   lstInfo5         = new List<DCT_ResponseSISACactiva_cls.Info5>();
 		List<DCT_ResponseSISACactiva_cls.Info10>  lstInfo10        = new List<DCT_ResponseSISACactiva_cls.Info10>();
 		List<DCT_ResponseSISACactiva_cls.Info11>  lstInfo11        = new List<DCT_ResponseSISACactiva_cls.Info11>();
+		List<String> lstDCTServices1 = new List<String>();
+		List<String> lstDCTServices2 = new List<String>();
 		Map<String, String> mapService1 = new Map<String, String>();
 
 		if(entityLegal == '1') {
@@ -57,8 +59,8 @@ public class DCT_SISACactivaRestAux_ws {
 					lstPlan = generateQueryPlan(clienteIterator.id);
 					response.esExitoso = true;
 					
-					List<String> lstDCTServices1 = clienteIterator.DCTServices1__c.split(';');
-					List<String> lstDCTServices2 = clienteIterator.DCTServices2__c.split(';');
+					lstDCTServices1 = clienteIterator.DCTServices1__c != null?clienteIterator.DCTServices1__c.split(';'): new List<String>();
+					lstDCTServices2 = clienteIterator.DCTServices2__c != null?clienteIterator.DCTServices2__c.split(';') : new List<String>();
 					
 					if(!lstPlan.isEmpty()) {
 						for(DCTAuthorizedLines__c planIterator: lstPlan) {
@@ -78,15 +80,18 @@ public class DCT_SISACactivaRestAux_ws {
 						}
 					}
 
-					for(String strIterator: lstDCTServices1) {
-						if(!mapService1.containsKey(strIterator)) {
-							mapService1.put(strIterator, clienteIterator.DCT_CatalogoFuerzaVenta__r.Name);
+					if(lstDCTServices1.size()>0) {
+						for(String strIterator: lstDCTServices1) {
+							if(!mapService1.containsKey(strIterator)) {
+								mapService1.put(strIterator, clienteIterator.DCT_CatalogoFuerzaVenta__r.Name);
+							}
 						}
 					}
-					
-					for(String strIterator: lstDCTServices2) {
-						if(!mapService1.containsKey(strIterator)) {
-							mapService1.put(strIterator, clienteIterator.DCTCatalogoFuerzaVenta2__r.Name);
+					if(lstDCTServices2.size()>0) {
+						for(String strIterator: lstDCTServices2) {
+							if(!mapService1.containsKey(strIterator)) {
+								mapService1.put(strIterator, clienteIterator.DCTCatalogoFuerzaVenta2__r.Name);
+							}
 						}
 					}
 					System.debug(loggingLevel.Error, '*************************************************' );
@@ -104,19 +109,22 @@ public class DCT_SISACactivaRestAux_ws {
 						info.FuerzaVentaServicioVoz = mapService1.containsKey('Para Voz - Datos')?mapService1.get('Para Voz - Datos'):null;
 						info.FuerzaVentaServicioDatos = mapService1.containsKey('Para Voz - Datos')?mapService1.get('Para Voz - Datos'):null;
 						info.CicloFacturacion = clienteIterator.DCTBillingCycle__c != null ? clienteIterator.DCTBillingCycle__c : null;
+						//info.Integrador = null;
 						info.ClaseCredito = clienteIterator.DCTCreditClass__c != null ? clienteIterator.DCTCreditClass__c : null;
 						info.TipoCuenta = clienteIterator.DCTAccountType__c != null ? clienteIterator.DCTAccountType__c : null;
 						info.TarifasAutorizada = strTarifas != ''?strTarifas:null;
 						info.GrupoPlan = strGroup != ''?strGroup:null;
 						info.FuerzaVentaPromocionVentaEmpleado = info.FuerzaVentaPromocionVentaEmpleado = mapService1.containsKey('Promoción Venta Empleado')?mapService1.get('Promoción Venta Empleado'):null;
 						info.FuerzaVentaRenovacionAdendum = mapService1.containsKey('Renovación de Adendum')?mapService1.get('Renovación de Adendum'):null;
-						info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?mapService1.get('Cambio de SIM'):null;
+						//info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?mapService1.get('Cambio de SIM'):null;
+						info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?true:false;
+						info.Rfc = clienteIterator.RFC__c != null ? clienteIterator.RFC__c : null;
 						info.LeyendaInvestigacion = clienteIterator.DCTResearchLegend__c;
-						info.AdendumAnticipado = clienteIterator.DCTAnticipatedAdendum__c != null ? clienteIterator.DCTAnticipatedAdendum__c : null;
+						info.AdendumAnticipado = clienteIterator.DCTAnticipatedAdendum__c == 'Si' ? true : false;
 						info.PlazoDiasAdendum = clienteIterator.DCTTermDays__c != null ? clienteIterator.DCTTermDays__c : null;
-						info.BonificaPenalizacion = clienteIterator.DCTBonusCustomization__c ? 'S' : 'N';
+						info.BonificaPenalizacion = clienteIterator.DCTBonusCustomization__c ? true : false;
 						info.UsuarioXO = clienteIterator.XO__c;
-						info.PuedeActivarVPN = clienteIterator.DCTVPNActivation__c ? '1' : '0';
+						info.PuedeActivarVPN = clienteIterator.DCTVPNActivation__c ? true : false;
 						info.FuerzadeVentaActivarVPN = mapService1.containsKey('Activación VPN')?mapService1.get('Activación VPN'):null;
 						
 						
@@ -127,10 +135,12 @@ public class DCT_SISACactivaRestAux_ws {
 						
 						DCT_ResponseSISACactiva_cls.Info2y8 info = new DCT_ResponseSISACactiva_cls.Info2y8();
 						
+						info.RazonSocial = clienteIterator.Name; 
 						info.FuerzaVentaAtiendenCliente = clienteIterator.DCT_CatalogoFuerzaVenta__r.Name +','+clienteIterator.DCTCatalogoFuerzaVenta2__r.Name;
 						info.FuerzaVentaEjecutivo = clienteIterator.VT__c != null ? clienteIterator.VT__c : null; //DCTVT
 						info.FuerzaVentaServicioVoz = mapService1.containsKey('Para Voz - Datos')?mapService1.get('Para Voz - Datos'):null;
 						info.FuerzaVentaServicioDatos = mapService1.containsKey('Para Voz - Datos')?mapService1.get('Para Voz - Datos'):null;
+						//info.Integrador = null;
 						info.CicloFacturacion = clienteIterator.DCTBillingCycle__c != null ? clienteIterator.DCTBillingCycle__c : null;
 						info.ClaseCredito = clienteIterator.DCTCreditClass__c != null ? clienteIterator.DCTCreditClass__c : null;
 						info.TipoCuenta = clienteIterator.DCTAccountType__c != null ? clienteIterator.DCTAccountType__c : null;
@@ -138,14 +148,15 @@ public class DCT_SISACactivaRestAux_ws {
 						info.GrupoPlan = strGroup != ''?strGroup:null;
 						info.FuerzaVentaPromocionVentaEmpleado = mapService1.containsKey('Promoción Venta Empleado')?mapService1.get('Promoción Venta Empleado'):null;
 						info.FuerzaVentaRenovacionAdendum = mapService1.containsKey('Renovación de Adendum')?mapService1.get('Renovación de Adendum'):null;
-						info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?mapService1.get('Cambio de SIM'):null;
+						//info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?mapService1.get('Cambio de SIM'):null;
+						info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?true:false;
 						info.Rfc = clienteIterator.RFC__c != null ? clienteIterator.RFC__c : null;
 						info.LeyendaInvestigacion = clienteIterator.DCTResearchLegend__c;
-						info.AdendumAnticipado = clienteIterator.DCTAnticipatedAdendum__c != null ? clienteIterator.DCTAnticipatedAdendum__c : null;
+						info.AdendumAnticipado = clienteIterator.DCTAnticipatedAdendum__c == 'Si' ? true : false;
 						info.PlazoDiasAdendum = clienteIterator.DCTTermDays__c != null ? clienteIterator.DCTTermDays__c : null;
-						info.BonificaPenalizacion = clienteIterator.DCTBonusCustomization__c ? 'S' : 'N';
+						info.BonificaPenalizacion = clienteIterator.DCTBonusCustomization__c ? true : false;
 						info.UsuarioXO = clienteIterator.XO__c;
-						info.PuedeActivarVPN = clienteIterator.DCTVPNActivation__c ? '1' : '0';
+						info.PuedeActivarVPN = clienteIterator.DCTVPNActivation__c ? true : false;
 						info.FuerzadeVentaActivarVPN = mapService1.containsKey('Activación VPN')?mapService1.get('Activación VPN'):null;
 						
 						lstInfo28.add(info);
@@ -166,13 +177,14 @@ public class DCT_SISACactivaRestAux_ws {
 						info.GrupoPlan = strGroup != ''?strGroup:null;
 						info.FuerzaVentaPromocionVentaEmpleado = info.FuerzaVentaPromocionVentaEmpleado = mapService1.containsKey('Promoción Venta Empleado')?mapService1.get('Promoción Venta Empleado'):null;
 						info.FuerzaVentaRenovacionAdendum = mapService1.containsKey('Renovación de Adendum')?mapService1.get('Renovación de Adendum'):null;
-						info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?mapService1.get('Cambio de SIM'):null;
+						//info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?mapService1.get('Cambio de SIM'):null;
+						info.FuerzaVentaCambioSim = mapService1.containsKey('Cambio de SIM')?true:false;
 						info.LeyendaInvestigacion = clienteIterator.DCTResearchLegend__c;
-						info.AdendumAnticipado = clienteIterator.DCTAnticipatedAdendum__c != null ? clienteIterator.DCTAnticipatedAdendum__c : null;
+						info.AdendumAnticipado = clienteIterator.DCTAnticipatedAdendum__c == 'Si' ? true : false;
 						info.PlazoDiasAdendum = clienteIterator.DCTTermDays__c != null ? clienteIterator.DCTTermDays__c : null;
-						info.BonificaPenalizacion = clienteIterator.DCTBonusCustomization__c ? 'S' : 'N';
+						info.BonificaPenalizacion = clienteIterator.DCTBonusCustomization__c ? true : false;
 						info.UsuarioXO = clienteIterator.XO__c;
-						info.PuedeActivarVPN = clienteIterator.DCTVPNActivation__c ? '1' : '0';
+						info.PuedeActivarVPN = clienteIterator.DCTVPNActivation__c ? true : false;
 						info.FuerzadeVentaActivarVPN = mapService1.containsKey('Activación VPN')?mapService1.get('Activación VPN'):null;
 						
 						

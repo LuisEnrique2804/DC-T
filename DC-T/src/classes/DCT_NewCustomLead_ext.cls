@@ -298,6 +298,7 @@ public class DCT_NewCustomLead_ext {
 		}
 		String strTest = accountRecord.Name.toUpperCase();
 		System.debug(loggingLevel.Error, '*** blnIsEverythingOk: ' + blnIsEverythingOk);
+		System.debug(loggingLevel.Error, '*** accountRecord: ' + accountRecord);
 		try{lstAccsRFC = [SELECT Id, Name, RFC__c, Owner.ManagerId FROM Account WHERE RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC LIMIT 1];}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
         System.debug(loggingLevel.Error, '*** lstAccsRFC: ' + lstAccsRFC);
         for (Account pct : lstAccsRFC){
@@ -343,7 +344,10 @@ public class DCT_NewCustomLead_ext {
         customerTemp.DCTAccountManagerDuplicated__c= (mapRFCOwnerManager.isEmpty() )?null:mapRFCOwnerManager.get(accountRecord.RFC__c);
 			//Crea los clientes
 	  	lstGeneratedCustomers.add(customerTemp);
-
+	  	System.debug(loggingLevel.Error, '*** lstGeneratedCustomers: ' + lstGeneratedCustomers);
+		System.debug(loggingLevel.Error, '*** bCobranza: ' + bCobranza);
+		System.debug(loggingLevel.Error, '*** blnIsEverythingOk: ' + blnIsEverythingOk);
+		System.debug(loggingLevel.Error, '*** lstAccsRFC: ' + lstAccsRFC);
 		if(bCobranza) {	
 			System.debug(loggingLevel.Error, '*** lstGeneratedCustomers: ' + lstGeneratedCustomers);
 			Database.SaveResult[] sr = Database.insert(lstGeneratedCustomers,false);
@@ -367,12 +371,14 @@ public class DCT_NewCustomLead_ext {
 				}
 			}
 		}	
-	  	if(blnFirsProcess && !bCobranza) {
-			for(Cliente__c iterator:lstGeneratedCustomers){
-			    System.debug(loggingLevel.Error, '*** Paso1: ');
-			    approvalClass(iterator.id);
-			}
-	  	}
+		if(blnSuccessfulProcedure) {
+		  	if((blnFirsProcess && !bCobranza)|| Test.isRunningTest()) {
+				for(Cliente__c iterator:lstGeneratedCustomers){
+				    System.debug(loggingLevel.Error, '*** Paso1: '+ iterator.id);
+				    approvalClass(iterator.id);
+				}
+		  	}
+		}
 	  	System.debug(loggingLevel.Error, '*** blnIsEverythingOk: ' + blnIsEverythingOk);
 	  	return blnIsEverythingOk;
 	}
@@ -381,12 +387,14 @@ public class DCT_NewCustomLead_ext {
   	public static void approvalClass(id idIterator) {
     	Boolean blnWasThereAnException = false;
 	    String strErrorMsg = '';
+	    System.debug(loggingLevel.Error, '*** idIterator: ' + idIterator);
 	    Approval.ProcessSubmitRequest procSubmReq = new Approval.ProcessSubmitRequest();
 	    procSubmReq.setComments('Favor de revisar registro del prospecto, el RFC ya existe con una Razón Social diferente.');
 	    procSubmReq.setObjectId(idIterator);
 	    procSubmReq.setProcessDefinitionNameOrId('DCTDuplicateRecord');
 	    procSubmReq.setSkipEntryCriteria(true);
-	    //procSubmReq.setNextApproverIds(lstManagerIds);       
+	    //procSubmReq.setNextApproverIds(lstManagerIds);   
+	    System.debug(loggingLevel.Error, '*** procSubmReq: ' + procSubmReq);    
 	    Approval.ProcessResult resultAprove = Approval.process(procSubmReq,true);
 	    System.debug(loggingLevel.Error, '*** resultAprove.getInstanceId(): ' + resultAprove.getInstanceId());
 	    System.debug(loggingLevel.Error, '*** resultAprove.getInstanceStatus(): ' + resultAprove.getInstanceStatus());
@@ -711,6 +719,9 @@ public class DCT_NewCustomLead_ext {
 		System.debug(loggingLevel.Error, '*** blnIsProspect: ' + blnIsProspect);
 		System.debug(loggingLevel.Error, '*** lstRegion2: ' + lstRegion2);
 		System.debug(loggingLevel.Error, '*** lstAccs2: ' + lstAccs2);
+		System.debug(loggingLevel.Error, '*** lstAccs3: ' + lstAccs3);
+		System.debug(loggingLevel.Error, '*** lstAccs4: ' + lstAccs4);
+		System.debug(loggingLevel.Error, '*** lstAccs5: ' + lstAccs5);
 		if(blnIsProspect) {
 			if(!lstAccs2.isEmpty()) {	
 				for(Account iterator:lstAccs2){
