@@ -506,53 +506,53 @@ public class DCT_RelatedListAssigment_ctr {
 	    return pbButtons;
 	}    
     
-	  public PageReference refreshGrid() { //user clicked a page number        
-	    return null;
-	  }
-	    
-	  public PageReference Previous() { //user clicked previous button
-	    selectedPage = '0';
-	    counter -= list_size;
-	    return null;
-	  }
-	
-	  public PageReference Next() { //user clicked next button
-	    selectedPage = '0';
-	    counter += list_size;
-	    return null;
-	  }
-	
-	  public PageReference End() { //user clicked end
-	    selectedPage = '0';
-	    counter = total_size - math.mod(total_size, list_size);
-	    return null;
-	  }
-	  
-	  public Boolean getDisablePrevious() { //this will disable the previous and beginning buttons
-	    if (counter>0) return false; else return true;
-	  }
-	
-	  public Boolean getDisableFirst() { //this will disable the previous and beginning buttons
-	    if (counter==0) return false; else return true;
-	  }
-	
-	  public Boolean getDisableNext() { //this will disable the next and end buttons
-	    if (counter + list_size < total_size) return false; else return true;
-	  }
-	
-	  public Integer getTotal_size() {
-	    return total_size;
-	  }
-	  
-	  public Integer getPageNumber() {
-	    return counter/list_size + 1;
-	  }
-	
-	  public Integer getTotalPages() {
-	    if (math.mod(total_size, list_size) > 0) {
-	      return total_size/list_size + 1;
-	    } else {
-	      return (total_size/list_size);
-	    }
-	  }
+	public PageReference refreshGrid() { //user clicked a page number        
+		return null;
+	}
+
+	public PageReference Previous() { //user clicked previous button
+		selectedPage = '0';
+		counter -= list_size;
+	return null;
+	}
+
+	public PageReference Next() { //user clicked next button
+		selectedPage = '0';
+		counter += list_size;
+	return null;
+	}
+
+	public PageReference End() { //user clicked end
+		selectedPage = '0';
+		counter = total_size - math.mod(total_size, list_size);
+	return null;
+	}
+
+	public Boolean getDisablePrevious() { //this will disable the previous and beginning buttons
+		if (counter>0) return false; else return true;
+	}
+
+	public Boolean getDisableFirst() { //this will disable the previous and beginning buttons
+		if (counter==0) return false; else return true;
+	}
+
+	public Boolean getDisableNext() { //this will disable the next and end buttons
+		if (counter + list_size < total_size) return false; else return true;
+	}
+
+	public Integer getTotal_size() {
+		return total_size;
+	}
+
+	public Integer getPageNumber() {
+		return counter/list_size + 1;
+	}
+
+	public Integer getTotalPages() {
+		if (math.mod(total_size, list_size) > 0) {
+	  		return total_size/list_size + 1;
+		} else {
+	  		return (total_size/list_size);
+		}
+	}
 }

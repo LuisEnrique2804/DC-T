@@ -46,11 +46,13 @@ global class DCT_assignmentNewOwner_bch implements Database.Batchable<sObject>, 
 		List<DCTAssignmentDuplicateAccount__c> lstAccDupProceced  = new List<DCTAssignmentDuplicateAccount__c>();
 		Map<Id, Id>                            mapAccNewOwner     = new Map<Id, Id>();
 		System.debug(loggingLevel.Error, '*** scope.size(): ' + scope.size());
+		System.debug(loggingLevel.Error, '*** scope: ' + scope);
 		if(!scope.isEmpty()) {
 			System.debug(loggingLevel.Error, '*** Date.today().addDays(mainSettings.DCT_SendChange__c): ' + Date.today().addDays(Integer.valueOf(mainSettings.DCT_SendChange__c)));
 			System.debug(loggingLevel.Error, '*** Date.today().addDays(mainSettings.DCT_sendNotification__c): ' + Date.today().addDays(Integer.valueOf(mainSettings.DCT_sendNotification__c)));
 			for(sObject iterator: scope) {
 				Cliente__c clientePaso = (Cliente__c)iterator;
+				System.debug(loggingLevel.Error, '*** clientePaso.DCTRegistrationDate__c: ' + clientePaso.DCTRegistrationDate__c);
 				if(clientePaso.DCTRegistrationDate__c == Date.today().addDays(Integer.valueOf(mainSettings.DCT_SendChange__c))) {
 					lstNNameAcc.add(clientePaso.Name);
 					lstIdAcc.add(clientePaso.Cliente__c);
@@ -60,7 +62,7 @@ global class DCT_assignmentNewOwner_bch implements Database.Batchable<sObject>, 
 					mapEmailSend.put(clientePaso.id, clientePaso.OwnerId);
 				}
 			}
-			System.debug(loggingLevel.Error, '*** lstNNameAcc.size(): ' + lstNNameAcc.size());
+			System.debug(loggingLevel.Error, '*** lstNNameAcc.size(): ' + lstNNameAcc);
 			System.debug(loggingLevel.Error, '*** lstIdAcc.size(): ' + lstIdAcc.size());
 			System.debug(loggingLevel.Error, '*** mapEmailSend90.size(): ' + mapEmailSend90.size());
 			System.debug(loggingLevel.Error, '*** mapEmailSend.size(): ' + mapEmailSend.size());
@@ -182,6 +184,7 @@ global class DCT_assignmentNewOwner_bch implements Database.Batchable<sObject>, 
 			//Los datos del usuario
 			for (User usuario : [SELECT id, Email, Name, LastName, FirstName 
 				FROM User WHERE ID IN: mapEmailSend90.values()]){
+				System.debug(loggingLevel.Error, '*** usuario: ' + usuario);
 				if (usuario.Email != NULL){
 					mapIdUsrEmail.put(usuario.id, usuario.Email);
 					if (mapEmailDatosUsr.containsKey(usuario.Email))
@@ -195,6 +198,9 @@ global class DCT_assignmentNewOwner_bch implements Database.Batchable<sObject>, 
 			for (Contact contacto : [SELECT id, Email FROM Contact WHERE Email IN: mapIdUsrEmail.values()]){
 				mapContactEmail.put(contacto.Email, contacto.id);
 			}
+			System.debug(loggingLevel.Error, '*** mapIdUsrEmail: ' + mapIdUsrEmail);
+			System.debug(loggingLevel.Error, '*** mapContactEmail: ' + mapContactEmail);
+			System.debug(loggingLevel.Error, '*** mapEmailDatosUsr: ' + mapEmailDatosUsr);
 			//Ve si existen todos los contactos asociados a los usuarios y si no crealos
 			for (String sEmailUsr : mapIdUsrEmail.values()){
 				//Crea el nuevo contacto apartir de los datos del usuario si no existe en mapContactEmail
@@ -208,6 +214,7 @@ global class DCT_assignmentNewOwner_bch implements Database.Batchable<sObject>, 
 				}///Fin si !mapContactEmail.contaisnKey(sEmailUsr)
 			}//Fin del for para mapIdUsrEmail.values()
 			//Ve si hay nuevos contacto que agregar
+			System.debug(loggingLevel.Error, '*** mapContactUps: ' + mapContactUps);
 			if (!mapContactUps.isEmpty()){
 				List<Database.Upsertresult> lDtupr = Database.upsert(mapContactUps.values(), Contact.id, false);
 				for (Database.Upsertresult dtupr : lDtupr){
@@ -240,9 +247,9 @@ global class DCT_assignmentNewOwner_bch implements Database.Batchable<sObject>, 
 			for (Contact contacto : [SELECT id, Email FROM Contact WHERE Email IN: mapIdUsrEmail2.values()]){
 				mapContactEmail2.put(contacto.Email, contacto.id);
 			}
-			
+			System.debug(loggingLevel.Error, '*** mapContactEmail2: ' + mapContactEmail2);
 			for (String sEmailUsr : mapIdUsrEmail2.values()){
-				
+				System.debug(loggingLevel.Error, '*** sEmailUsr: ' + sEmailUsr);
 				if (!mapContactEmail2.containsKey(sEmailUsr)){
 					mapContactUps2.put(sEmailUsr, new Contact(
 							FirstName = mapEmailDatosUsr2.get(sEmailUsr).get(0).FirstName,
@@ -291,6 +298,7 @@ global class DCT_assignmentNewOwner_bch implements Database.Batchable<sObject>, 
 			}
 			System.debug(loggingLevel.Error, '*** lSingleemailMessage: ' + lSingleemailMessage);
 			Messaging.SendEmailResult[] repuestaReceiver = Messaging.sendEmail(lSingleemailMessage);	        
+			System.debug(loggingLevel.Error, '*** repuestaReceiver: ' + repuestaReceiver);
 			//Ve si hubo error
 			if (repuestaReceiver[0].success)
 				System.debug('El correo para el usuario. ');

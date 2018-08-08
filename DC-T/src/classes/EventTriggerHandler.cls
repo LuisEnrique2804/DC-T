@@ -77,7 +77,7 @@ public with sharing class EventTriggerHandler extends TriggerHandler {
     public override void afterInsert() {
     	
     	for (Event newEvent : newList){
-            
+            System.debug(loggingLevel.Error, '*** newEvent.Type: ' + newEvent.Type);
 			if(newEvent.Type == 'Preventa / Postventa' || (newEvent.Type == 'PCTPruebaAvxAdm' && test.isRunningTest())){
                 
                 
@@ -130,7 +130,7 @@ public with sharing class EventTriggerHandler extends TriggerHandler {
 	    		}
     		}    
     		
-    		if (((oldEvent.StartDateTime != newEvent.StartDateTime) && newEvent.Type == 'Embudo') || (newEvent.Type != 'PCTPruebaAvxAdm' && test.isRunningTest())){
+    		if (((oldEvent.StartDateTime != newEvent.StartDateTime) && newEvent.Type == 'Embudo') || (newEvent.Type != 'PCTPruebaAvxAdm' && !test.isRunningTest())){
     			Opportunity Opp = new Opportunity(Id = newEvent.WhatId);
     			if(newEvent.Subject == 'Cita Persona RIP'|| test.isRunningTest()){
     				Opp.FechaRIP__c = Date.valueOf(newEvent.StartDateTime);	
