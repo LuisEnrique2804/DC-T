@@ -2,7 +2,7 @@
 private class DCT_RelatedListAssigment_tst {
 	
 	@isTest static void test_method_one() {
-
+		DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('PlanCliente');
 		String  profileName = Label.DCT_AdministratorProfile; //Administrador del sistema
 		String   username = Math.round(Math.random() * 10000) + '_' + Math.round(Math.random() * 10000) + '_' + Math.round(Math.random() * 10000) + '@test.com';
 		String   username2 = Math.round(Math.random() * 10000) + '_' + Math.round(Math.random() * 10000) + '_' + Math.round(Math.random() * 10000) + '@test.com';          
@@ -47,6 +47,14 @@ private class DCT_RelatedListAssigment_tst {
 		);
 		insert acc;
 
+		Account acc1 = new Account(
+			Name = 'Prueba2',
+			RFC__c = 'ABC123456EFL',
+			OwnerID = usr1.Id,
+			TipoCliente__c = 'Prospecto'
+		);
+		insert acc1;
+
 		Account acc2 = new Account(
 			Name = 'Pruebas Ejemplo TestS',
 			RFC__c = 'ABCD123456EFM',
@@ -65,7 +73,10 @@ private class DCT_RelatedListAssigment_tst {
 		insert newClient;
 
 
-		DCTAssignment__c assigment = new DCTAssignment__c();
+		DCTAssignment__c assigment = new DCTAssignment__c(
+			Aprobador__c = usr.id,
+			Status__c = 'Rechazado'
+		);
 		insert assigment;
 
 		DCTClientsProspectstoAssigned__c newProsAssigment = new DCTClientsProspectstoAssigned__c(
@@ -74,26 +85,28 @@ private class DCT_RelatedListAssigment_tst {
 			AccountName__c  = acc.id,
 			IssuingUser__c  = usr.id,
 			UserReceiver__c = usr1.id,
-			Status__c       = 'Pendiente',
+			Status__c       = 'Aprobado',
 			AssignmentNumber__c = assigment.id
 		);
 		insert newProsAssigment;
 
-		String idProcessDefinition = [SELECT Id, Name FROM ProcessDefinition Limit 1].id;
-
-		ProcessInstance processInstWorkitem = new ProcessInstance(
-			TargetObjectId = assigment.id,
-			ProcessDefinitionId = idProcessDefinition,
-			Status = 'Pendiente'
+		DCTClientsProspectstoAssigned__c newProsAssigment1 = new DCTClientsProspectstoAssigned__c(
+			Name            = 'Test',
+			Approval__c     = true,
+			AccountName__c  = acc1.id,
+			IssuingUser__c  = usr.id,
+			UserReceiver__c = usr1.id,
+			Status__c       = 'Rechazado',
+			AssignmentNumber__c = assigment.id
 		);
-		insert processInstWorkitem;
+		insert newProsAssigment1;
 
 		DCT_RelatedListAssigment_ctr newAssigment = new DCT_RelatedListAssigment_ctr(new ApexPages.StandardController(assigment));
 		Test.startTest();
 			newAssigment.validateSatus();
 			newAssigment.getDCTAssigment();
 			newAssigment.regresar();
-			//newAssigment.reject();
+			newAssigment.reject();
 			newAssigment.save();
 			newAssigment.getMyCommandButtons();
 			newAssigment.refreshGrid();

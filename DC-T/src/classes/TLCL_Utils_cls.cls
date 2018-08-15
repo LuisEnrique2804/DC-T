@@ -71,10 +71,13 @@ global class TLCL_Utils_cls {
      * @return              Objeto de configuración de Endpoing
     **/
    
-    public static EndpointSetting__mdt getEndpointSetting(String strSetupCode){  
+    public static EndpointSetting__mdt getEndpointSetting(String strSetupCode){ 
+        System.debug(loggingLevel.Error, '*** strSetupCode: ' + strSetupCode); 
         EndpointSetting__mdt objEndpointSetting = new EndpointSetting__mdt();
         String strQueryOverEndpointSetting = 'SELECT '+String.join(new List<String>(SObjectType.EndpointSetting__mdt.Fields.getMap().keySet()),', ')+' FROM EndpointSetting__mdt WHERE DeveloperName = \''+strSetupCode+'\' LIMIT 1';
+        System.debug(loggingLevel.Error, '*** strQueryOverEndpointSetting: ' + strQueryOverEndpointSetting);
         try{objEndpointSetting = Database.query(strQueryOverEndpointSetting);}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
+        System.debug(loggingLevel.Error, '*** objEndpointSetting: ' + objEndpointSetting);
         return objEndpointSetting;
     }
 

@@ -18,7 +18,8 @@ public class DCT_CuentaDeudoraSAP {
         private String[] field_order_type_info = new String[]{'usuario','password','xmlConsultaStock'};
     }
     public class SapCtaDeudoraWSPort {
-        public String endpoint_x = 'https://10.188.90.120:7080/WSCuentaDeudoraWeb/SapCtaDeudoraWSService';
+        //public String endpoint_x = 'https://10.188.90.120:7080/WSCuentaDeudoraWeb/SapCtaDeudoraWSService';
+        public String endpoint_x = Label.DCT_CuentaDeudoraSAP;
         public Map<String,String> inputHttpHeaders_x;
         public Map<String,String> outputHttpHeaders_x;
         public String clientCertName_x;
@@ -34,20 +35,14 @@ public class DCT_CuentaDeudoraSAP {
             DCT_CuentaDeudoraSAP.RegistraCtaDeudoraResponse response_x;
             Map<String, DCT_CuentaDeudoraSAP.RegistraCtaDeudoraResponse> response_map_x = new Map<String, DCT_CuentaDeudoraSAP.RegistraCtaDeudoraResponse>();
             response_map_x.put('response_x', response_x);
-            WebServiceCallout.invoke(
-              this,
-              request_x,
-              response_map_x,
-              new String[]{endpoint_x,
-              'RegistraCtaDeudora',
-              'http://webservices.ctadeudora.ddas.gis.sss.dfa.telcel.com/',
-              'RegistraCtaDeudora',
-              'http://webservices.ctadeudora.ddas.gis.sss.dfa.telcel.com/',
-              'RegistraCtaDeudoraResponse',
-              'DCT_CuentaDeudoraSAP.RegistraCtaDeudoraResponse'}
-            );
+            if (!Test.isRunningTest()){            
+	            WebServiceCallout.invoke(this,request_x,response_map_x,new String[]{endpoint_x,'RegistraCtaDeudora','http://webservices.ctadeudora.ddas.gis.sss.dfa.telcel.com/',
+	              'RegistraCtaDeudora','http://webservices.ctadeudora.ddas.gis.sss.dfa.telcel.com/','RegistraCtaDeudoraResponse','DCT_CuentaDeudoraSAP.RegistraCtaDeudoraResponse'}
+	            );
+            }
             response_x = response_map_x.get('response_x');
-            return response_x.return_x;
+            //return response_x.return_x;
+            return Test.isRunningTest() ? '' : response_x.return_x;
         }
     }
 }

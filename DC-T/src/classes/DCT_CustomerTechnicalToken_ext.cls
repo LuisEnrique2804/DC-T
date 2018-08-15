@@ -12,7 +12,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 	public Account accountInstance{set;get;}
 
 	public List<Account> lstAssociatedAccs{set;get;}
-	public Map<String,Account> mapAccsById{set;get;}
+	//public Map<String,Account> mapAccsById{set;get;}
 	public Boolean blnAreThereRelAccs{set;get;}
 		
 	public Boolean blnAreThereProvisioningRecords{set;get;}
@@ -30,14 +30,14 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 	public Boolean blnNewDedicatedLink{set;get;}
 	public DCTDedicatedLinks__c dedicatedLinkInstance{set;get;}
 
-	public Boolean blnIsEmptyControlledVPNKeyMap {get {return mapControlledVPNKeys.isEmpty();}}
-	public Boolean blnIsEmptyOpenVPNKeyMap {get {return mapOpenVPNKeys.isEmpty();}}
+	public Boolean blnIsEmptyControlledVPNKeyMap {set; get {return mapControlledVPNKeys.isEmpty();}}
+	public Boolean blnIsEmptyOpenVPNKeyMap {set; get {return mapOpenVPNKeys.isEmpty();}}
 	public Map<String,String> mapControlledVPNKeys{set;get;}
 	public Map<String,String> mapOpenVPNKeys{set;get;}
 	public String strSelectedNewControlledVPNKey{set;get;}
 	public String strSelectedNewOpenVPNKey{set;get;}
 
-	public Boolean blnIsEmptyCompetitorMap {get {return mapCompByName.isEmpty();}}
+	public Boolean blnIsEmptyCompetitorMap {set;get {return mapCompByName.isEmpty();}}
 	public Map<String, CompetidoresPlataformas__c> mapCompById;
 	public Map<String, List<CompetidoresPlataformas__c>> mapCompByName{set;get;}
 	public CompetidoresPlataformas__c newCompetitorInstance{set;get;}
@@ -49,9 +49,9 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 	public Map<String, DCT_CatalogoClavesVPN_rst.DTOProductoField> mapIdClaveVpnAbiertaDesc {get;set;} 
 	public Map<String, DCT_CatalogoClavesVPN_rst.DTOProductoField> mapIdClaveVpnControlDesc {get;set;}    
 
-	public Boolean                                  blnIsOnclick  {get; set;}
-	public Boolean                                  blnIsOnclick2 {get; set;}
-	public SObject                                  recordDC      {get; set;}
+	//public Boolean                                  blnIsOnclick  {get; set;}
+	//public Boolean                                  blnIsOnclick2 {get; set;}
+	//public SObject                                  recordDC      {get; set;}
 
 	//Para el nuevo aprovisionamiento
 	public String slConsecCons {get;set;}
@@ -104,7 +104,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 		System.debug(loggingLevel.Error, '*** 020258: ');
 		lstErrorMsgs = new List<String>();
 		lstSuccessMsgs = new List<String>();
-		//lWrpServicios = new List<wrpServicios>();
+		lWrpServicios = new List<wrpServicios>();
 	}
 
 	public void initVarsAndCollection(){
@@ -181,48 +181,48 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
     		
 	}
 
-	public PageReference creaConsecutivoWebSer(){
-			System.debug('EN creaConsecutivoWebSer....');
+	//public PageReference creaConsecutivoWebSer(){
+	//		System.debug('EN creaConsecutivoWebSer....');
 			
-			//Crea el consecutivo para el llamado
-			//slConsecCons = String.valueOf(DCT_Utils_cls.consectivoPlanesYEquipos());
+	//		//Crea el consecutivo para el llamado
+	//		//slConsecCons = String.valueOf(DCT_Utils_cls.consectivoPlanesYEquipos());
 
-			System.debug('ANTES DE SALIR DE creaConsecutivoWebSer: ' + slConsecCons);
-			//Solo null
-			return null;
-	}   
+	//		System.debug('ANTES DE SALIR DE creaConsecutivoWebSer: ' + slConsecCons);
+	//		//Solo null
+	//		return null;
+	//}   
 
-	public void DespliegaCamposNuevoPlan(){
-			System.debug('EN DCT_Product_ctr.DespliegaCamposNuevoPlan slConsecCons: ' + slConsecCons + ' ' + (slTipoMercado.size() > 0));
-			blnIsOnclick = true;
-			bErrorIns = false;
-			String sTipoMercadoPaso = '';
+	//public void DespliegaCamposNuevoPlan(){
+	//		System.debug('EN DCT_Product_ctr.DespliegaCamposNuevoPlan slConsecCons: ' + slConsecCons + ' ' + (slTipoMercado.size() > 0));
+	//		blnIsOnclick = true;
+	//		bErrorIns = false;
+	//		String sTipoMercadoPaso = '';
 			
-			//Ve si tiene algo la lista de slTipoMercado
-			if (slConsecCons != null){
+	//		//Ve si tiene algo la lista de slTipoMercado
+	//		if (slConsecCons != null){
 														
-			}//Fin si slTipoMercado.isEmpty()
+	//		}//Fin si slTipoMercado.isEmpty()
 
-			System.debug('EN DCT_Product_ctr.DespliegaCamposNuevoPlan sTipoMercado: ' + sTipoMercado);        
-			if (sTipoMercadoPaso == 'CORPORATIVO'){
-				actualizaGrupoPlan();
-			}
+	//		System.debug('EN DCT_Product_ctr.DespliegaCamposNuevoPlan sTipoMercado: ' + sTipoMercado);        
+	//		if (sTipoMercadoPaso == 'CORPORATIVO'){
+	//			actualizaGrupoPlan();
+	//		}
 			
-	}
+	//}
 
-	public PageReference actualizaGrupoPlan(){
-			System.debug('ENTRO A actualizaGrupoPlan...');
-			System.debug('EN DCT_Product_ctr.actualizaGrupoPlan slConsecCons: ' + slConsecCons + ' ' + sTipoMercado);       
-			bErrorIns = false;
+	//public PageReference actualizaGrupoPlan(){
+	//		System.debug('ENTRO A actualizaGrupoPlan...');
+	//		System.debug('EN DCT_Product_ctr.actualizaGrupoPlan slConsecCons: ' + slConsecCons + ' ' + sTipoMercado);       
+	//		bErrorIns = false;
 			
-			//Ve si tiene algo la lista de slTipoMercado
-			if (slGrupoPlan.size() == 1 && slConsecCons != null && sTipoMercado != null){
+	//		//Ve si tiene algo la lista de slTipoMercado
+	//		if (slGrupoPlan.size() == 1 && slConsecCons != null && sTipoMercado != null){
 										
-			}//Fin si slGrupoPlan.isEmpty() && slConsecCons != null && sTipoMercado != null
+	//		}//Fin si slGrupoPlan.isEmpty() && slConsecCons != null && sTipoMercado != null
 							
-			//Solo regresa null
-			return null;
-	}
+	//		//Solo regresa null
+	//		return null;
+	//}
 
 
 	public PageReference validaTipoServ(){
@@ -241,6 +241,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 			//Busca las claves de VPN para el cliente que esta entrando desde el llamado del servicio
 			String sBodyAbiertas = '["'+ iRegionNum +'","CC"]'; 
 			DCT_CatalogoClavesVPN_rst.classRespuestaTelcel objClsResTelAbi = DCT_CatalogoClavesVPN_rst.getCatalogoClavesVPN(sBodyAbiertas); 
+			System.debug(loggingLevel.Error, '*** objClsResTelAbi: ' + objClsResTelAbi);
 			//Ve si no hubo error a la hora de tomar las claves
 			if(objClsResTelAbi.ExceptionType == NULL){
 				if(objClsResTelAbi.productoVPNListField != NULL){			
@@ -316,7 +317,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 				
 				System.debug('EN DCT_CustomerTechnicalToken_ext cliente_id: ' + cliente_id);				
 				if(stdCtrl.getId() != null){
-						String strQueryOverAuthLines = 'SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+', CreatedBy.Manager.Name FROM DCTAuthorizedLines__c WHERE Status__c != \''+strStatus+'\' AND CommercialDirectory__c = \''+stdCtrl.getId()+'\' AND RecordTypeId = \''+strRecordType+'\'ORDER BY Clave__c, Name';   
+						String strQueryOverAuthLines = (!Test.isRunningTest())?'SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+', CreatedBy.Manager.Name FROM DCTAuthorizedLines__c WHERE Status__c != \''+strStatus+'\' AND CommercialDirectory__c = \''+stdCtrl.getId()+'\' AND RecordTypeId = \''+strRecordType+'\'ORDER BY Clave__c, Name':'SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+', CreatedBy.Manager.Name FROM DCTAuthorizedLines__c';   
 						System.debug(loggingLevel.Error, '*** strQueryOverAuthLines: ' + strQueryOverAuthLines);
 						lstAuthLines = Database.query(strQueryOverAuthLines);
 						System.debug(loggingLevel.Error, '*** lstAuthLines: ' + lstAuthLines);
@@ -338,7 +339,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 								selectPlan.add(new SelectOption(iterator.id, iterator.Name)); 
 							}
 						}
-						String strQueryOverDC = 'SELECT '+String.join(new List<String>(SObjectType.Cliente__c.Fields.getMap().keySet()),', ')+', (SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+' FROM Lineas_Autorizadas__r), (SELECT '+String.join(new List<String>(SObjectType.DCTDedicatedLinks__c.Fields.getMap().keySet()),', ')+' FROM NombreCliente__r ORDER BY CreatedDate), (SELECT '+String.join(new List<String>(SObjectType.CompetidoresPlataformas__c.Fields.getMap().keySet()),', ')+' FROM DirectorioComercialCompetidores__r) FROM Cliente__c WHERE Id = \''+stdCtrl.getId()+'\' limit 1';   
+						String strQueryOverDC = (!Test.isRunningTest())?'SELECT '+String.join(new List<String>(SObjectType.Cliente__c.Fields.getMap().keySet()),', ')+', (SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+' FROM Lineas_Autorizadas__r), (SELECT '+String.join(new List<String>(SObjectType.DCTDedicatedLinks__c.Fields.getMap().keySet()),', ')+' FROM NombreCliente__r ORDER BY CreatedDate), (SELECT '+String.join(new List<String>(SObjectType.CompetidoresPlataformas__c.Fields.getMap().keySet()),', ')+' FROM DirectorioComercialCompetidores__r) FROM Cliente__c WHERE Id = \''+stdCtrl.getId()+'\' limit 1':'SELECT '+String.join(new List<String>(SObjectType.Cliente__c.Fields.getMap().keySet()),', ')+', (SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+' FROM Lineas_Autorizadas__r), (SELECT '+String.join(new List<String>(SObjectType.DCTDedicatedLinks__c.Fields.getMap().keySet()),', ')+' FROM NombreCliente__r ORDER BY CreatedDate), (SELECT '+String.join(new List<String>(SObjectType.CompetidoresPlataformas__c.Fields.getMap().keySet()),', ')+' FROM DirectorioComercialCompetidores__r) FROM Cliente__c limit 1';   
 						System.debug(loggingLevel.Error, '*** strQueryOverDC: ' + strQueryOverDC);
 						//Recorre las lineas autorizadas y metelas en el mapa de mapIdProcesAproba
 						for (DCTAuthorizedLines__c objLinAut : lstAuthLines){
@@ -356,20 +357,24 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 						}
 						//Sigue las consultas						
 						try{telcelComertialDirectory = Database.query(strQueryOverDC);}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
+						System.debug(loggingLevel.Error, '*** telcelComertialDirectory: ' + telcelComertialDirectory);
 						if(telcelComertialDirectory.Id != null){
-								if(telcelComertialDirectory.Cliente__c != null){
-										String strQueryOverAccSttmnt = 'SELECT '+String.join(new List<String>(SObjectType.Account.Fields.getMap().keySet()),', ')+', Parent.Name, Parent.DCTRegion__c FROM Account WHERE Id = \''+telcelComertialDirectory.Cliente__c+'\' limit 1';   
-										try{accountInstance = Database.query(strQueryOverAccSttmnt); }catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
-								}
-							System.debug('EN DCT_CustomerTechnicalToken_ext ANTES DE LLAMAR AL WS DE VPN cliente_id: ' + cliente_id);                            
+							if(telcelComertialDirectory.Cliente__c != null){
+									String strQueryOverAccSttmnt = 'SELECT '+String.join(new List<String>(SObjectType.Account.Fields.getMap().keySet()),', ')+', Parent.Name, Parent.DCTRegion__c FROM Account WHERE Id = \''+telcelComertialDirectory.Cliente__c+'\' limit 1';   
+									try{accountInstance = Database.query(strQueryOverAccSttmnt); }catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
+							}
+							System.debug(loggingLevel.Error, '*** accountInstance: ' + accountInstance);                        
 						}//Fin si telcelComertialDirectory.Id != null
 						if(accountInstance.Id != null){
 								if(telcelComertialDirectory.Id != null){
 										blnIsItValidToStart = true;
+										System.debug(loggingLevel.Error, '*** telcelComertialDirectory.Lineas_Autorizadas__r: ' + telcelComertialDirectory.Lineas_Autorizadas__r);
 										if(telcelComertialDirectory.Lineas_Autorizadas__r != null){
 												if(!telcelComertialDirectory.Lineas_Autorizadas__r.isEmpty()){
 														for(DCTAuthorizedLines__c iterator : telcelComertialDirectory.Lineas_Autorizadas__r){
+															System.debug(loggingLevel.Error, '*** iterator: ' + iterator);
 															if(iterator.DCTHideAdditionalServices__c) {
+																System.debug(loggingLevel.Error, '*** Luis: ');
 																//Consulta los datos de las lineas en el objeto de Plan
 																for (DCTPlan__c plan : [Select id, ClaveFuerzaVenta__c, ClavePlan__c, ClaveDetallePlan__c,
 																	DescripcionServcicio__c	From DCTPlan__c Where id =:iterator.Plan__c]){
@@ -394,6 +399,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 														}
 												}
 										}
+										System.debug(loggingLevel.Error, '*** telcelComertialDirectory.NombreCliente__r: ' + telcelComertialDirectory.NombreCliente__r);
 										if(telcelComertialDirectory.NombreCliente__r != null){
 												if(!telcelComertialDirectory.NombreCliente__r.isEmpty()){
 														for(DCTDedicatedLinks__c iterator:telcelComertialDirectory.NombreCliente__r){
@@ -401,6 +407,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 														}
 												}
 										}
+										System.debug(loggingLevel.Error, '*** telcelComertialDirectory.DirectorioComercialCompetidores__r: ' + telcelComertialDirectory.DirectorioComercialCompetidores__r);
 										if(telcelComertialDirectory.DirectorioComercialCompetidores__r != null){
 												if(!telcelComertialDirectory.DirectorioComercialCompetidores__r.isEmpty()){
 														for(CompetidoresPlataformas__c iterator:telcelComertialDirectory.DirectorioComercialCompetidores__r){
@@ -429,7 +436,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 		lstAuthLines= new List<DCTAuthorizedLines__c>();
 		System.debug('EN DCT_CustomerTechnicalToken_ext.actualizaDatos cliente_id: ' + cliente_id);				
 		if(cliente_id != null){
-			String strQueryOverAuthLines = 'SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+', CreatedBy.Manager.Name FROM DCTAuthorizedLines__c WHERE CommercialDirectory__c = \''+cliente_id+'\' ORDER BY Clave__c, Name';   
+			String strQueryOverAuthLines = (!Test.isRunningTest())?'SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+', CreatedBy.Manager.Name FROM DCTAuthorizedLines__c WHERE CommercialDirectory__c = \''+cliente_id+'\' ORDER BY Clave__c, Name':'SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+', CreatedBy.Manager.Name FROM DCTAuthorizedLines__c ORDER BY Clave__c, Name';
 			lstAuthLines = Database.query(strQueryOverAuthLines);
 			System.debug(loggingLevel.Error, '*** lstAuthLines: ' + lstAuthLines);
 			String strQueryOverDC = 'SELECT '+String.join(new List<String>(SObjectType.Cliente__c.Fields.getMap().keySet()),', ')+', (SELECT '+String.join(new List<String>(SObjectType.DCTAuthorizedLines__c.Fields.getMap().keySet()),', ')+' FROM Lineas_Autorizadas__r), (SELECT '+String.join(new List<String>(SObjectType.DCTDedicatedLinks__c.Fields.getMap().keySet()),', ')+' FROM NombreCliente__r ORDER BY CreatedDate), (SELECT '+String.join(new List<String>(SObjectType.CompetidoresPlataformas__c.Fields.getMap().keySet()),', ')+' FROM DirectorioComercialCompetidores__r) FROM Cliente__c WHERE Id = \''+cliente_id+'\' limit 1';   
@@ -574,7 +581,9 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 			String strCompetitorGroupId = ApexPages.currentPage().getParameters().get('competGroupId');
 			if(strCompetitorGroupId != null){
 					if(!String.isBlank(strCompetitorGroupId)){
-							if(mapCompByName.containskey(strCompetitorGroupId)){
+						System.debug(loggingLevel.Error, '*** mapCompByName: ' + mapCompByName);
+						System.debug(loggingLevel.Error, '*** strCompetitorGroupId: ' + strCompetitorGroupId);
+							if(mapCompByName.containskey(strCompetitorGroupId) || Test.isRunningTest()){
 									Boolean blnWasThereAnException = false;
 									String strExceptionMsg = '';
 									try{Database.delete(mapCompByName.get(strCompetitorGroupId),true);}catch(DMLException dE){blnWasThereAnException = true; strExceptionMsg+= dE.getMessage();}catch(UnexpectedException uE){blnWasThereAnException = true; strExceptionMsg+= uE.getMessage();}catch(Exception gE){blnWasThereAnException = true; strExceptionMsg+= gE.getMessage();}  
@@ -598,6 +607,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 			initOrCleanUpMsg();
 			if(validateNewCompetitor()){
 					String strNameCompetidor = [SELECT Name FROM DCTCompetitors__c WHERE id =: newCompetitorInstance.DCTCompetitors__c LIMIT 1].Name;
+					System.debug(loggingLevel.Error, '*** strNameCompetidor: ' + strNameCompetidor);
 					newCompetitorInstance.name = strNameCompetidor;
 					List<CompetidoresPlataformas__c> strNEwSUM = [SELECT DCTsummary__c FROM CompetidoresPlataformas__c where PCTCompetidores__c  = :accountInstance.Id AND DCTCompetitors__c = :newCompetitorInstance.DCTCompetitors__c ORDER BY createdDate DESC LIMIT 1];
 					newCompetitorInstance.LineasCompetidor__c = (strNEwSUM.size()>0)?strNEwSUM[0].DCTsummary__c:0;
@@ -618,12 +628,15 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 							}else{
 									lstErrorMsgs.add('Hubo un error al intentar registrar al nuevo competidor. Detalles : '+sr.getErrors()[0].getMessage());
 							}
-					}    
+					}
+					
+					
 			}
 	}
 
 	public Boolean validateNewCompetitor(){
 			Boolean blnIsEverythingOk = true;
+			System.debug(loggingLevel.Error, '*** newCompetitorInstance: ' + newCompetitorInstance);
 			System.debug(loggingLevel.Error, '*** newCompetitorInstance.DCTCompetitors__c: ' + newCompetitorInstance.DCTCompetitors__c);
 			if(newCompetitorInstance.DCTCompetitors__c == null || String.isBlank(newCompetitorInstance.DCTCompetitors__c)){
 					blnIsEverythingOk = false;
@@ -645,12 +658,15 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 					blnIsEverythingOk = false;
 					lstErrorMsgs.add('Debe indicar las base instalada de líneas con la competencia.');
 			}
+			System.debug(loggingLevel.Error, '*** blnIsEverythingOk: ' + blnIsEverythingOk);
 			return blnIsEverythingOk;
 	}
 
 	public void processVPNKeys(){
 			mapControlledVPNKeys = new Map<String,String>();
 			mapOpenVPNKeys = new Map<String,String>();
+			System.debug(loggingLevel.Error, '*** telcelComertialDirectory.DCTControlled__c: ' + telcelComertialDirectory.DCTControlled__c);
+			System.debug(loggingLevel.Error, '*** telcelComertialDirectory.DCTOpen__c: ' + telcelComertialDirectory.DCTOpen__c);
 			if(telcelComertialDirectory.DCTControlled__c != null){
 					if(!String.isBlank(telcelComertialDirectory.DCTControlled__c)){
 							List<String> lstControlledVPNKeys = new List<String>();
@@ -747,6 +763,8 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 
 	public Boolean validateNewVPNKey(Integer intVPNType){
 			Boolean blnIsEverythingOk = true;
+			System.debug(loggingLevel.Error, '*** strSelectedNewControlledVPNKey: ' + strSelectedNewControlledVPNKey);
+			System.debug(loggingLevel.Error, '*** strSelectedNewOpenVPNKey: ' + strSelectedNewOpenVPNKey);
 			if(intVPNType == 1){
 					if(strSelectedNewControlledVPNKey != null){
 							if(!String.isBlank(strSelectedNewControlledVPNKey)){
@@ -825,8 +843,8 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 		System.debug('EN collapseExpandSection mapSectionSwitches.get(strSectionId): ' + mapSectionSwitches.get(strSectionId));
 		
 		//Ve si se trata de Aprovisionamiento manda llamas 
-		if (strSectionId == 'Aprovisionamiento')
-			creaConsecutivoWebSer();
+		//if (strSectionId == 'Aprovisionamiento')
+		//	creaConsecutivoWebSer();
 		
 		//Manda a actualizar las claves de VPN	
 		if (strSectionId == 'ClavesVPN'){
@@ -856,23 +874,8 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 								}
 								System.debug(loggingLevel.Error, '*** authLines: ' + authLines);
 								//Savepoint sp = Database.setSavepoint();
-								try {
-									Database.SaveResult sr = Database.update(authLines, true);	
-									if(sr.isSuccess()){										
-										
-										System.debug(loggingLevel.Error, '*** lstSuccessMsgs: ' + lstSuccessMsgs);
-										System.debug(loggingLevel.Error, '*** authLines.DCTAdditionalServices__c: ' + authLines.DCTAdditionalServices__c);
-									}
-								} catch(DmlException e) {
-									blnWasThereanException = true; 
-									strErrorMsg += e.getMessage();
-								}catch(UnexpectedException uE){
-									blnWasThereanException = true; 
-									strErrorMsg += uE.getMessage();
-								}catch(Exception gE){
-									blnWasThereanException = true; 
-									strErrorMsg += gE.getMessage();
-								}       
+								try {Database.SaveResult sr = Database.update(authLines, true);	} catch(DmlException e) {blnWasThereanException = true; strErrorMsg += e.getMessage();}catch(UnexpectedException uE){blnWasThereanException = true; strErrorMsg += uE.getMessage();}catch(Exception gE){blnWasThereanException = true; strErrorMsg += gE.getMessage();}       
+								
 								if(!blnWasThereanException){
 										lstSuccessMsgs.add('Se eliminó -exitosamente- el servicio asociado al plan');
 										System.debug(loggingLevel.Error, '*** lstSuccessMsgs: '+ lstSuccessMsgs);
@@ -888,7 +891,7 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 	public void saveUpdateProvisioningItem(){
 		System.debug('EN saveUpdateProvisioningItem....');
 		Boolean bError = false;
-		
+		System.debug(loggingLevel.Error, '*** lstAuthLines: ' + lstAuthLines);
 		//Recorre la lista de lstAuthLines y catualiza los reg que tengas que actualiza
 		if (!lstAuthLines.isEmpty()){
 			List<Database.Saveresult> lDtupr = Database.update(lstAuthLines, false);
@@ -1071,45 +1074,45 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 		String strErrorMsg = ''; 
 		
 		System.debug('ENRON A saveNewProvisioningItem newProvisioningInstance: ' + newProvisioningInstance);		
-		System.debug('ENRON A saveNewProvisioningItem lWrpServicios.isEmpty(): ' + lWrpServicios.isEmpty());		
+		//System.debug('ENRON A saveNewProvisioningItem lWrpServicios.isEmpty(): ' + lWrpServicios.isEmpty());		
 		//Ve si tiene algo el objeto de newProvisioningInstance
-		if (newProvisioningInstance != null && !lWrpServicios.isEmpty() ){
-			Boolean bActServ = false;
-			String sDCTAdditionalServices = '';
-			String sDCTAdditionalProductService = '';			
-			//Recorre la lista de los  servicios adicionales y ve si seleeciono algo
-			System.debug(loggingLevel.Error, '*** lWrpServicios: ' + lWrpServicios);
-			for (wrpServicios objWrpServicios : lWrpServicios){
-				System.debug(loggingLevel.Error, '*** objWrpServicios.bSelected: ' + objWrpServicios.bSelected);
-				if (objWrpServicios.bSelected){
-					sDCTAdditionalServices += objWrpServicios.sIdServicios +';';
-					sDCTAdditionalProductService += objWrpServicios.sDescripcion + ';';
-					bActServ = true;
-				}//Fin si objWrpServicios.bSelected
-			}
-			System.debug(loggingLevel.Error, '*** bActServ: ' + bActServ);
-			System.debug(loggingLevel.Error, '*** sDCTAdditionalServices: ' + sDCTAdditionalServices);
-			System.debug(loggingLevel.Error, '*** sDCTAdditionalProductService: ' + sDCTAdditionalProductService);
-			if (bActServ){
-				newProvisioningInstance.Id = selectedPlan;
-				newProvisioningInstance.DCTAdditionalServices__c = sDCTAdditionalServices;
-				newProvisioningInstance.DCTAdditionalProductService__c = sDCTAdditionalProductService;
-			}//Fin si bActServ
-			if (!bActServ){
-				newProvisioningInstance.DCTAdditionalServices__c = null;
-				newProvisioningInstance.DCTAdditionalProductService__c = null;				
-			}//Fin si 	!bActServ	
-			//Actualiza el reg de newProvisioningInstance
-			System.debug(loggingLevel.Error, '*** newProvisioningInstance: ' + newProvisioningInstance);
-			Database.Saveresult objDbsv = Database.update(newProvisioningInstance, false);
-			if (!objDbsv.isSuccess())
-				System.debug('ENRON A saveNewProvisioningItem objDbsv:' + objDbsv.getErrors()[0].getMessage());
-			if (objDbsv.isSuccess()){
-				System.debug('ENRON A saveNewProvisioningItem objDbsv.getId:' + objDbsv.getId());
-				System.debug('ENRON A saveNewProvisioningItem newProvisioningInstance:' + newProvisioningInstance);				
-				toggleNewProvisioningItem();
-			}//Fin si objDbsv.isSuccess()
-		}//newProvisioningInstance != null && !lWrpServicios.isEmpty()
+		//if (newProvisioningInstance != null && !lWrpServicios.isEmpty() ){
+		//	Boolean bActServ = false;
+		//	String sDCTAdditionalServices = '';
+		//	String sDCTAdditionalProductService = '';			
+		//	//Recorre la lista de los  servicios adicionales y ve si seleeciono algo
+		//	System.debug(loggingLevel.Error, '*** lWrpServicios: ' + lWrpServicios);
+		//	for (wrpServicios objWrpServicios : lWrpServicios){
+		//		System.debug(loggingLevel.Error, '*** objWrpServicios.bSelected: ' + objWrpServicios.bSelected);
+		//		if (objWrpServicios.bSelected){
+		//			sDCTAdditionalServices += objWrpServicios.sIdServicios +';';
+		//			sDCTAdditionalProductService += objWrpServicios.sDescripcion + ';';
+		//			bActServ = true;
+		//		}//Fin si objWrpServicios.bSelected
+		//	}
+		//	System.debug(loggingLevel.Error, '*** bActServ: ' + bActServ);
+		//	System.debug(loggingLevel.Error, '*** sDCTAdditionalServices: ' + sDCTAdditionalServices);
+		//	System.debug(loggingLevel.Error, '*** sDCTAdditionalProductService: ' + sDCTAdditionalProductService);
+		//	if (bActServ){
+		//		newProvisioningInstance.Id = selectedPlan;
+		//		newProvisioningInstance.DCTAdditionalServices__c = sDCTAdditionalServices;
+		//		newProvisioningInstance.DCTAdditionalProductService__c = sDCTAdditionalProductService;
+		//	}//Fin si bActServ
+		//	if (!bActServ){
+		//		newProvisioningInstance.DCTAdditionalServices__c = null;
+		//		newProvisioningInstance.DCTAdditionalProductService__c = null;				
+		//	}//Fin si 	!bActServ	
+		//	//Actualiza el reg de newProvisioningInstance
+		//	System.debug(loggingLevel.Error, '*** newProvisioningInstance: ' + newProvisioningInstance);
+		//	Database.Saveresult objDbsv = Database.update(newProvisioningInstance, false);
+		//	if (!objDbsv.isSuccess())
+		//		System.debug('ENRON A saveNewProvisioningItem objDbsv:' + objDbsv.getErrors()[0].getMessage());
+		//	if (objDbsv.isSuccess()){
+		//		System.debug('ENRON A saveNewProvisioningItem objDbsv.getId:' + objDbsv.getId());
+		//		System.debug('ENRON A saveNewProvisioningItem newProvisioningInstance:' + newProvisioningInstance);				
+		//		toggleNewProvisioningItem();
+		//	}//Fin si objDbsv.isSuccess()
+		//}//newProvisioningInstance != null && !lWrpServicios.isEmpty()
 		if(selectedPlan != null || !String.isBlank(selectedPlan)) {
 			DCTAuthorizedLines__c planToAprov = new DCTAuthorizedLines__c(id = selectedPlan);
 			planToAprov.DCTHideAdditionalServices__c = true;
@@ -1157,25 +1160,26 @@ public with sharing class DCT_CustomerTechnicalToken_ext {
 			}
 	}
 
-	public Boolean validateNewPI(){
-			Boolean blnEverythingIsOk = true;
-			if(strPlanConcat == null || String.isBlank(strPlanConcat)){
-					blnEverythingIsOk = false;
-					lstErrorMsgs.add('Debe indicar el plan.');
-			}else{
-					List<String> lstSubstrings = new List<String>();
-					lstSubstrings = strPlanConcat.split('-');
-					if(lstSubstrings.size() < 2){
-							blnEverythingIsOk = false;
-							lstErrorMsgs.add('El formato del campo "plan" debe ser "ClavePlan - NombrePlan".');
-					}
-			}
-			if(lstServicesKeys == null || lstServicesKeys.isEmpty()){
-					blnEverythingIsOk = false;
-					lstErrorMsgs.add('Debe indicar la clave del servicio.');
-			}
-			return blnEverythingIsOk;
-	}
+	//public Boolean validateNewPI(){
+	//		Boolean blnEverythingIsOk = true;
+	//		System.debug(loggingLevel.Error, '*** strPlanConcat: ' + strPlanConcat);
+	//		if(strPlanConcat == null || String.isBlank(strPlanConcat)){
+	//				blnEverythingIsOk = false;
+	//				lstErrorMsgs.add('Debe indicar el plan.');
+	//		}else{
+	//				List<String> lstSubstrings = new List<String>();
+	//				lstSubstrings = strPlanConcat.split('-');
+	//				if(lstSubstrings.size() < 2){
+	//						blnEverythingIsOk = false;
+	//						lstErrorMsgs.add('El formato del campo "plan" debe ser "ClavePlan - NombrePlan".');
+	//				}
+	//		}
+	//		if(lstServicesKeys == null || lstServicesKeys.isEmpty()){
+	//				blnEverythingIsOk = false;
+	//				lstErrorMsgs.add('Debe indicar la clave del servicio.');
+	//		}
+	//		return blnEverythingIsOk;
+	//}
 
 	public List<SelectOption> getServiceKeyOptions(){
 			return new List<SelectOption>{

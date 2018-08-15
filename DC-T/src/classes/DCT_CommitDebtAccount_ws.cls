@@ -61,12 +61,10 @@ global class DCT_CommitDebtAccount_ws {
 					blnSuccessfulProcedure = true;
 					blnAccountWasConverted = true;
 					sIdSfdc = sr.getId();					
-				}else{
+				}else
 					mapErrorMsgs.put('06',sr.getErrors()[0].getMessage());
-				}
-			}else{
+			}else
 				mapErrorMsgs.put('05','No se encontró ningun cliente con los datos proporcionados.');
-			}
 		}
 		Result wsResponseInstance = new Result();
 		wsResponseInstance.convertedIntoDebtAccount = blnAccountWasConverted;
@@ -103,16 +101,21 @@ global class DCT_CommitDebtAccount_ws {
 	} 
 
 	webservice static Result commitDebtAccountNisi(CommitDebtAccountArgsNisi argsInstance){
+		System.debug('EN DCT_CommitDebtAccount_ws.commitDebtAccountNisi argsInstance...');
+
 		initCleanUpMsgs();
 		Boolean blnSuccessfulProcedure = false;
 		Boolean blnAccountWasConverted = false;
 		String sIdSfdc = '';		
 		if(validateInputs(argsInstance)){
+			System.debug('EN DCT_CommitDebtAccount_ws.commitDebtAccountNisi DESPUES DE validateInputs argsInstance: ' + argsInstance);
 			Cliente__c accountInstance = new Cliente__c();
-			try{accountInstance = [SELECT Id, DCTFolio__c FROM Cliente__c WHERE DCTFolio__c =: argsInstance.folio
-				LIMIT 1]; }catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
+			try{
+				accountInstance = [SELECT Id, DCTFolio__c FROM Cliente__c WHERE DCTFolio__c =: argsInstance.folio LIMIT 1]; 
+			}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
 			if(accountInstance.Id != null){
-				Cliente__c PCT = new Cliente__c(Id = accountInstance.Id, DCTKeyNISI__c = argsInstance.NISI,
+				Cliente__c PCT = new Cliente__c(Id = accountInstance.Id, 
+				DCTKeyNISI__c = argsInstance.NISI,
 				DCTSAPSporadicCustomer__c = argsInstance.NISI);
 				System.debug('EN commitDebtAccountNisi2 : ' + PCT);
 				Database.SaveResult sr = Database.update(PCT,false);
@@ -120,12 +123,10 @@ global class DCT_CommitDebtAccount_ws {
 					blnSuccessfulProcedure = true;
 					blnAccountWasConverted = true;
 					sIdSfdc = sr.getId();					
-				}else{
+				}else
 					mapErrorMsgs.put('06',sr.getErrors()[0].getMessage());
-				}
-			}else{
+			}else
 				mapErrorMsgs.put('05','No se encontró ningun cliente con los datos proporcionados.');
-			}
 		}
 		Result wsResponseInstance = new Result();
 		wsResponseInstance.convertedIntoDebtAccount = blnAccountWasConverted;

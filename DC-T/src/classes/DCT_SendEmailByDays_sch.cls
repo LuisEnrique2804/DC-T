@@ -1,8 +1,10 @@
 global class DCT_SendEmailByDays_sch implements Schedulable {
 	global void execute(SchedulableContext sc) {
 		Date dateValid = System.today();
+		System.debug(loggingLevel.Error, '*** dateValid: ' + dateValid);
 		String dateValid2 = String.valueof(dateValid);
-		String strQueryOverCases = 'SELECT Id, DCTDateBonus__c, OwnerId FROM Cliente__c WHERE DCTDateBonus__c > :'+dateValid2+'';
+		System.debug(loggingLevel.Error, '*** dateValid2: ' + dateValid2);
+		String strQueryOverCases = 'SELECT Id, DCTDateBonus__c, OwnerId FROM Cliente__c WHERE DCTDateBonus__c > '+dateValid2+'';
 		system.debug('***strQueryOverCases: '+strQueryOverCases);
 		DCT_SendEmailByDays_bch bchInstace = new DCT_SendEmailByDays_bch(strQueryOverCases);
 		//MyBatchClass b = new MyBatchClass();

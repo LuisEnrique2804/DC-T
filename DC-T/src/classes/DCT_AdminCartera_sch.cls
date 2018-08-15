@@ -10,15 +10,15 @@ global class DCT_AdminCartera_sch implements Schedulable {
 		this.sQuery += ' From DCTClientsProspectstoAssigned__c d';		
 
 		//No es una prueba
-		if (!Test.isRunningTest()){
+		//if (!Test.isRunningTest()){
 			this.sQuery += ' Where AccountName__r.DCTDateLastassignment__c != NULL';
 			this.sQuery += ' And Status__c = \'Aprobado\' And AccountName__r.DCTDateLastassignment__c = TODAY';			
 			this.sQuery += ' Order by AccountName__r.DCTDateLastassignment__c ';			
-		}
+		//}
 		
 		//Si es una prueba
-		if (Test.isRunningTest())
-			this.sQuery += ' Where AccountName__r.DCTDateLastassignment__c != NULL Limit 1';
+		//if (Test.isRunningTest())
+		//	this.sQuery += ' Where AccountName__r.DCTDateLastassignment__c != NULL Limit 1';
 
 		System.debug('EN DCT_AdminCartera_sch.execute sQuery: ' + sQuery);
 		

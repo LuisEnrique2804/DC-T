@@ -39,21 +39,24 @@ public class DCT_ReferenciaRAP_ws {
 		String              strResponse        = '';
 		Boolean             blnServiceHadError = false;
 		string              stgMessage         = '';
+		String 				sParametros		   = '';
+		String 				sUser			   = '';
+		String 				sContrasena        = '';
 		
 		//rfc = 'BBM061031RY6'; //Para pruebas nada nas	    
 		System.debug('ENTRO A DCT_ReferenciaRAP_ws.ReferenciaRAP strEndpointName: ' + strEndpointName + ' rfc: ' + rfc);
-		//String urlDecodeRfc = rfc.replaceAll('&', '%26');
-		//System.debug('ENTRO A DCT_ReferenciaRAP_ws.ReferenciaRAP strEndpointName2: ' + strEndpointName + ' urlDecodeRfc: ' + urlDecodeRfc);
 		
+		EndpointSetting__mdt objEndpointSettingMdt = TLCL_Utils_cls.getEndpointSetting(strEndpointName);
+		sUser = objEndpointSettingMdt.Usuario__c;
+		sContrasena = objEndpointSettingMdt.Contrasenia__c;
+		
+		//cadenaConsulta=A&B0609046F3&usuario=SmartRefRapWs&contrasena=SmartPassRefRap
+		sParametros = '?cadenaConsulta=' + rfc + '&usuario=' + sUser + '&contrasena=' + sContrasena;
+		System.debug('ENTRO A DCT_ReferenciaRAP_ws.ReferenciaRAP sParametros: ' + sParametros);		
+				
 		try{
-			strResponse = DCT_GenericCallout_cls.fn_runCallout(strRequest, strEndpointName, null, rfc);
-		}catch(CalloutException cE){
-			blnServiceHadError = true;stgMessage = cE.getMessage();
-		}catch(UnexpectedException uE){
-			blnServiceHadError = true;stgMessage = uE.getMessage();
-		}catch(Exception gE){
-			blnServiceHadError = true;stgMessage = gE.getMessage();
-		}
+			strResponse = DCT_GenericCallout_cls.fn_runCallout(strRequest, strEndpointName, null, sParametros);
+		}catch(Exception gE){blnServiceHadError = true;stgMessage = gE.getMessage();}
 		System.debug(loggingLevel.Error, 'ENTRO A DCT_ReferenciaRAP_ws.ReferenciaRAP strResponse: ' + strResponse);
 		
 		//Regresa la respuesta en el objeto que se llama

@@ -40,9 +40,9 @@ public class DCT_TriggerExecutionControl_cls {
         Método que se utiliza para eliminar una cadena de texto representativa de un desencadenador. Después de ejecutarse este método, dicho desencadenador puede volver a ejecutarse.
     */
     
-    public static void resetStatusExecutionTrigger(String strTriggerName){
-        if(setExecutedTrigger.contains(strTriggerName))
-            setExecutedTrigger.remove(strTriggerName);  /* Se elimina la cadena de texto especificada del conjunto */
-    }
+    //public static void resetStatusExecutionTrigger(String strTriggerName){
+    //    if(setExecutedTrigger.contains(strTriggerName))
+    //        setExecutedTrigger.remove(strTriggerName);  /* Se elimina la cadena de texto especificada del conjunto */
+    //}
 
 }

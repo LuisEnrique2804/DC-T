@@ -88,7 +88,7 @@ public with sharing class DCT_SIAC_XoVt_ctrl_rst {
 		Map<String, DTCFuerzaVentas__c> DTCFuerzaVentas = DTCFuerzaVentas__c.getAll();
 
 		Try{
-				
+							
 			//Valida los datos de entrada
 			if(validateInputsRfcNombreReg(rfc, RazonSocial, region)){
 			
@@ -97,33 +97,31 @@ public with sharing class DCT_SIAC_XoVt_ctrl_rst {
 		        String strConsulta = 'SELECT Id, XO__c, VT__c, DCTRegion__c, Name ' + 
 		        	' FROM Cliente__c ' +
 		        	' WHERE RFC__c = \'' + rfc + '\'' +
-		        	' And DCTRegion__c = \'' + region + '\'' +
-		        	' And Name like \'' + RazonSocial + '%\'';
+		        	//' And DCTRegion__c = \'' + region + '\'' +
+		        	' And Name like \'' + RazonSocial + '%\'';		        		
 				System.debug('ENTRO A DCT_SIAC_XoVt_ctrl_rst.siacXoVtRfcNomRegion strConsulta: ' + strConsulta);		        	
         		try{
         			lstCtes = Database.query(strConsulta);
+
+					//Consulta los datos del cliente
+					for (Cliente__c clienteCons : lstCtes ){ 	
+						Resultado.isSuccessful = true;
+						Resultado.UsuarioUniversal = clienteCons.XO__c != null ? clienteCons.XO__c : '';
+						Resultado.FuerzaVenta = clienteCons.VT__c != null ? clienteCons.VT__c : '';
+						//Resultado.Region = clienteCons.DCTRegion__c != null ? clienteCons.DCTRegion__c : '';
+						//No es la region R09
+						if (DTCFuerzaVentas.containsKey(region))
+							Resultado.FuerzaVenta = DTCFuerzaVentas.get(region).FuerzaVentas__c;
+						bExiste = true;
+					}//Fin del for para los clientes
+					//Ve si no existe el cliente con esos datos
+					if (!bExiste){
+						lErrores.add(new Error('04', 'No se encontró ningun cliente con los datos proporcionados.'));
+						Resultado.isSuccessful = false;
+					}//Fin si 	!bExiste				
+
         		}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
         		        				
-				//Consulta los datos del cliente
-				for (Cliente__c clienteCons : lstCtes 
-						/*[SELECT Id, XO__c, VT__c, DCTRegion__c, Name
-						FROM Cliente__c WHERE RFC__c =: rfc And DCTRegion__c =:region 
-						And Name =:nombreLimit 1]*/
-					){ 	
-					Resultado.isSuccessful = true;
-					Resultado.UsuarioUniversal = clienteCons.XO__c != null ? clienteCons.XO__c : '';
-					Resultado.FuerzaVenta = clienteCons.VT__c != null ? clienteCons.VT__c : '';
-					//Resultado.Region = clienteCons.DCTRegion__c != null ? clienteCons.DCTRegion__c : '';
-					//No es la region R09
-					if (DTCFuerzaVentas.containsKey(region))
-						Resultado.FuerzaVenta = DTCFuerzaVentas.get(region).FuerzaVentas__c;
-					bExiste = true;
-				}//Fin del for para los clientes
-				//Ve si no existe el cliente con esos datos
-				if (!bExiste){
-					lErrores.add(new Error('04', 'No se encontró ningun cliente con los datos proporcionados.'));
-					Resultado.isSuccessful = false;
-				}//Fin si 	!bExiste				
 			}else{//Fin si validateInputs(datodEntrada)
 				Resultado.isSuccessful = false;
 			}
@@ -178,7 +176,9 @@ public with sharing class DCT_SIAC_XoVt_ctrl_rst {
 				Cliente__c clientePaso = new Cliente__c();
 				//Consulta los datos del cliente
 				for (Cliente__c clienteCons : [SELECT Id, XO__c, VT__c, DCTRegion__c, Name
-					FROM Cliente__c WHERE RFC__c =: rfc And DCTRegion__c =:region]){
+					FROM Cliente__c WHERE RFC__c =: rfc 
+					//And DCTRegion__c =:region
+					]){
 					ResultRfcTipoReg ResultPaso = new ResultRfcTipoReg(); 	
 					ResultPaso.isSuccessful = true;
 					ResultPaso.UsuarioUniversal = clienteCons.XO__c != null ? clienteCons.XO__c : '';

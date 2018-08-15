@@ -5,7 +5,7 @@ global class DCT_ConsultarDistribuidorPorClave_sch implements Schedulable{
     global void execute(SchedulableContext ctx){
 		System.debug('EN DCT_ConsultarDistribuidorPorClave_sch.execute...');
 
-		this.sQuery = 'Select id From User ';		
+		this.sQuery = 'Select id From User Where isActive = true ';		
 
 		//No es una prueba
 		if (!Test.isRunningTest())
@@ -13,7 +13,7 @@ global class DCT_ConsultarDistribuidorPorClave_sch implements Schedulable{
 		
 		//Si es una prueba
 		if (Test.isRunningTest())
-			this.sQuery += ' Limit 1';
+			this.sQuery += ' LIMIT 1';
 
 		System.debug('EN DCT_ConsultarDistribuidorPorClave_sch.execute sQuery: ' + sQuery);
 		

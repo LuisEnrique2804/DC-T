@@ -1,4 +1,4 @@
-<apex:page standardController="Cliente__c" showHeader="false" sidebar="false" extensions="DCT_Product_ctr" action="{!creaConsecutivoWebSer}">
+<apex:page standardController="Cliente__c" showHeader="false" sidebar="false" extensions="DCT_Product_ctr" >
   <html >
     <head>
 <!--       <apex:includeScript value="/support/console/41.0/integration.js"/>
@@ -26,7 +26,7 @@
         }
         function jsRefresh(estatus){
 		  //alert('Estatus: ' + sEstatus);
-		  if (sEstatus == 'true'){
+		  if (estatus == true){
 	          console.log('Luis');
 	          afRefreshTable();
 	          console.log('Enrique');
@@ -313,19 +313,6 @@
                       </td>                  
                   </tr>
                   
-                  <!-- <tr class="slds-text-title_caps">
-                      <td data-label="Tipo de Servicio" style="text-align: left;" colspan="4">
-                        <div class="slds-truncate" title="TipoServ">
-                            <label class="slds-form-element__label">
-                              Tipo de Servicio
-                            </label>                                            
-                            <apex:selectList value="{!sGuiaPlanes}" title="TipoServ" size="1" id="TipoServ">
-                                <apex:selectOptions value="{!selGuiaPlanes}" />
-                                <apex:actionSupport event="onchange" action="{!validaTipoServ}" rerender="DetPlan,msgs0OP" status="actGuiaPlanes" oncomplete="jsDespDoc();" />                                
-                            </apex:selectList>
-                        </div>
-                      </td>                  
-                  </tr> -->
               </tbody>
             </table>            
             <br/>   

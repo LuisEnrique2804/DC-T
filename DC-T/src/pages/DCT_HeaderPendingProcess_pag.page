@@ -7,17 +7,34 @@
 			<apex:includeScript value="/support/console/39.0/integration.js" />
 			<apex:slds />
 			<script type="text/javascript">
-				function jsreload(){
-					console.log('Luis');
-					setTimeout(AFregresar,3000);
-					console.log('Enrique');
+				function jsReload(error){
+					var vError = error;
+					//alert('vError: ' + vError);
+					if (vError == true)
+						setTimeout(AFregresar,3000);
+					if (vError == false)
+						afDespliegaError();
 				}
 			</script>
 		</head>
 		<body>
+	         <apex:actionStatus id="processing">
+                <apex:facet name="start">
+                    <div class="slds-spinner_container slds-is-fixed">
+                        <div class="slds-spinner--brand slds-spinner slds-spinner--medium" role="alert">
+                            <span class="slds-assistive-text">Processing</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+		
 			<apex:form id="headerForm">
-				<apex:actionFunction name="AFregresar" action="{!regresar}"/>
-				<apex:outputPanel id="OPResults">
+				<apex:actionFunction name="afDespliegaError" action="{!desplMsgErros}" rerender="headerForm"/>			
+				<apex:actionFunction name="AFregresar" action="{!regresar}" rerender="headerForm"/>
+
+<!-- 				<apex:outputPanel id="OPResults">
 				  <apex:outputPanel id="ErrorMsgs" rendered="{!lstErrorMsgs.size <> 0}">
 					<div class="slds-notify_container" style="position:relative;">
 					  <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
@@ -38,7 +55,8 @@
 					  </div> 
 					</div>
 				  </apex:outputPanel>
-				</apex:outputPanel>
+				</apex:outputPanel> -->
+				
 				<div class="slds-page-header">
 					<div class="slds-grid">
 						<div class="slds-col slds-has-flexi-truncate">
@@ -63,6 +81,7 @@
 						</div>
 					</div>
 				</div>
+				
 				<apex:outputPanel id="botton" rendered="{!blnClickBotton}">    
 					<div class="slds-form slds-form_compound">
 						<fieldset class="slds-form-element">	
@@ -75,17 +94,63 @@
 										<apex:inputTextarea styleClass="slds-input" value="{!strComment}"/> 
 									</div>
 									<div class="slds-form-element slds-size_1-of-4 slds-align_absolute-center" style="margin: 0 auto;">
-										<!-- <apex:commandButton styleClass="slds-button slds-button--neutral" value="Cancelar" reRender="headerForm"/> -->
-										<apex:commandButton styleClass="slds-button slds-button_brand" value="Aprobar" reRender="headerForm" action="{!changeToApprove}" oncomplete="JavaScript: jsreload();"/>
+										<apex:commandButton styleClass="slds-button slds-button_brand" value="Aprobar" reRender="headerForm" action="{!changeToApprove}" status="processing" oncomplete="JavaScript:jsReload({!bContProc});"/>
 									</div>
 								</div>
 							</div>
+							
+							<apex:outputPanel id="OPResults">
+							  <apex:outputPanel id="ErrorMsgs" rendered="{!lstErrorMsgs.size <> 0}">
+								<div class="slds-notify_container" style="position:relative;">
+								  <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+									<apex:repeat value="{!lstErrorMsgs}" var="msg">
+									  {!msg} 
+									  <br/>
+									</apex:repeat>
+								  </div>
+								</div>
+							  </apex:outputPanel> 
+							  <apex:outputPanel id="SuccessMsgs" rendered="{!lstSuccessMsgs.size <> 0}">
+								<div class="slds-notify_container" style="position:relative;">
+								  <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+									<apex:repeat value="{!lstSuccessMsgs}" var="msg">
+									  {!msg} 
+									  <br/>
+									</apex:repeat>
+								  </div> 
+								</div>
+							  </apex:outputPanel>
+							</apex:outputPanel>
+
+							<apex:outputPanel id="NoLineas" rendered="{!bInvestiga}">
+								<div class="slds-form-element__group">
+									<div class="slds-form-element__row">								
+										<div class="slds-form-element slds-size_1-of-4">
+											<label class="slds-form-element__label">
+												No. Líneas solicitadas
+											</label>
+											<apex:inputField styleClass="slds-input" value="{!DirComInv.DCTNoLineasSolicitadas__c}"/> 
+										</div>
+										<div class="slds-form-element slds-size_1-of-4">
+											<label class="slds-form-element__label">
+												No. Líneas autorizadas
+											</label>
+											<apex:inputText styleClass="slds-input" value="{!sNoLinAuto}"/> 
+										</div>										
+										<div class="slds-form-element slds-size_1-of-4"> 
+										</div>
+										<div class="slds-form-element slds-size_1-of-4">
+										</div>										
+									</div>									
+								</div>
+							</apex:outputPanel>
 						</fieldset>
 					</div>
 				</apex:outputPanel>
+				
 				<apex:outputPanel id="botton2" rendered="{!blnClickBottonReject}">    
 					<div class="slds-form slds-form_compound">
-									<fieldset class="slds-form-element">	
+						<fieldset class="slds-form-element">	
 							<div class="slds-form-element__group">
 								<div class="slds-form-element__row">
 									<div class="slds-form-element slds-size_3-of-4">
@@ -96,12 +161,36 @@
 									</div>
 									<div class="slds-form-element slds-size_1-of-4 slds-align_absolute-center" style="margin: 0 auto;">
 										<!-- <apex:commandButton styleClass="slds-button slds-button--neutral" value="Cancelar" reRender="headerForm"/> -->
-										<apex:commandButton styleClass="slds-button slds-button_brand" value="Rechazar" reRender="headerForm" action="{!changeToReject}" oncomplete="JavaScript: jsreload();"/>
+										<apex:commandButton styleClass="slds-button slds-button_brand" value="Rechazar" reRender="headerForm" action="{!changeToReject}" oncomplete="JavaScript:jsReload({!bContProc});"/>
 									</div>
 								</div>
 							</div>
 						</fieldset>
 					</div>
+
+					<apex:outputPanel id="OPResults2">
+					  <apex:outputPanel id="ErrorMsgs2" rendered="{!lstErrorMsgs.size <> 0}">
+						<div class="slds-notify_container" style="position:relative;">
+						  <div class="slds-notify slds-notify--alert slds-theme--error slds-theme--alert-texture">
+							<apex:repeat value="{!lstErrorMsgs}" var="msg">
+							  {!msg} 
+							  <br/>
+							</apex:repeat>
+						  </div>
+						</div>
+					  </apex:outputPanel> 
+					  <apex:outputPanel id="SuccessMsgs2" rendered="{!lstSuccessMsgs.size <> 0}">
+						<div class="slds-notify_container" style="position:relative;">
+						  <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_offline" role="alert">
+							<apex:repeat value="{!lstSuccessMsgs}" var="msg">
+							  {!msg} 
+							  <br/>
+							</apex:repeat>
+						  </div> 
+						</div>
+					  </apex:outputPanel>
+					</apex:outputPanel>
+					
 				</apex:outputPanel>
 			</apex:form>
 		</body>

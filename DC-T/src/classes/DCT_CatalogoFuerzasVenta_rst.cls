@@ -29,7 +29,7 @@ public with sharing class DCT_CatalogoFuerzasVenta_rst {
 		public String Clave {get;set;}				
 	}
 
-	//El metodo para obtener el catalogo de la fuerza de venta Completa sin parametros
+	//El metodo para obtener el catalogo de la fuerza de venta Completa sin parametros SI APLICA METODO DE PRUEBA
 	public static classRespuestaTelcelTodo getCatalogoFuerzasVenta(){
 		
 		//Un objeto del tipo classRespuestaTelcel para la respuesta
@@ -114,7 +114,7 @@ public with sharing class DCT_CatalogoFuerzasVenta_rst {
 		
 	}
 
-	//El metodo para obtener el catalogo de la fuerza de venta por No de Empleado
+	/*//El metodo para obtener el catalogo de la fuerza de venta por No de Empleado **** NO APLICA METODO DE PRUEBA
 	public static classRespuestaTelcelTodo getCatalogoFuerzasVentaNoEmpleado(String sNoEmpleado){
 		
 		//Un objeto del tipo classRespuestaTelcel para la respuesta
@@ -201,9 +201,9 @@ public with sharing class DCT_CatalogoFuerzasVenta_rst {
 		//Regresa el objeto de objDtRespuesta     	
     	return objDtRespuesta;
 		
-	}
+	}*/
 	
-	//El metodo para obtener el catalogo de la fuerza de venta por Estatus
+	/*//El metodo para obtener el catalogo de la fuerza de venta por Estatus **** NO APLICA METODO DE PRUEBA
 	public static classRespuestaTelcel getCatalogoFuerzasVentaPorEstatus(String sEstatus){
 		
 		//Un objeto del tipo classRespuestaTelcel para la respuesta
@@ -278,9 +278,9 @@ public with sharing class DCT_CatalogoFuerzasVenta_rst {
 		//Regresa el objeto de objDtRespuesta     	
     	return objDtRespuesta;
 		
-	}
+	}*/
 
-	//El metodo para obtener el catalogo de la fuerza de venta por ID
+	/*//El metodo para obtener el catalogo de la fuerza de venta por ID **** NO APLICA METODO DE PRUEBA
 	public static classRespuestaTelcel getCatalogoFuerzasVentaPorID(String sId){
 		
 		//Un objeto del tipo classRespuestaTelcel para la respuesta
@@ -355,9 +355,9 @@ public with sharing class DCT_CatalogoFuerzasVenta_rst {
 		//Regresa el objeto de objDtRespuesta     	
     	return objDtRespuesta;
 		
-	}
+	}*/
 
-	//El metodo para obtener el catalogo de la fuerza de venta por razón social
+	/*//El metodo para obtener el catalogo de la fuerza de venta por razón social **** NO APLICA METODO DE PRUEBA
 	public static classRespuestaTelcel getCatalogoFuerzasVentaPorRazonSocial(String sRazonSocial){
 		
 		//Un objeto del tipo classRespuestaTelcel para la respuesta
@@ -432,7 +432,7 @@ public with sharing class DCT_CatalogoFuerzasVenta_rst {
 		//Regresa el objeto de objDtRespuesta     	
     	return objDtRespuesta;
 		
-	}
+	}*/
 
 	//Regresa un objeto del tipo DtRespuestaTelcel si no hubo error a la hora de registrar el cliente		
 	public static classRespuestaTelcel JSONParserRespTelcel(String sJsonResp){

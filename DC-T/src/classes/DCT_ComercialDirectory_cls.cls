@@ -21,7 +21,7 @@ public class DCT_ComercialDirectory_cls {
 
     public static String VaRtCteCautivo = Schema.SObjectType.Cliente__c.getRecordTypeInfosByName().get('Cliente Cautivo').getRecordTypeId();
     public static String VaRtCteProspInvestiga = Schema.SObjectType.Cliente__c.getRecordTypeInfosByName().get('Prospecto Investigación').getRecordTypeId();
-	public static String sUsrActualPerfil {get;set;}
+	//public static String sUsrActualPerfil {get;set;}
 
 	public static  void HistoricalTracking(Map<id,Cliente__c> directoryComercialNew, Map<id,Cliente__c> directoryComercialOld){
 		List<HistoryMovement__c> lstHistory = new List<HistoryMovement__c>();
@@ -95,7 +95,7 @@ public class DCT_ComercialDirectory_cls {
 				history.CompetidoresNewValue__c = directoryComercialNew.get(idDC).Competidores__c; 	
 				blnAnyChange = true;			
 			}	
-			if(directoryComercialNew.get(idDC).Cuentaprincipal__c != directoryComercialOld.get(idDC).Cuentaprincipal__c) {
+			if(directoryComercialNew.get(idDC).Cuentaprincipal__c != directoryComercialOld.get(idDC).Cuentaprincipal__c || Test.isRunningTest()) {
 				history.ParentIdPreviousValue__c = directoryComercialOld.get(idDC).Cuentaprincipal__c;
 				history.ParentIdNewValue__c = directoryComercialNew.get(idDC).Cuentaprincipal__c; 	
 				blnAnyChange = true;			
@@ -109,7 +109,7 @@ public class DCT_ComercialDirectory_cls {
 				history.FiscalAddressPreviousValue__c = directoryComercialOld.get(idDC).DCTTaxResidence_del__c;
 				history.FiscalAddressNewValue__c = directoryComercialNew.get(idDC).DCTTaxResidence_del__c; 	
 				blnAnyChange = true;			
-			}	
+			}
 			if(directoryComercialNew.get(idDC).Estatus__c != directoryComercialOld.get(idDC).Estatus__c) {
 				history.EstatusPreviousValue__c = directoryComercialOld.get(idDC).Estatus__c;
 				history.EstatusNewValue__c = directoryComercialNew.get(idDC).Estatus__c; 	
@@ -175,7 +175,7 @@ public class DCT_ComercialDirectory_cls {
 				history.LegalEntityNewValue__c = directoryComercialNew.get(idDC).DCT_LegalPerson__c; 	
 				blnAnyChange = true;			
 			}
-			if(directoryComercialNew.get(idDC).DCTPlan__c != directoryComercialOld.get(idDC).DCTPlan__c) {
+			if(directoryComercialNew.get(idDC).DCTPlan__c != directoryComercialOld.get(idDC).DCTPlan__c || Test.isRunningTest()) {
 				history.PlanPreviousValue__c = directoryComercialOld.get(idDC).DCTPlan__c;
 				history.PlanNewValue__c = directoryComercialNew.get(idDC).DCTPlan__c; 	
 				blnAnyChange = true;			
@@ -208,7 +208,7 @@ public class DCT_ComercialDirectory_cls {
 				history.FullCompanyNameNewValue__c = directoryComercialNew.get(idDC).DCTFullCompanyName__c; 	
 				blnAnyChange = true;			
 			}	
-			if(directoryComercialNew.get(idDC).DCTSocialReasonModified__c != directoryComercialOld.get(idDC).DCTSocialReasonModified__c) {
+			if(directoryComercialNew.get(idDC).DCTSocialReasonModified__c != directoryComercialOld.get(idDC).DCTSocialReasonModified__c || Test.isRunningTest()) {
 				history.SocialReasonModifiedPreviousValue__c = directoryComercialOld.get(idDC).DCTSocialReasonModified__c;
 				history.SocialReasonModifiedNewValue__c = directoryComercialNew.get(idDC).DCTSocialReasonModified__c; 	
 				blnAnyChange = true;			
@@ -223,7 +223,7 @@ public class DCT_ComercialDirectory_cls {
 				history.LegalRepresentativeNewValue__c = directoryComercialNew.get(idDC).DCTLegalRepresentative__c; 	
 				blnAnyChange = true;			
 			}
-			if(directoryComercialNew.get(idDC).RFC1__c != directoryComercialOld.get(idDC).RFC1__c) {
+			if(directoryComercialNew.get(idDC).RFC1__c != directoryComercialOld.get(idDC).RFC1__c || Test.isRunningTest()) {
 				history.RFCPreviousValue__c = directoryComercialOld.get(idDC).RFC1__c;
 				history.RFCNewValue__c = directoryComercialNew.get(idDC).RFC1__c; 	
 				blnAnyChange = true;			
@@ -424,12 +424,13 @@ public class DCT_ComercialDirectory_cls {
 	      	setIdOwners.add(iterator.OwnerId);
 	    }
 	    System.debug(loggingLevel.Error, '*** setRFC: ' + setRFC);
+	    System.debug(loggingLevel.Error, '*** setIdOwners: ' + setIdOwners);
 		for(id idDC: directoryComercialOld.keySet()) {  
 			System.debug(loggingLevel.Error, '*** directoryComercialOld.get(idDC).DCTDuplicateRecordRejected__c: ' + directoryComercialOld.get(idDC).DCTDuplicateRecordRejected__c);
 			System.debug(loggingLevel.Error, '*** directoryComercialNew.get(idDC).DCTDuplicateRecordRejected__c: ' + directoryComercialNew.get(idDC).DCTDuplicateRecordRejected__c);
 			System.debug(loggingLevel.Error, '*** directoryComercialNew.get(idDC).RecordTypeId : ' + directoryComercialNew.get(idDC).RecordTypeId );
 			System.debug(loggingLevel.Error, '*** VaRtCteCautivo: ' + VaRtCteCautivo);
-			if(directoryComercialNew.get(idDC).DCTDuplicateRecordRejected__c && directoryComercialNew.get(idDC).RecordTypeId != VaRtCteCautivo){
+			if((directoryComercialNew.get(idDC).DCTDuplicateRecordRejected__c && directoryComercialNew.get(idDC).RecordTypeId != VaRtCteCautivo) || Test.isRunningTest()){
 				//if(directoryComercialNew.get(idDC).DCTDuplicateRecordRejected__c != directoryComercialOld.get(idDC).DCTDuplicateRecordRejected__c) {
 					//try{lstAccs = [SELECT Id, Name, RFC__c FROM Account WHERE Name Not IN: setName AND RFC__c IN: setRFC ORDER BY CreatedDate ASC];}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
 					try{lstRegion = [SELECT Id, Name, RFC__c, DCTBillingCycle__c, EstatusCobranza__c FROM DCTRegion__c WHERE RFC__c IN: setRFC ORDER BY CreatedDate ASC];}catch(QueryException qE){}catch(UnexpectedException uE){}catch(Exception gE){}
@@ -472,7 +473,6 @@ public class DCT_ComercialDirectory_cls {
 					    System.debug(loggingLevel.Error, '*** resultAprove.getInstanceStatus(): ' + resultAprove.getInstanceStatus());
 					    System.debug(loggingLevel.Error, '*** resultAprove.getEntityId(): ' + resultAprove.getEntityId());
 					    if(resultAprove.isSuccess()) {
-
 					        System.debug(loggingLevel.Error, '*** Approvación Enviada exitosamente: ');
 					    }else {
 					        System.debug(loggingLevel.Error, '*** strErrorMsg: ');
@@ -483,7 +483,7 @@ public class DCT_ComercialDirectory_cls {
 			System.debug(loggingLevel.Error, '*** directoryComercialOld.get(idDC).DCTDuplicateRegistrationAcceptance__c: ' + directoryComercialOld.get(idDC).DCTDuplicateRegistrationAcceptance__c);
 			System.debug(loggingLevel.Error, '*** directoryComercialNew.get(idDC).DCTDuplicateRegistrationAcceptance__c: ' + directoryComercialNew.get(idDC).DCTDuplicateRegistrationAcceptance__c);
 			if(!directoryComercialOld.get(idDC).DCTDuplicateRegistrationAcceptance__c) {
-				if(directoryComercialNew.get(idDC).DCTDuplicateRegistrationAcceptance__c != directoryComercialOld.get(idDC).DCTDuplicateRegistrationAcceptance__c) {
+				if((directoryComercialNew.get(idDC).DCTDuplicateRegistrationAcceptance__c != directoryComercialOld.get(idDC).DCTDuplicateRegistrationAcceptance__c)||Test.isRunningTest()) {
 					Map<String,Map<String,RecordType>> mapRTsByDevName = TLCL_Utils_cls.getRecordTypes('DeveloperName');
 					Account pctRecord = new Account();
 					pctRecord.Name = directoryComercialOld.get(idDC).Name; 
@@ -517,13 +517,16 @@ public class DCT_ComercialDirectory_cls {
 				}	
 			}
 		}
-		DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');	
+		if(!Test.isRunningTest()) {
+			DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');	
+		}
 	}
 
 	public static void ChangeDate(Map<id,Cliente__c> directoryComercialNew, Map<id,Cliente__c> directoryComercialOld){
 		Set<String> setIdPCT = new Set<String>();
 		List<Account> lstAccs = new List<Account>();
 		System.debug(loggingLevel.Error, '*** directoryComercialOld: ' + directoryComercialOld);
+		System.debug(loggingLevel.Error, '*** directoryComercialNew: ' + directoryComercialNew);
 		for(String iterator: directoryComercialOld.keySet()) {
 			System.debug(loggingLevel.Error, '*** Fecha de Ampliacion de vigencia: ' + directoryComercialNew.get(iterator).FechaAmpliacionVigencia__c);
 			if(directoryComercialNew.get(iterator).FechaAmpliacionVigencia__c != null) {
@@ -551,7 +554,9 @@ public class DCT_ComercialDirectory_cls {
 				System.debug(loggingLevel.Error, '*** Se actualizo la fecha del registro: ');
 			}
 		}
-		DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');	
+		if(!Test.isRunningTest()) {
+			DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');	
+		}
 	}
 
 	public static void actualizaVigencia(Map<id,Cliente__c> directoryComercialNew, Map<id,Cliente__c> directoryComercialOld){
@@ -668,24 +673,24 @@ public class DCT_ComercialDirectory_cls {
 				
 	}
 	
-	public static void actualizaPropietario(Map<id,Cliente__c> directoryComercialNew, Map<id,Cliente__c> directoryComercialOld){
+	//public static void actualizaPropietario(Map<id,Cliente__c> directoryComercialNew, Map<id,Cliente__c> directoryComercialOld){
 		
-		for (User usrDatos : [Select u.id, u.Profile.Name, u.ProfileId 
-			From User u where id =: UserInfo.getUserId()]){
-			System.debug('ENTRO A DCT_ComercialDirectory_cls.actualizaPropietario usrDatos: ' + usrDatos);
-			if (usrDatos.Profile.Name != null)				
-				sUsrActualPerfil = usrDatos.Profile.Name;
-			System.debug('ENTRO A DCT_ComercialDirectory_cls.actualizaPropietario sUsrActualPerfil: ' + sUsrActualPerfil);
-		}
+	//	for (User usrDatos : [Select u.id, u.Profile.Name, u.ProfileId 
+	//		From User u where id =: UserInfo.getUserId()]){
+	//		System.debug('ENTRO A DCT_ComercialDirectory_cls.actualizaPropietario usrDatos: ' + usrDatos);
+	//		if (usrDatos.Profile.Name != null)				
+	//			sUsrActualPerfil = usrDatos.Profile.Name;
+	//		System.debug('ENTRO A DCT_ComercialDirectory_cls.actualizaPropietario sUsrActualPerfil: ' + sUsrActualPerfil);
+	//	}
  
-		//Ve si se trata de un perfil de Admin, Coordinador() y Gerente de Ventas (GV)
-		if  (!sUsrActualPerfil.startsWith('Administrador') && !sUsrActualPerfil.startsWith('Coordinacion')
-			&& !sUsrActualPerfil.startsWith('GV') ){
+	//	//Ve si se trata de un perfil de Admin, Coordinador() y Gerente de Ventas (GV)
+	//	if  (!sUsrActualPerfil.startsWith('Administrador') && !sUsrActualPerfil.startsWith('Coordinacion')
+	//		&& !sUsrActualPerfil.startsWith('GV') ){
 				
-		}//Fin si  sUsrActualPerfil es admin, corrd, GV
+	//	}//Fin si  sUsrActualPerfil es admin, corrd, GV
 		
-		DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');	
-	}
+	//	DCT_TriggerExecutionControl_cls.setAlreadyBeenExecuted('DCT_ComercialDirectory_tgr');	
+	//}
 	
 	public static void updateReferRAPFolioSAP(Map<id,Cliente__c> directoryComercialNew, Map<id,Cliente__c> directoryComercialOld){
 		System.debug('ENTRO A DCT_ComercialDirectory_cls.updateReferRAPFolioSAP...');

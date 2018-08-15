@@ -9,7 +9,7 @@ public class DCT_Distributor_ctr {
 
 	public void ActualizaDistribuidoresWs() {
 		List<DCTSalesForceCatalog__c> lstCatalgFuerzaVta = new List<DCTSalesForceCatalog__c>();
-		DCT_CatalogoFuerzasVenta_rst.classRespuestaTelcelTodo respService = DCT_CatalogoFuerzasVenta_rst.getCatalogoFuerzasVenta();
+		DCT_CatalogoFuerzasVenta_rst.classRespuestaTelcelTodo respService =  DCT_CatalogoFuerzasVenta_rst.getCatalogoFuerzasVenta();
 		List<SelectOption> options = new List<SelectOption>();
 		System.debug(loggingLevel.Error, '*** respService: ' + respService);
 		//System.debug(loggingLevel.Error, '*** respService.FuerzaVentaDistribuidor.size(): ' + respService.FuerzaVentaDistribuidor.size());

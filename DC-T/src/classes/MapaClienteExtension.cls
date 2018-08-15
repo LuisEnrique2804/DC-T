@@ -114,6 +114,16 @@ public class MapaClienteExtension {
     
     public final String escritura{set;get;}
     
+    public class wrpCompetidoresPlataformas{
+    	public String sPlataforma {get;set;}
+    	public CompetidoresPlataformas__c objCompetPlat {get;set;}    	
+    	
+    	public wrpCompetidoresPlataformas(String sPlataforma, CompetidoresPlataformas__c objCompetPlat){
+    		this.sPlataforma = sPlataforma;
+    		this.objCompetPlat = objCompetPlat;
+    	}
+    }
+    public List<wrpCompetidoresPlataformas> lWrpCompPlat {get;set;}
     
     public MapaClienteExtension(ApexPages.StandardController stdController){
     
@@ -148,23 +158,88 @@ public class MapaClienteExtension {
         //FIN Campos Información para Detectar Oportunidades
         
         //Operaciones Competidores
-        //Operaciones Competidores
+		lWrpCompPlat = new List<wrpCompetidoresPlataformas>();
         indiceActualCompetidores = 1;
         totalElementosCompetidores = new List<CompetidoresPlataformas__c>();    
         mapaIndexacionCompetidores = new Map<Integer,List<CompetidoresPlataformas__c>>();
-        totalElementosCompetidores = Database.query('SELECT '+String.join(new List<String>(SObjectType.CompetidoresPlataformas__c.fields.getMap().keySet()),', ')+' from CompetidoresPlataformas__c Where ServiciosTradicionales__r.MapaCliente__c = \''+acctId+'\''+ 'order by Name');
-        for(Integer i=0; i<totalElementosCompetidores.size(); i++)
-        {
-            if(!mapaIndexacionCompetidores.containsKey(((i/5)+1)))
-            {
+        Map<String, CompetidoresPlataformas__c> mapCompe = new map<String, CompetidoresPlataformas__c>();        
+        Map<String, CompetidoresPlataformas__c> mapCompeSD = new map<String, CompetidoresPlataformas__c>();        
+        Set<String> setNomCom = new Set<String>();
+        //totalElementosCompetidores = Database.query('SELECT '+String.join(new List<String>(SObjectType.CompetidoresPlataformas__c.fields.getMap().keySet()),', ')+' from CompetidoresPlataformas__c Where ServiciosTradicionales__r.MapaCliente__c = \''+acctId+'\''+ ' And Directorio_Comercial__c != null order by Name');
+        
+        //Cambia la consulta los que estan asociados a un directorio
+		for (CompetidoresPlataformas__c competidor : [Select c.Directorio_Comercial__c, c.DCTsummary__c, c.CreatedDate, 
+			DCTCompetitors__r.Name, Directorio_Comercial__r.Cliente__c, Name, Facturacion__c, Plataforma__c,
+			LineasCompetidor__c
+			From CompetidoresPlataformas__c c 
+			Where ServiciosTradicionales__r.MapaCliente__c = :acctId
+			And Directorio_Comercial__c != null
+			Order by c.Name DESC]){				
+			System.debug('EN MapaClienteExtension Name0: ' + competidor.Name + ' LineasCompetidor__c: ' + competidor.LineasCompetidor__c);
+			//Metelos al set de setCompe
+			if (mapCompe.containsKey(competidor.Name))
+				mapCompe.get(competidor.Name).DCTsummary__c += competidor.LineasCompetidor__c != null ? competidor.LineasCompetidor__c : 0;
+			if (!mapCompe.containsKey(competidor.Name)){
+				competidor.DCTsummary__c = competidor.LineasCompetidor__c != null ? competidor.LineasCompetidor__c : 0;
+				mapCompe.put(competidor.Name, competidor);
+			}
+			System.debug('EN MapaClienteExtension DCTsummary__c: ' + mapCompe.get(competidor.Name).DCTsummary__c);				
+			//Metelos a setNomCom			
+			setNomCom.add(competidor.Name);			
+		}
+		System.debug('EN MapaClienteExtension mapCompe: ' + mapCompe.KeySet());		
+		System.debug('EN MapaClienteExtension mapCompe: ' + mapCompe.Values());
+		
+		//Los que no estan asociados a un directorio
+		for (CompetidoresPlataformas__c competidor : [Select c.Directorio_Comercial__c, c.DCTsummary__c, c.CreatedDate, 
+			DCTCompetitors__r.Name, Directorio_Comercial__r.Cliente__c, Name, Facturacion__c, Plataforma__c,
+			LineasCompetidor__c
+			From CompetidoresPlataformas__c c 
+			Where ServiciosTradicionales__r.MapaCliente__c = :acctId
+			And Directorio_Comercial__c = null
+			Order by c.Name DESC]){
+			System.debug('EN MapaClienteExtension Name1: ' + competidor.Name + ' LineasCompetidor__c: ' + competidor.LineasCompetidor__c);
+			if (mapCompeSD.containsKey(competidor.Name))
+				mapCompeSD.get(competidor.Name).DCTsummary__c += competidor.LineasCompetidor__c != null ? competidor.LineasCompetidor__c : 0;
+			if (!mapCompeSD.containsKey(competidor.Name)){
+				competidor.DCTsummary__c = competidor.LineasCompetidor__c != null ? competidor.LineasCompetidor__c : 0;
+				mapCompeSD.put(competidor.Name, competidor);
+			}
+			System.debug('EN MapaClienteExtension DCTsummary__c: ' + mapCompeSD.get(competidor.Name).DCTsummary__c);			
+			//Metelos a setNomCom 	
+			setNomCom.add(competidor.Name);
+		}
+		System.debug('EN MapaClienteExtension mapCompeSD: ' + mapCompeSD.KeySet());		
+		System.debug('EN MapaClienteExtension mapCompeSD: ' + mapCompeSD.Values());
+				
+		//Recorre el mapa de mapCompe y mete los reg a totalElementosCompetidores
+		for (String sNomComPaso : setNomCom){
+			Decimal dTotLinCom = 0;
+			CompetidoresPlataformas__c competidor;
+			//Ve si existe en mapCompe
+			if (mapCompe.containsKey(sNomComPaso)){
+				competidor = mapCompe.get(sNomComPaso);
+				dTotLinCom += mapCompe.get(sNomComPaso).DCTsummary__c;
+			}
+			if (mapCompeSD.containsKey(sNomComPaso)){
+				competidor = mapCompeSD.get(sNomComPaso);				
+				dTotLinCom += mapCompeSD.get(sNomComPaso).DCTsummary__c;
+			}
+			//Actualiza las lineas totales
+			competidor.LineasCompetidor__c = dTotLinCom;
+			lWrpCompPlat.add(new wrpCompetidoresPlataformas('Voz/Datos', competidor));	
+		}		
+		System.debug('EN MapaClienteExtension lWrpCompPlat: ' + lWrpCompPlat);
+		
+		//Recorre la lista de totalElementosCompetidores
+        for(Integer i=0; i<totalElementosCompetidores.size(); i++){
+            if(!mapaIndexacionCompetidores.containsKey(((i/5)+1))){
                mapaIndexacionCompetidores.put(((i/5)+1),new List<CompetidoresPlataformas__c>());
             }
-                
             mapaIndexacionCompetidores.get(((i/5)+1)).add(totalElementosCompetidores[i]);
         }
         totalIndicesCompetidores = mapaIndexacionCompetidores.keySet().size();
         elementosAMostrarCompetidores = (mapaIndexacionCompetidores.containsKey(indiceActualCompetidores))?mapaIndexacionCompetidores.get(indiceActualCompetidores):new List<CompetidoresPlataformas__c>(); 
-        
         // Fin Operaciones Competidores
         
         
@@ -360,6 +435,9 @@ public class MapaClienteExtension {
                   order by createddate ASC];          
         
     }
+    
+    
+    
     
     public void cambios()
     {

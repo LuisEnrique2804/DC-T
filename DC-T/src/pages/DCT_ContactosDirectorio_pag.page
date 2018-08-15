@@ -43,7 +43,10 @@
                                     </th>
                                     <th scope="col">
                                         <div class="slds-truncate" title="TOTAL DE LINEAS AUTORIZADAS">CORREO ELECTRÓNICO</div>
-                                    </th>                                       
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="TOTAL DE LINEAS AUTORIZADAS">AUTORIZA RECIBIR INFORMACIÓN</div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -69,7 +72,12 @@
                                         </td>
                                         <td data-label="{!contacto.DCTNIP__c}">
                                             <div class="slds-truncate" title="{!contacto.DCTNIP__c}">{!contacto.Email}</div>
-                                        </td>                                                                                                                                                                               
+                                        </td>
+                                        <td data-label="{!contacto.DCTReceiveInformation__c}">
+                                            <div class="slds-truncate" title="{!contacto.DCTReceiveInformation__c}">
+                                            	<apex:outputField value="{!contacto.DCTReceiveInformation__c}"/>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </apex:repeat>
                             </tbody>

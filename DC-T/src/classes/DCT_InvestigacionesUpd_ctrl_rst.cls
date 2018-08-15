@@ -36,6 +36,7 @@ public with sharing class DCT_InvestigacionesUpd_ctrl_rst {
 		lErrores = new List<Error>();
 		
 		Boolean bValidaDatosEntrada = ValidaDatos(sDatosEntrada);
+		System.debug('ENTRO A DCT_InvestigacionesUpd_ctrl_rst.updInvestigaciones bValidaDatosEntrada: ' + bValidaDatosEntrada);		
 		
 		//Valida los datos y ve si hay errores
 		if (bValidaDatosEntrada){
@@ -53,12 +54,15 @@ public with sharing class DCT_InvestigacionesUpd_ctrl_rst {
 				if (objDatosEntrada.EstatusInvestigacion != null && objDatosEntrada.EstatusInvestigacion != '')					
 					DirComUpd.DCTResultVerification__c = objDatosEntrada.EstatusInvestigacion;
 				//Si el valor que esta poniendo es IT entonces en la leyenda de Investigaciòn es Rechazar Activación
-				if (objDatosEntrada.ClaveInvestigacion != null && objDatosEntrada.ClaveInvestigacion != '')
-					if (objDatosEntrada.ClaveInvestigacion == 'IT' && dirCom.DCTResearchLegend__c == null)				
-						DirComUpd.DCTResearchLegend__c = 'Rechazar Activación';						
-			System.debug('ENTRO A DCT_InvestigacionesUpd_ctrl_rst.updInvestigaciones DirComUpd: ' + DirComUpd);					
+				if (objDatosEntrada.ClaveInvestigacion != null && objDatosEntrada.ClaveInvestigacion != ''){
+					if (objDatosEntrada.ClaveInvestigacion == 'IT' && dirCom.DCTResearchLegend__c == null){
+						DirComUpd.DCTResearchLegend__c = 'Rechazar Activación';
+						DirComUpd.DCTTotLineasAutorInvest__c = '0';
+					}//Fin si objDatosEntrada.ClaveInvestigacion == 'IT' && dirCom.DCTResearchLegend__c == null
+				}//Fin si objDatosEntrada.ClaveInvestigacion != null && objDatosEntrada.ClaveInvestigacion != ''					
 			}//Fin del for para los datos de la consulta de la empresa
-			
+
+			System.debug('ENTRO A DCT_InvestigacionesUpd_ctrl_rst.updInvestigaciones DirComUpd1: ' + DirComUpd);			
 			//Ve si tiene algo el objeto de DirComUpd
 			if (DirComUpd != null){
 				//Bloquea el trigger para que no se mande llamar dos veces el servicio cuando es V1
@@ -89,7 +93,8 @@ public with sharing class DCT_InvestigacionesUpd_ctrl_rst {
 						DCT_Utils_cls.ActualizaInvestigacionesEsc5VI(DirComUpd.id, true);
 				}//Fin si objDtsv.isSuccess()
 			}//Fin si DirComUpd != null
-			
+
+			System.debug('ENTRO A DCT_InvestigacionesUpd_ctrl_rst.updInvestigaciones DirComUpd2: ' + DirComUpd);			
 			//No existe la empresa en SFDC
 			if (DirComUpd == null){
 				objResultadoSfdc.esExitoso = false;
@@ -116,7 +121,7 @@ public with sharing class DCT_InvestigacionesUpd_ctrl_rst {
 	}
 
 	public static boolean ValidaDatos(String sDatosEntrada){
-		System.debug('EN DCT_InvestigacionesUpd_ctrl_rst.ValidaDatos sDatosEntrada: ' + sDatosEntrada);
+		System.debug('EN DCT_InvestigacionesUpd_ctrl_rst.ValidaDatos sDatosEntrada lErrores: ' + lErrores);
 		
 		Boolean bError = true;
 		objDatosEntrada = new DatosEntrada();
@@ -135,13 +140,7 @@ public with sharing class DCT_InvestigacionesUpd_ctrl_rst {
 				 &&	(objDatosEntrada.ClaveInvestigacion == null || objDatosEntrada.ClaveInvestigacion == '')
 				 &&	(objDatosEntrada.EstatusInvestigacion == null || objDatosEntrada.EstatusInvestigacion == '')				 
 				)
-				lErrores.Add(new Error('03', 'Debes capturar al menos un un valor en alguno de estos campos: Tot. Lineas Autor Invest., Clave Investigación o Estatus Investigación'));					
-				
-			/*if (objDatosEntrada.ClaveInvestigacion == null || objDatosEntrada.ClaveInvestigacion == '')
-				lErrores.Add(new Error('03', 'Debes capturar un valor en el campo de: Clave Investigación'));					
-			if (objDatosEntrada.EstatusInvestigacion == null || objDatosEntrada.EstatusInvestigacion == '')
-				lErrores.Add(new Error('04', 'Debes capturar un valor en el campo de: Estatus Investigación'));
-			*/
+				lErrores.Add(new Error('03', 'Debes capturar al menos un un valor en alguno de estos campos: Tot. Lineas Autor Invest., Clave Investigación o Estatus Investigación'));
 				
 			if (!lErrores.isEmpty())	
 				bError = false;			
@@ -150,7 +149,8 @@ public with sharing class DCT_InvestigacionesUpd_ctrl_rst {
 			bError = false;
 			System.debug('EN DCT_InvestigacionesUpd_ctrl_rst.ValidaDatos ex.getMessage(): ' + ex.getMessage());			
 		}
-		
+
+		System.debug('EN DCT_InvestigacionesUpd_ctrl_rst.ValidaDatos bError: ' + bError + ' lErrores: ' + lErrores);		
 		return bError;
 	}
 

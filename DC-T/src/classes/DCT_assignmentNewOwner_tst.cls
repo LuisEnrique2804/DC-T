@@ -416,4 +416,3 @@ private class DCT_assignmentNewOwner_tst {
 		Test.stopTest();
 	}	
 }
-

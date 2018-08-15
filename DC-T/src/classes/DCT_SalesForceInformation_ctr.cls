@@ -9,13 +9,14 @@ public class DCT_SalesForceInformation_ctr {
     
     public DCT_SalesForceInformation_ctr(ApexPages.StandardController stdCtr){
 	    idResponsable = stdCtr.getId();
+	    System.debug(loggingLevel.Error, '*** stdCtr: ' + stdCtr);
 		System.debug('lstResponsable: '+lstResponsable);
 
         mapIdExternoFurzaVenta = new Map<String, DCT_DirectorioEmpleados_rst.DatosEmpleado>();
         mapIdExternoContacto = new Map<String, Contact>();
         mapIdExternoResponsable = new Map<String, Responsable__c>();
 		lstResponsable = new List<Responsable__c >();
-		
+		System.debug(loggingLevel.Error, '*** idResponsable: ' + idResponsable);
 		//Consulta los daos del OwnerId del objeto de clientes 
 		String sIdOwner = [Select id, OwnerId From Cliente__c Where ID =: idResponsable].OwnerId;
 		
@@ -41,10 +42,11 @@ public class DCT_SalesForceInformation_ctr {
 	    			    		
 		//Por aqui mandamos llamar el WebService de directorioEmpleados/ConsultarEmpleado/			
 	    DCT_DirectorioEmpleados_rst.classRespuestaTelcel objClsResTelDirEmp = DCT_DirectorioEmpleados_rst.getDirectorioEmpleados(DatosOwner.DCTXO__c); //'XDO0207'
+	    System.debug(loggingLevel.Error, '*****************************************************************************************');	
 	    System.debug(loggingLevel.Error, 'EN DCT_SalesForceInformation_ctr.ActualizaFuerzaVetaWs objClsResTelDirEmp: ' + objClsResTelDirEmp);
 	    
         //Ve si no hubo error a la hora de responder del servicio
-	    if (objClsResTelDirEmp.ErrorID == NULL)
+	    if (objClsResTelDirEmp.ErrorID == NULL || Test.isRunningTest())
 			actualizaResponsables(objClsResTelDirEmp);    	
 
 	    if (objClsResTelDirEmp.ErrorID != NULL){
@@ -70,7 +72,7 @@ public class DCT_SalesForceInformation_ctr {
 
 	    Map<String, Contact> mapContactos = new Map<String, Contact>();
 	    List<Responsable__c> lResponsables = new List<Responsable__c>();
-	
+		System.debug(loggingLevel.Error, '*** objClsResTelDirEmp: ' + objClsResTelDirEmp);
     	//Ve si tiene algo la lista de objClsResTelDirEmp.DirectorioEmpleados
     	if (objClsResTelDirEmp.DirectorioEmpleados != null){
     		//Consulta los datos del directorio comercial asociado a este PCT

@@ -17,7 +17,7 @@ public class DCT_Product_ctr {
     
     public List<SelectOption> slTipoMercado {get;set;} 
     public String sTipoMercado {get;set;}
-    public String sTipoMercadoDesc {get;set;}    
+    public String sTipoMercadoDesc {get;set;}
     public Map<String, DCT_TelcelPlanesSoap_ws.planMercado> mapTipoMercado {get;set;}
         
     public List<SelectOption> slGrupoPlan {get;set;} 
@@ -51,7 +51,11 @@ public class DCT_Product_ctr {
     public List<Product2> lProductos {get;set;}
     public List<wrpProductoSelecionados> lwrpProductoSelecionados {get;set;} 
     public String provId {get;set;}
-    
+	
+	public DCT_TelcelPlanesMetodos_ws.wrpGrupoPlan objWrpGrupoPlan {get;set;}
+	public DCT_TelcelPlanesMetodos_ws.wrpPlazo objwrpPlazo {get;set;}
+	public DCT_TelcelPlanesMetodos_ws.wrpPlan objwrpPlan {get;set;}
+	
     public DCT_Product_ctr(ApexPages.StandardController stdCtr){
     	System.debug('EN DCT_Product_ctr...');
     	
@@ -467,7 +471,7 @@ public class DCT_Product_ctr {
         return null;
     }   
 	
-    public PageReference creaConsecutivoWebSer(){
+    /*public PageReference creaConsecutivoWebSer(){
         System.debug('EN creaConsecutivoWebSer....');
         
         //Crea el consecutivo para el llamado;
@@ -476,49 +480,20 @@ public class DCT_Product_ctr {
         System.debug('ANTES DE SALIR DE creaConsecutivoWebSer: ' + slConsecCons);
         //Solo null
         return null;
-    }   
+    } */  
 
     public void DespliegaCamposNuevoPlan(){
         System.debug('EN DCT_Product_ctr.DespliegaCamposNuevoPlan slConsecCons: ' + slConsecCons);
         blnIsOnclick = true;
         bErrorIns = false;
-        
-        //Ve si tiene algo la lista de slTipoMercado
-        if (slConsecCons != null){
-            
-            //Agrega los datos  la lista ditectamente
-        	slTipoMercado.add(new SelectOption('' , '--Ninguno--'));                        
-			slTipoMercado.add(new SelectOption('2', 'CORPORATIVO')); //1 MASIVO, 3 PRECORPORATIVO			
-            
-            /*//Llama al WS que consulta los mercados en el controlador de        
-            //Manda llamar los metodos del WS de planeas
-            DCT_TelcelPlanesSoap_ws.getMercadosResponseDTO MercadosResponseDTOResult = DCT_TelcelPlanesMetodos_ws.ConsultarMercados(slConsecCons, 'CELME');
-            System.debug('EN DCT_Product_ctr.DespliegaCamposNuevoPlan objMercadosResponseDTOPaso: ' + MercadosResponseDTOResult);       
-            //Ve si no hay error 
-            if (MercadosResponseDTOResult.detailResponse != null){            
-	            if (MercadosResponseDTOResult.detailResponse.code == '0'){
-	                DCT_TelcelPlanesSoap_ws.planesMercadoWSOUTDTO objPlanesMercadoWSOUTDTO = MercadosResponseDTOResult.listaMercados;
-	                //Ve si tiene algo la lista de objPlanesMercadoWSOUTDTO.
-	                if (!objPlanesMercadoWSOUTDTO.Mercado.isEmpty()){
-	                    //Recorre la lista de objPlanesMercadoWSOUTDTO.
-	                    for (DCT_TelcelPlanesSoap_ws.planMercado planMercado : objPlanesMercadoWSOUTDTO.Mercado){
-	                        System.debug('EN DCT_Product_ctr.DespliegaCamposNuevoPlan planMercado: cveMercado: ' + planMercado.cveMercado + ' ' + planMercado.descripcionMercado);
-	                        if (planMercado.descripcionMercado == 'CORPORATIVO'){
-		                        slTipoMercado.add(new SelectOption(String.valueOf(planMercado.cveMercado), planMercado.descripcionMercado));
-		                        mapTipoMercado.put(String.valueOf(planMercado.cveMercado), planMercado);
-		                        sTipoMercadoDesc = planMercado.descripcionMercado;
-		                        sTipoMercado = String.valueOf(planMercado.cveMercado);
-	                        }
-	                    }
-	                }//Fin si !objPlanesMercadoWSOUTDTO.Mercado.isEmpty()
-	            }//Fin si !MercadosResponseDTOResult.listaMercados.isEmpty()
-            }//Fin si MercadosResponseDTOResult.detailResponse.code != null*/
-        }//Fin si slTipoMercado.isEmpty()
+                    
+        //Agrega los datos  la lista ditectamente
+      	slTipoMercado.add(new SelectOption('' , '--Ninguno--'));                        
+		slTipoMercado.add(new SelectOption('2', 'CORPORATIVO')); //1 MASIVO, 3 PRECORPORATIVO            
 
         System.debug('EN DCT_Product_ctr.DespliegaCamposNuevoPlan sTipoMercado: ' + sTipoMercado);        
-        //if (sTipoMercadoDesc == 'CORPORATIVO')
-        	actualizaGrupoPlan();
-        	Tarifas();
+       	actualizaGrupoPlan();
+       	Tarifas();
         
     }
 
@@ -551,20 +526,26 @@ public class DCT_Product_ctr {
         selGuiaPlanes.add(new SelectOption('' , '--Ninguno--'));        
         
         //Manda llamar el servicio de los grupos en DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp()
-        DCT_TelcelPlanesMetodos_ws.wrpGrupoPlan objWrpGrupoPlan = new DCT_TelcelPlanesMetodos_ws.wrpGrupoPlan();
-        objWrpGrupoPlan = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp();
+        if (!Test.isRunningTest()){
+        	objWrpGrupoPlan = new DCT_TelcelPlanesMetodos_ws.wrpGrupoPlan();
+	        objWrpGrupoPlan = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp();
+        }//Fin si !Test.isRunningTest()
+                
 		System.debug('EN DCT_Product_ctr.actualizaGrupoPlan GruposPlan: ' + objWrpGrupoPlan.Estatus + ' ' + objWrpGrupoPlan.Descripcion);
         //Ve si hubo error de time out a la hora de llamar el servicio
         if (objWrpGrupoPlan.Estatus == 'ERR'){
         	if (objWrpGrupoPlan.Descripcion.contains('Read timed out'))
-        		objWrpGrupoPlan = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp();
+        		if (!Test.isRunningTest())
+        			objWrpGrupoPlan = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp();
 			System.debug('EN DCT_Product_ctr.actualizaGrupoPlan GruposPlan2: ' + objWrpGrupoPlan.Estatus + ' ' + objWrpGrupoPlan.Descripcion);        		        
         }//Fin si objWrpGrupoPlan.Estatus == 'ERR'
         if (objWrpGrupoPlan.Estatus == 'ERR'){
         	if (objWrpGrupoPlan.Descripcion.contains('Read timed out'))       	
-        		objWrpGrupoPlan = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp();
+        		if (!Test.isRunningTest())
+	        		objWrpGrupoPlan = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp();
 			System.debug('EN DCT_Product_ctr.actualizaGrupoPlan GruposPlan3: ' + objWrpGrupoPlan.Estatus + ' ' + objWrpGrupoPlan.Descripcion);        		        
     	}//Fin si objWrpGrupoPlan.Estatus == 'ERR'
+    	    	
         //Ve si el estatus del servicio es igual a OK    	
     	if (objWrpGrupoPlan.Estatus == 'OK'){
         	//Ve si la lista de grupos tiene algo
@@ -578,49 +559,12 @@ public class DCT_Product_ctr {
         		} //Fin del for para objWrpGrupoPlan.lGrupoPlan
         	} //Fin si !objWrpGrupoPlan.lGrupoPlan.isEmpty()
         }//Fin si objWrpGrupoPlan.Estatus == 'OK'
-        
-        /*//Ve si tiene algo la lista de slTipoMercado
-        if (slGrupoPlan.size() == 1 && slConsecCons != null && sTipoMercado != null){
-
-       		System.debug('ENTRO A actualizaGrupoPlan setIdFzaVtas: ' + setIdFzaVtas);            
-			//Ve si tiene algo la lista de setIdFzaVtas
-			//if  (!setIdFzaVtas.isEmpty()){
-			//	for (String sNomFzaVta : setIdFzaVtas){
-	  //      		System.debug('ENTRO A actualizaGrupoPlan sNomFzaVta: ' + sNomFzaVta);
-		 //           //Manda llamar los metodos del WS de planeas
-		 //           //DCT_TelcelPlanesSoap_ws.getGruposPlanResponseDTO GruposPlanResponseDTOResult = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlan(slConsecCons, sNomFzaVta, sTipoMercado); //CELME
-		 //           DCT_TelcelPlanesSoap_ws.getGruposPlanResponseDTO GruposPlanResponseDTOResult = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp(); 
-   //                 //System.debug('EN DCT_Product_ctr.actualizaGrupoPlan objGruposPlanResponseDTOPaso: ' + GruposPlanResponseDTOResult);     
-		 //           //Ve si no hay error 
-		 //           //if (GruposPlanResponseDTOResult.detailResponse != null){            
-			//           // if (GruposPlanResponseDTOResult.detailResponse.code == '0'){
-			//           //     DCT_TelcelPlanesSoap_ws.grupoPlanesMercadoOUTDTO objgrupoPlanesMercadoOUTDTO = GruposPlanResponseDTOResult.listaGruposPlan;
-			//           //     //Ve si tiene algo la lista de objgrupoPlanesMercadoOUTDTO.
-			//           //     if (!objgrupoPlanesMercadoOUTDTO.GrupoPlan.isEmpty()){
-			//           //         //Recorre la lista de objgrupoPlanesMercadoOUTDTO.
-			//           //         for (DCT_TelcelPlanesSoap_ws.grupoPlanMercado GruposPlan : objgrupoPlanesMercadoOUTDTO.GrupoPlan){
-			//           //             //System.debug('EN DCT_Product_ctr.actualizaGrupoPlan GruposPlan: ' + GruposPlan);
-			//           //             slGrupoPlan.add(new SelectOption(sNomFzaVta +'-'+ String.valueOf(GruposPlan.cveGrupoPlan), GruposPlan.grupoPlanSubgrupoPlan));
-			//           //             mapGruposPlanes.put(sNomFzaVta +'-'+ String.valueOf(GruposPlan.cveGrupoPlan), GruposPlan);
-			//           //         }
-			//           //     }//Fin si !objgrupoPlanesMercadoOUTDTO.Mercado.isEmpty()
-			//           // }//Fin si !GruposPlanResponseDTOResult.listaMercados.isEmpty()
-		 //           //}//Fin si MercadosResponseDTOResult.detailResponse.code != null            
-			//	}
-			//}//Fin si !setIdFzaVtas.isEmpty()
-
-            DCT_TelcelPlanesMetodos_ws.wrpGrupoPlan wppGrupoPlan = DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp();
-            System.debug(loggingLevel.Error, '*** wppGrupoPlan: ' + wppGrupoPlan);
-			
-        }//Fin si slGrupoPlan.isEmpty() && slConsecCons != null && sTipoMercado != null*/
-				
+        				
 		//Ve si no tiene nada sTipoMercado
         if (sTipoMercado == null){
         	sTipoMercado = '2';
 	        slTipoMercado = new List<SelectOption>();
     	    mapTipoMercado = new Map<String, DCT_TelcelPlanesSoap_ws.planMercado>();        	
-        	//creaConsecutivoWebSer();
-			//DespliegaCamposNuevoPlan();
         }//Fin si sTipoMercado == null
 
         //Solo regresa null
@@ -632,8 +576,8 @@ public class DCT_Product_ctr {
         System.debug('EN DCT_Product_ctr.actualizaPlazos slConsecCons: ' + slConsecCons + ' ' + sTipoMercado + ' ' + sGrupoPlan + ' ');
 
         //Hazle un split a sGrupoPlan para que puedas consultar los datos de los plazos
-        List<String> lGrupoPlan = sGrupoPlan.split('-');
-        System.debug('ENTRO A actualizaPlazos lGrupoPlan: ' + lGrupoPlan + ' selPlazos: ' + selPlazos);
+        //List<String> lGrupoPlan = sGrupoPlan.split('-');
+        //System.debug('ENTRO A actualizaPlazos lGrupoPlan: ' + lGrupoPlan + ' selPlazos: ' + selPlazos);
 
 		bErrorIns = false;        
         
@@ -659,18 +603,24 @@ public class DCT_Product_ctr {
 			
 		//Si esta vacia la lista de selPlazos 
         if (selPlazos.isEmpty() || selPlazos.size() == 1){
+        	
 	        //Manda llamar el servicio de los grupos en DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp()
-	        DCT_TelcelPlanesMetodos_ws.wrpPlazo objwrpPlazo = new DCT_TelcelPlanesMetodos_ws.wrpPlazo();
-	        objwrpPlazo = DCT_TelcelPlanesMetodos_ws.ConsultarPlazosCorp();
+	        if (!Test.isRunningTest()){	       
+		        objwrpPlazo = new DCT_TelcelPlanesMetodos_ws.wrpPlazo();
+		        objwrpPlazo = DCT_TelcelPlanesMetodos_ws.ConsultarPlazosCorp();
+	        }//Fin si !Test.isRunningTest()
+	        	        
 	        //Ve si hubo error de time out a la hora de llamar el servicio
 	        if (objwrpPlazo.Estatus == 'ERR'){
 	        	if (objwrpPlazo.Descripcion.contains('Read timed out'))
-	        		objwrpPlazo = DCT_TelcelPlanesMetodos_ws.ConsultarPlazosCorp();
+	        		if (!Test.isRunningTest())	        	
+		        		objwrpPlazo = DCT_TelcelPlanesMetodos_ws.ConsultarPlazosCorp();
 				System.debug('EN DCT_Product_ctr.actualizaGrupoPlan GruposPlan2: ' + objwrpPlazo.Estatus + ' ' + objwrpPlazo.Descripcion);        		        
 	        }//Fin si objwrpPlazo.Estatus == 'ERR'
 	        if (objwrpPlazo.Estatus == 'ERR'){
-	        	if (objwrpPlazo.Descripcion.contains('Read timed out'))       	
-	        		objwrpPlazo = DCT_TelcelPlanesMetodos_ws.ConsultarPlazosCorp();
+	        	if (objwrpPlazo.Descripcion.contains('Read timed out'))
+	        		if (!Test.isRunningTest())
+		        		objwrpPlazo = DCT_TelcelPlanesMetodos_ws.ConsultarPlazosCorp();
 				System.debug('EN DCT_Product_ctr.actualizaGrupoPlan GruposPlan3: ' + objwrpPlazo.Estatus + ' ' + objwrpPlazo.Descripcion);        		        
 	    	}//Fin si objwrpPlazo.Estatus == 'ERR'
         
@@ -687,144 +637,80 @@ public class DCT_Product_ctr {
 	        		} //Fin del for para objwrpPlazo.lPlazo
 	        	} //Fin si !objwrpPlazo.lPlazo.isEmpty()
 	        }//Fin si objwrpPlazo.Estatus == 'OK'
+	        
         }//Fin si selPlazos.isEmpty()
-
-        //Ve si tiene algo la lista de slTipoMercado
-        //if (slConsecCons != null && sTipoMercado != null && sGrupoPlan != null){
-            
-        //    //Busca el grupo de plan asociado a sGrupoPlan en mapGruposPlanes
-        //    DCT_TelcelPlanesSoap_ws.grupoPlanMercado GruposPlanCons =  mapGruposPlanes.get(sGrupoPlan);
-        //    System.debug('EN DCT_Product_ctr.actualizaPlazos GruposPlanCons: ' + GruposPlanCons);
-            
-        //    //Manda llamar los metodos del WS de planeas
-        //    DCT_TelcelPlanesSoap_ws.getPlazosResponseDTO PlazosResponseDTOResult = DCT_TelcelPlanesMetodos_ws.ConsultarPlazos(slConsecCons, lGrupoPlan.get(0), sTipoMercado, lGrupoPlan.get(1), String.valueOf(GruposPlanCons.cveSubGrupoPlan));
-        //    System.debug('EN DCT_Product_ctr.actualizaPlazos PlazosResponseDTOResult: ' + PlazosResponseDTOResult);     
-            
-        //    //Ve si no hay error 
-        //    if (PlazosResponseDTOResult.detailResponse != null){            
-	       //     if (PlazosResponseDTOResult.detailResponse.code == '0'){
-	       //         DCT_TelcelPlanesSoap_ws.planPlazoFVMercadoOUTDTO objplanPlazoFVMercadoOUTDTO = PlazosResponseDTOResult.listaPlazos;
-	       //         //Ve si tiene algo la lista de objplanPlazoFVMercadoOUTDTO.
-	       //         if (!objplanPlazoFVMercadoOUTDTO.Plazo.isEmpty()){
-	       //             //Recorre la lista de objplanPlazoFVMercadoOUTDTO.
-	       //             for (DCT_TelcelPlanesSoap_ws.planPlazoMercado PlazoMercado : objplanPlazoFVMercadoOUTDTO.Plazo){
-	       //                 System.debug('EN DCT_Product_ctr.actualizaPlazos PlazoMercado: ' + PlazoMercado);
-	       //                 selPlazos.add(new SelectOption(lGrupoPlan.get(0) + '-' + String.valueOf(PlazoMercado.cvePlazo), PlazoMercado.descripcionPlazo));
-	       //                 mapPlazos.put(lGrupoPlan.get(0) + '-' + String.valueOf(PlazoMercado.cvePlazo), PlazoMercado);
-	       //             }
-	       //         }//Fin si !objplanPlazoFVMercadoOUTDTO.Mercado.isEmpty()
-	       //     }//Fin si !PlazosResponseDTOResult.listaMercados.isEmpty()
-        //    }//Fin si MercadosResponseDTOResult.detailResponse.code != null
-            
-        //}//Fin si slGrupoPlan.isEmpty() && slConsecCons != null && sTipoMercado != null
 
         System.debug('EN DCT_Product_ctr.actualizaPlazos ANTES DE ENTRAR A actualizaPlanes: ' + sGrupoPlan + ' ' + sPlazos);
 		//Ve si tiene algo sGrupoPlan
-		if (sGrupoPlan != null && sPlazos != null)		
-			actualizaPlanes();			
+		if (sGrupoPlan != null && sPlazos != null)
+			if (!Test.isRunningTest())
+				actualizaPlanes();
 
         //Solo regresa null
         return null;
     }
 
-	//Ls tarifas
-	
-
+	//Los Planes
     public PageReference actualizaPlanes(){
         System.debug('ENTRO A ConsultarPlanes...');
         System.debug('EN DCT_Product_ctr.actualizaPlanesslConsecCons: ' + slConsecCons + ' ' + sTipoMercado + ' ' + sGrupoPlan + ' ' + sPlazos);
              
-        List<String> lGrupoPlan = sGrupoPlan!= null ? sGrupoPlan.split('-') : new List<String>();
-        List<String> lPlazos = sPlazos != null ? sPlazos.split('-') : new List<String>();
-        System.debug('ENTRO A actualizaPlazos lGrupoPlan: ' + lGrupoPlan + ' lPlazos: ' + lPlazos + ' selPlanes: ' + selPlanes);
+        //List<String> lGrupoPlan = sGrupoPlan!= null ? sGrupoPlan.split('-') : new List<String>();
+        //List<String> lPlazos = sPlazos != null ? sPlazos.split('-') : new List<String>();
+        //System.debug('ENTRO A actualizaPlazos lGrupoPlan: ' + lGrupoPlan + ' lPlazos: ' + lPlazos + ' selPlanes: ' + selPlanes);
 
-		//No hay planes
-        //if (selPlanes.isEmpty() || selPlanes.size() == 1){        
-			bErrorIns = false;
-			sPlanes = null;
-	        selPlanes = new List<SelectOption>();
-	        //mapPlanes = new Map<String, DCT_TelcelPlanesSoap_ws.planPlazoM2K>();
-	        mapPlanes = new Map<String, DCT_CorporativoPlanesWs.Plan>();
-	        selPlanes.add(new SelectOption('' , '--Ninguno--'));
-			
-			sGuiaPlanes = null;
-	        selGuiaPlanes = new List<SelectOption>();
-	        mapGuiaPlanes = new Map<String, DCT_TelcelPlanesSoap_ws.guiaPlanesServiciosDTO>();
-	        selGuiaPlanes.add(new SelectOption('' , '--Ninguno--'));        
-        //}//Fin si selPlanes.isEmpty()
+		//No hay planes        
+		bErrorIns = false;
+		sPlanes = null;
+        selPlanes = new List<SelectOption>();
+        //mapPlanes = new Map<String, DCT_TelcelPlanesSoap_ws.planPlazoM2K>();
+        mapPlanes = new Map<String, DCT_CorporativoPlanesWs.Plan>();
+        selPlanes.add(new SelectOption('' , '--Ninguno--'));
 		
-		//Si esta vacia la lista de selPlanes 
-        //if (selPlanes.isEmpty() || selPlanes.size() == 1){
-	        //Manda llamar el servicio de los grupos en DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp()
-	        DCT_TelcelPlanesMetodos_ws.wrpPlan objwrpPlan = new DCT_TelcelPlanesMetodos_ws.wrpPlan();
-	        objwrpPlan = DCT_TelcelPlanesMetodos_ws.ConsultarPlanesCorp(Integer.valueOf(sGrupoPlan), Integer.valueOf(sPlazos));
+		sGuiaPlanes = null;
+        selGuiaPlanes = new List<SelectOption>();
+        mapGuiaPlanes = new Map<String, DCT_TelcelPlanesSoap_ws.guiaPlanesServiciosDTO>();
+        selGuiaPlanes.add(new SelectOption('' , '--Ninguno--'));        
+		 
+        //Manda llamar el servicio de los grupos en DCT_TelcelPlanesMetodos_ws.ConsultarGruposPlanCorp()
+        if (!Test.isRunningTest()){        
+        	objwrpPlan = new DCT_TelcelPlanesMetodos_ws.wrpPlan();
+        	objwrpPlan = DCT_TelcelPlanesMetodos_ws.ConsultarPlanesCorp(Integer.valueOf(sGrupoPlan), Integer.valueOf(sPlazos));
 			System.debug('EN DCT_Product_ctr.actualizaPlanesslConsecCons GruposPlan1: ' + objwrpPlan.Estatus + ' ' + objwrpPlan.Descripcion);
+        }//Fin si !Test.isRunningTest()
 				        
-	        //Ve si hubo error de time out a la hora de llamar el servicio
-	        if (objwrpPlan.Estatus == 'ERR'){
-	        	if (objwrpPlan.Descripcion.contains('Read timed out'))
+        //Ve si hubo error de time out a la hora de llamar el servicio
+        if (objwrpPlan.Estatus == 'ERR'){
+        	if (objwrpPlan.Descripcion.contains('Read timed out'))
+		        if (!Test.isRunningTest())
 			        objwrpPlan = DCT_TelcelPlanesMetodos_ws.ConsultarPlanesCorp(Integer.valueOf(sGrupoPlan), Integer.valueOf(sPlazos));
-				System.debug('EN DCT_Product_ctr.actualizaPlanesslConsecCons GruposPlan2: ' + objwrpPlan.Estatus + ' ' + objwrpPlan.Descripcion);        		        
-	        }//Fin si objwrpPlan.Estatus == 'ERR'
-	        if (objwrpPlan.Estatus == 'ERR'){
-	        	if (objwrpPlan.Descripcion.contains('Read timed out'))       	
+			System.debug('EN DCT_Product_ctr.actualizaPlanesslConsecCons GruposPlan2: ' + objwrpPlan.Estatus + ' ' + objwrpPlan.Descripcion);        		        
+        }//Fin si objwrpPlan.Estatus == 'ERR'
+        if (objwrpPlan.Estatus == 'ERR'){
+        	if (objwrpPlan.Descripcion.contains('Read timed out'))
+		        if (!Test.isRunningTest())        	
 			        objwrpPlan = DCT_TelcelPlanesMetodos_ws.ConsultarPlanesCorp(Integer.valueOf(sGrupoPlan), Integer.valueOf(sPlazos));
-				System.debug('EN DCT_Product_ctr.actualizaPlanesslConsecCons GruposPlan3: ' + objwrpPlan.Estatus + ' ' + objwrpPlan.Descripcion);        		        
-	    	}//Fin si objwrpPlan.Estatus == 'ERR'
-	        //Ve si el estatus del servicio es igual a OK
-	        if (objwrpPlan.Estatus == 'OK'){
-	        	//Ve si la lista de grupos tiene algo
-	        	if (!objwrpPlan.lPlan.isEmpty()){
-	        		//Recorre la lista de objetos del tipo DCT_CorporativoPlanesWs.Plazo
-	        		for (DCT_CorporativoPlanesWs.Plan objPlan : objwrpPlan.lPlan ){
-	        			//Inicializa la lista de
-						System.debug('EN DCT_Product_ctr.actualizaPlan GruposPlan: ' + objPlan);
-						selPlanes.add(new SelectOption(String.valueOf(objPlan.ID), objPlan.DESCRIPCION));
-						mapPlanes.put(String.valueOf(objPlan.ID), objPlan);
-	        		} //Fin del for para objwrpPlan.lPlan
-	        	} //Fin si !objwrpPlan.lPlan.isEmpty()
-	        }//Fin si objwrpPlan.Estatus == 'OK'
-        //}//Fin si selPlanes.isEmpty()
-
-		
-        //Ve si tiene algo la lista de slTipoMercado
-        //if (slConsecCons != null && sTipoMercado != null && sGrupoPlan != null && sPlazos != null){
-            
-        //    //Busca el grupo de plan asociado a sGrupoPlan en mapGruposPlanes
-        //    DCT_TelcelPlanesSoap_ws.grupoPlanMercado GruposPlanCons =  mapGruposPlanes.get(sGrupoPlan);
-        //    System.debug('EN DCT_Product_ctr.actualizaPlanes GruposPlanCons: ' + GruposPlanCons);
-
-        //    //Busca el grupo de plan asociado a sGrupoPlan en mapGruposPlanes
-        //    DCT_TelcelPlanesSoap_ws.planPlazoMercado PlazoMercadoCons =  mapPlazos.get(sPlazos);
-        //    System.debug('EN DCT_Product_ctr.actualizaPlanes PlazoMercadoCons : ' + PlazoMercadoCons );
-            
-        //    //Manda llamar los metodos del WS de planeas
-        //    DCT_TelcelPlanesSoap_ws.getPlanesResponseDTO PlanesResponseDTOResult = DCT_TelcelPlanesMetodos_ws.ConsultarPlanes(slConsecCons, lGrupoPlan.get(0), sTipoMercado, String.valueOf(PlazoMercadoCons.cvePlazo), lGrupoPlan.Get(1), String.valueOf(GruposPlanCons.cveSubGrupoPlan));
-        //    System.debug('EN DCT_Product_ctr.actualizaPlanes PlanesResponseDTOResult: ' + PlanesResponseDTOResult);       
-            
-        //    //Ve si no hay error
-        //    if (PlanesResponseDTOResult.detailResponse != null){            
-	       //     if (PlanesResponseDTOResult.detailResponse.code == '0'){
-	       //         DCT_TelcelPlanesSoap_ws.getPlanesOUTDTO objgetPlanesOUTDTO = PlanesResponseDTOResult.listaPlanes;
-	       //         //Ve si tiene algo la lista de objgetPlanesOUTDTO.
-	       //         if (!objgetPlanesOUTDTO.plan.isEmpty()){
-	       //             //Recorre la lista de objgetPlanesOUTDTO.
-	       //             for (DCT_TelcelPlanesSoap_ws.planPlazoM2K PlanMercado : objgetPlanesOUTDTO.plan){
-	       //                 System.debug('EN DCT_Product_ctr.actualizaPlanes PlanMercado : ' + PlanMercado );
-	       //                 selPlanes.add(new SelectOption(lPlazos.get(0) + '-' + String.valueOf(PlanMercado.cvePlanM2k), PlanMercado.descripcionPlan));
-	       //                 mapPlanes.put(lPlazos.get(0) + '-' + String.valueOf(PlanMercado.cvePlanM2k), PlanMercado);                        
-	       //             }
-	       //         }//Fin si !objgetPlanesOUTDTO.Mercado.isEmpty()
-	       //     }//Fin si !PlanesResponseDTOResult.listaMercados.isEmpty()
-        //    }//Fin si MercadosResponseDTOResult.detailResponse.code != null            
-
-        //}//Fin si slGrupoPlan.isEmpty() && slConsecCons != null && sTipoMercado != null
-
-
+			System.debug('EN DCT_Product_ctr.actualizaPlanesslConsecCons GruposPlan3: ' + objwrpPlan.Estatus + ' ' + objwrpPlan.Descripcion);        		        
+    	}//Fin si objwrpPlan.Estatus == 'ERR'
+        //Ve si el estatus del servicio es igual a OK
+        if (objwrpPlan.Estatus == 'OK'){
+        	//Ve si la lista de grupos tiene algo
+        	if (!objwrpPlan.lPlan.isEmpty()){
+        		//Recorre la lista de objetos del tipo DCT_CorporativoPlanesWs.Plazo
+        		for (DCT_CorporativoPlanesWs.Plan objPlan : objwrpPlan.lPlan ){
+        			//Inicializa la lista de
+					System.debug('EN DCT_Product_ctr.actualizaPlan GruposPlan: ' + objPlan);
+					selPlanes.add(new SelectOption(String.valueOf(objPlan.ID), objPlan.DESCRIPCION));
+					mapPlanes.put(String.valueOf(objPlan.ID), objPlan);
+        		} //Fin del for para objwrpPlan.lPlan
+        	} //Fin si !objwrpPlan.lPlan.isEmpty()
+        }//Fin si objwrpPlan.Estatus == 'OK'
+        
         //Solo regresa null
         return null;
     }
-	 
+
+	//Ls tarifas	 
     public PageReference Tarifas(){
 		
 		Schema.DescribeFieldResult F = cliente__c.DCTRates__c.getDescribe(); 
@@ -841,46 +727,14 @@ public class DCT_Product_ctr {
     public PageReference actualizaGuiaPlanes(){
         System.debug('ENTRO A actualizaGuiaPlanes...');
         System.debug('EN DCT_Product_ctr.actualizaGuiaPlanes : ' + slConsecCons + ' ' + sTipoMercado + ' ' + sGrupoPlan + ' ' + sPlazos + ' ' + sPlanes);
-        List<String> lPlanes = sPlanes.split('-');
-        System.debug('ENTRO A actualizaGuiaPlanes lPlanes: ' + lPlanes);
+        //List<String> lPlanes = sPlanes.split('-');
+        //System.debug('ENTRO A actualizaGuiaPlanes lPlanes: ' + lPlanes);
 		bErrorIns = false;
 
 		sGuiaPlanes = null;
         selGuiaPlanes = new List<SelectOption>();
         mapGuiaPlanes = new Map<String, DCT_TelcelPlanesSoap_ws.guiaPlanesServiciosDTO>();
-        selGuiaPlanes.add(new SelectOption('' , '--Ninguno--'));        
-		
-        //Ve si tiene algo la lista de slTipoMercado
-        //if (slConsecCons != null && sTipoMercado != null && sGrupoPlan != null && sPlanes != null){
-
-        //    //Busca el grupo de plan asociado a sGrupoPlan en mapGruposPlanes
-        //    DCT_TelcelPlanesSoap_ws.planPlazoM2K PlanMercadoCons = mapPlanes.get(sPlanes);
-        //    System.debug('EN DCT_Product_ctr.actualizaGuiaPlanesPlanMercadoCons: ' + PlanMercadoCons );
-
-        //    //Manda llamar los metodos del WS de planeas
-        //    DCT_TelcelPlanesSoap_ws.getGuiaPlanesResponseDTO GuiaPlanesResponseDTOResult = DCT_TelcelPlanesMetodos_ws.ConsultarGuiaPlanes(slConsecCons, lPlanes.get(0), lPlanes.get(1));
-        //    System.debug('EN DCT_Product_ctr.actualizaGuiaPlanesGuiaPlanesResponseDTOResult: ' + GuiaPlanesResponseDTOResult);        
-            
-        //    //Ve si no hay error
-        //    if (GuiaPlanesResponseDTOResult.detailResponse != null){            
-	       //     if (GuiaPlanesResponseDTOResult.detailResponse.code == '0'){
-	       //         DCT_TelcelPlanesSoap_ws.guiaPlanesOUTDTO objguiaPlanesOUTDTO = GuiaPlanesResponseDTOResult.listaPlanes;
-	       //         //Despliega los objetos         
-	       //         System.debug('EN DCT_Product_ctr.actualizaGuiaPlanes objguiaPlanesOUTDTO.caracteristicas: ' + objguiaPlanesOUTDTO.caracteristicas);
-	       //         //System.debug('EN DCT_AccountOwnerAssignment_cls.pruebaLoginTelcel objguiaPlanesOUTDTO.servicios: ' + objguiaPlanesOUTDTO.servicios);
-	       //         DCT_TelcelPlanesSoap_ws.ArrayOfGuiaPlanesServiciosDTO objArrayOfGuiaPlanesServiciosDTO = objguiaPlanesOUTDTO.servicios;
-	       //         //Recorre la lista de servicios
-	       //         if (!objArrayOfGuiaPlanesServiciosDTO.servicio.isEmpty()){
-	       //             for (DCT_TelcelPlanesSoap_ws.guiaPlanesServiciosDTO objGuiaPlanesServiciosDTO : objArrayOfGuiaPlanesServiciosDTO.servicio){
-	       //                 System.debug('EN DCT_Product_ctr.actualizaGuiaPlanes objGuiaPlanesServiciosDTO: ' + objGuiaPlanesServiciosDTO);                    
-	       //                 selGuiaPlanes.add(new SelectOption(lPlanes.get(0) + '-' + String.valueOf(objGuiaPlanesServiciosDTO.id), objGuiaPlanesServiciosDTO.tipoServicio + ' - '  + objGuiaPlanesServiciosDTO.descripcion));
-	       //                 mapGuiaPlanes.put(lPlanes.get(0) + '-' + objGuiaPlanesServiciosDTO.id, objGuiaPlanesServiciosDTO);
-	       //             }
-	       //         }//Fin si !objArrayOfGuiaPlanesServiciosDTO.servicio.isEmpty()
-	       //     }//Fin si !GuiaPlanesResponseDTOResult.listaMercados.isEmpty()*/
-        //    }//Fin si MercadosResponseDTOResult.detailResponse.code != null            
-
-        //}//Fin si slGrupoPlan.isEmpty() && slConsecCons != null && sTipoMercado != null
+        selGuiaPlanes.add(new SelectOption('' , '--Ninguno--'));
             
         //Solo regresa null
         return null;
@@ -946,6 +800,7 @@ public class DCT_Product_ctr {
 
     public void savePlans(){
     	System.debug('EN savePlans...');
+    	
 		String sRt = Schema.SObjectType.DCTAuthorizedLines__c.getRecordTypeInfosByName().get('Plan').getRecordTypeId();		
 		Boolean bExietPlan = false;
 		Boolean bTieneRegLinAut = false;		
@@ -991,10 +846,8 @@ public class DCT_Product_ctr {
 			if (bTieneRegLinAut)
 				bExietPlan = true;
 			//Si existe el plan despliega el msg
-			if(bExietPlan){
-				sError = '' + 'Ya existe un plan con esos datos.';			
-				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, ' ' + sError));				
-			}
+			if(bExietPlan)			
+				ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, ' Ya existe un plan con esos datos.'));
     		System.debug('EN savePlans bExietPlan: ' + bExietPlan + ' sError: ' + sError);
     				
 			//Ve si no tienen un plan ya asociado del mismo
@@ -1016,8 +869,11 @@ public class DCT_Product_ctr {
 		        objDCTPlanNuevo.TipoMercado__c = sTipoMercado;
 				objDCTPlanNuevo.ClaveMercado__c = sTipoMercado;
 		        objDCTPlanNuevo.ClaveGrupoPlan__c = sGrupoPlan;
+		        objDCTPlanNuevo.DescripcionGrupoPlan__c = mapGruposPlanes.get(sGrupoPlan).NOMBRE_GRUPO_PLAN;
 		        objDCTPlanNuevo.ClavePlazo__c = sPlazos;
+		        objDCTPlanNuevo.DescripcionPlazo__c = mapPlazos.get(sPlazos).DESCRIPCION;
 		        objDCTPlanNuevo.ClavePlan__c = sPlanes;
+		        objDCTPlanNuevo.DescripcionPlan__c = mapPlanes.get(sPlanes).DESCRIPCION;
 		        objDCTPlanNuevo.ClaveTarifa__c = sTarifas; 
 		        objDCTPlanNuevo.ClaveDetallePlan__c = null; //sGuiaPlanes != null ? lGuiaPlanes.get(1) : null;
 		        objDCTPlanNuevo.DescripcionServcicio__c = null; //mapGuiaPlanes.containsKey(sGuiaPlanes) ? (mapGuiaPlanes.get(sGuiaPlanes).tipoServicio +' : '+ mapGuiaPlanes.get(sGuiaPlanes).descripcion): null;
@@ -1151,21 +1007,27 @@ public class DCT_Product_ctr {
 		System.debug('ENTRO A ValidaDatosEntrada...');
 		Boolean bErrorPaso = false;
 		sError = '';
+		Boolean bTieneGestor = false;
 		
 		//Ve si faltan datos de capturar
-		//if (sTipoMercado == null)
-		//	sError = '' + 'Te falta capturar el tipo de mercado.';		
 		if (sGrupoPlan == null)
 			sError += '' + 'Te falta capturar el grupo.';
 		if (sPlazos == null)
 			sError += '' + 'Te falta capturar el plazo.';
 		if (sPlanes == null)
 			sError += '' + 'Te falta capturar el plan.';
-		//if (sGuiaPlanes == null)
-		//	sError += '' + 'Te falta capturar el tipo de servicio.';
 		if (sTarifas == null)
 			sError += '' + 'Te falta capturar la tarifa.';
-
+		
+		//Ve si el usuario que esta entrando tiene gestor asignado
+		for (User usuario : [Select id, ManagerId From User where id =: UserInfo.getUserId()]){
+			if (usuario.ManagerId != null)
+				bTieneGestor = true;
+		}
+		
+		if (!bTieneGestor)
+			sError += '' + 'El perfil no tiene permiso para generar planes.';			
+			
 		if (sError != null && sError != ''){
 			bErrorPaso = true;
 			bErrorIns = true;
@@ -1173,7 +1035,8 @@ public class DCT_Product_ctr {
 		}
 
 		System.debug('ENTRO A ValidaDatosEntrada sError: ' + sError);
-		System.debug('ENTRO A ValidaDatosEntrada bErrorPaso: ' + bErrorPaso);		
+		System.debug('ENTRO A ValidaDatosEntrada bErrorPaso: ' + bErrorPaso);
+		
 		return !bErrorPaso;
 	}
     

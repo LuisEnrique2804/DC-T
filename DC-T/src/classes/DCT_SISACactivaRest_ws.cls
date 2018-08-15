@@ -9,14 +9,16 @@ global with sharing class DCT_SISACactivaRest_ws  {
 		String legalName   = RestContext.request.params.get('RazonSocial');
 		String entityLegal = RestContext.request.params.get('TipoPersona');
 		String nisi	       = RestContext.request.params.get('NISI');
+		String identifier  = RestContext.request.params.get('Identificador');
 
 		System.debug(loggingLevel.Error, '*** method: ' + method);	
 		System.debug(loggingLevel.Error, '*** rfc: ' + rfc);	
 		System.debug(loggingLevel.Error, '*** legalName: ' + legalName);	
 		System.debug(loggingLevel.Error, '*** entityLegal: ' + entityLegal);	
 		System.debug(loggingLevel.Error, '*** nisi: ' + nisi);	
+		System.debug(loggingLevel.Error, '*** identifier: ' + identifier);	
 		
-    	DCT_ResponseSISACactiva_cls response = DCT_SISACactivaRestAux_ws.sisact(method,rfc,legalName,entityLegal,nisi);
+    	DCT_ResponseSISACactiva_cls response = DCT_SISACactivaRestAux_ws.sisact(method,rfc,legalName,entityLegal,nisi,identifier);
     	System.debug(loggingLevel.Error, '******************************************');
 		System.debug(loggingLevel.Error, '*** response: ' + response);
 		String strResponseString = JSON.serialize(response);

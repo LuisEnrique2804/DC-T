@@ -1,5 +1,6 @@
 public with sharing class CompetidoresPlataformasTriggerHandler extends TriggerHandler {
-	private Map<Id, CatalgoCompetidoresPlataformas__c> newMap;
+	
+	/*private Map<Id, CatalgoCompetidoresPlataformas__c> newMap;
     private Map<Id, CatalgoCompetidoresPlataformas__c> oldMap;
     private List<CatalgoCompetidoresPlataformas__c> newList;
     private List<CatalgoCompetidoresPlataformas__c> oldList;
@@ -70,5 +71,6 @@ public with sharing class CompetidoresPlataformasTriggerHandler extends TriggerH
 	
 	public override void afterUndelete() {}
     
-    public override void afterUpdate(){}
+    public override void afterUpdate(){}*/
+    
 }

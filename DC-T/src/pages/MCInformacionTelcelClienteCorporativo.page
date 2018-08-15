@@ -185,11 +185,12 @@
                     <apex:column value="{!mcitc.GranTotalLineasCompetidor__c}"/>
                     <apex:column value="{!mcitc.GranTotalFacturacionCompetidor__c}"/>
                 </apex:pageBlockTable>
-                <apex:pageBlockTable value="{!elementosAMostrarCompetidores}" var="cp" >
-                    <apex:column value="{!cp.Plataforma__c}"/>
-                    <apex:column value="{!cp.Name}"/>
-                    <apex:column value="{!cp.LineasCompetidor__c}"/>
-                    <apex:column value="{!cp.Facturacion__c}"/>
+                <apex:pageBlockTable value="{!lWrpCompPlat}" var="cp" >
+                    <apex:column value="{!cp.sPlataforma}"/> <!-- Plataforma__c -->
+                    <apex:column value="{!cp.objCompetPlat.Name}"/>
+                    <apex:column value="{!cp.objCompetPlat.LineasCompetidor__c}"/> <!-- DCTsummary__c  --> 
+                    <apex:column value="{!cp.objCompetPlat.Facturacion__c}"/>
+                    <apex:column value="{!cp.objCompetPlat.Directorio_Comercial__c}"/>
                 </apex:pageBlockTable>
                 <apex:panelGrid columns="2">
                     <apex:commandLink target="_parent" action="{!anteriorCompetidores}" value="Anterior" reRender="pBCompetidores" rendered="{!IF(OR(totalIndicesCompetidores==0,indiceActualCompetidores==1),'false','true')}"/>

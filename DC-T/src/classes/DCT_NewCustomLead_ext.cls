@@ -586,7 +586,8 @@ public class DCT_NewCustomLead_ext {
 			System.debug(loggingLevel.Error, '*** strconcaName: ' + strconcaName);
 			lstProspect =[SELECT Id, Name, RFC__c, RecordType.Name, OwnerId FROM Cliente__c WHERE DCTStatus__c = 'Activo' AND Name= :strconcaName /*OR RFC__c = :accountRecord.RFC__c*/  ORDER BY CreatedDate ASC];
 			lstAccs =[SELECT Id, Name, RFC__c,TipoCliente__c, OwnerId FROM Account WHERE Name= :strconcaName /*OR RFC__c = :accountRecord.RFC__c*/  ORDER BY CreatedDate ASC];
-			lstRegion = [SELECT Id, RFC__c, Name, OwnerId,EstatusCobranza__c, DCTBillingCycle__c FROM DCTRegion__c WHERE Name= :strconcaName OR RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
+			//lstRegion = [SELECT Id, RFC__c, Name, OwnerId,EstatusCobranza__c, DCTBillingCycle__c FROM DCTRegion__c WHERE Name= :strconcaName OR RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
+			lstRegion = [SELECT Id, RFC__c, Name, OwnerId,EstatusCobranza__c, DCTBillingCycle__c FROM DCTRegion__c WHERE Name= :strconcaName ORDER BY CreatedDate ASC];
 			System.debug(loggingLevel.Error, '*** lstProspect: ' + lstProspect);
 			System.debug(loggingLevel.Error, '*** lstAccs: ' + lstAccs);
 			System.debug(loggingLevel.Error, '*** lstRegion: ' + lstRegion);
@@ -650,7 +651,8 @@ public class DCT_NewCustomLead_ext {
 		if(accountRecord.DTC_LegalEntity__c == 'Moral' || accountRecord.DTC_LegalEntity__c == 'Gubernamental') {
 			lstProspect =[SELECT Id, Name, RFC__c,RFC1__c, RecordType.Name, OwnerId FROM Cliente__c WHERE DCTStatus__c = 'Activo' AND  Name= :accountRecord.DCTControlFieldName__c /*OR RFC__c = :accountRecord.RFC__c*/  ORDER BY CreatedDate ASC];
 			lstAccs =[SELECT Id, Name, RFC__c,TipoCliente__c, OwnerId FROM Account WHERE Name= :accountRecord.DCTControlFieldName__c /*OR RFC__c = :accountRecord.RFC__c*/ ORDER BY CreatedDate ASC];
-			lstRegion = [SELECT Id, RFC__c, Name, EstatusCobranza__c, DCTBillingCycle__c, OwnerId FROM DCTRegion__c WHERE Name= :accountRecord.DCTControlFieldName__c OR RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
+			//lstRegion = [SELECT Id, RFC__c, Name, EstatusCobranza__c, DCTBillingCycle__c, OwnerId FROM DCTRegion__c WHERE Name= :accountRecord.DCTControlFieldName__c OR RFC__c = :accountRecord.RFC__c ORDER BY CreatedDate ASC];
+			lstRegion = [SELECT Id, RFC__c, Name, EstatusCobranza__c, DCTBillingCycle__c, OwnerId FROM DCTRegion__c WHERE Name= :accountRecord.DCTControlFieldName__c ORDER BY CreatedDate ASC];
 			System.debug(loggingLevel.Error, '*** lstAccs: ' + lstAccs);
 			System.debug(loggingLevel.Error, '*** lstRegion: ' + lstRegion);
 			System.debug(loggingLevel.Error, '*** lstProspect: ' + lstProspect);

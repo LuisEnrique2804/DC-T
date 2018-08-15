@@ -1,4 +1,4 @@
-<apex:page controller="DCT_AccountOwnerAssignment_cls" sidebar="false" showHeader="false" action="{!creaConsecutivoWebSer}">
+<apex:page controller="DCT_AccountOwnerAssignment_cls" sidebar="false" showHeader="false" >
     <html>
         <head>
             <meta charset="utf-8"/>

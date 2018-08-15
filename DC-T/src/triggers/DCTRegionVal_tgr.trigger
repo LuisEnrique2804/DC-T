@@ -61,7 +61,7 @@ trigger DCTRegionVal_tgr on DCTRegionVal__c (after insert, after update) {
 	        		//Metela al mapa de mapDCTRegionUps
 	        		mapDCTRegionUps.put(sIdExterna, objDCTRegion);
 	        		
-	        		//Ve si se trata de la region R09 entonces actualiza sus datos 
+	        		/*//Ve si se trata de la region R09 entonces actualiza sus datos 
 	        		if ( pct.Region__c == 'R09'){
 						System.debug('ANTES DE CONSULTAR EL DIR COM: ' + pct.RFC__c + ' ' + pct.LegalEntity__c + ' ' + pct.Region__c);	        			
 		        		//Busca el cliente en base a RFC, Razon Social y Region
@@ -120,7 +120,7 @@ trigger DCTRegionVal_tgr on DCTRegionVal__c (after insert, after update) {
 							mapDirComerUpd.put(dirComrPaso.id, DirecComer);
 		        			
 		        		}//Fin del for para la consulta del cliente
-	        		}//Fin si  pct.Region__c == 'R09'
+	        		}//Fin si  pct.Region__c == 'R09'*/
 	        			        		
 	        	}//Fin si pct.LegalEntity__c != null && pct.RFC__c != null && pct.Region__c != null
 	        					
@@ -138,7 +138,7 @@ trigger DCTRegionVal_tgr on DCTRegionVal__c (after insert, after update) {
 				}//Fin del for para lDtur
 			}//Fin si !mapDCTRegionUps.isEmpty()
 			
-			//Ve si tiene algo mapDirComerUpd
+			/*//Ve si tiene algo mapDirComerUpd
 			if (!mapDirComerUpd.isEmpty()){
 				Integer iCntReg = 0;
 				List<Cliente__c> lCliente = mapDirComerUpd.Values();
@@ -152,7 +152,7 @@ trigger DCTRegionVal_tgr on DCTRegionVal__c (after insert, after update) {
 					}
 					iCntReg++;						
 				}//Fin del for para lDtur				
-			}//Fin si !mapDirComerUpd.isEmpty()
+			}//Fin si !mapDirComerUpd.isEmpty()*/
 			
 			//Hubo errores regresa el mensaje
 	        for(DCTRegionVal__c pct : Trigger.new) {

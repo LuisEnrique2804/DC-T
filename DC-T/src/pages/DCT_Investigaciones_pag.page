@@ -51,6 +51,7 @@
 							<fieldset class="slds-form-element">
 								<legend class="slds-form-element__label slds-text-title_caps">Datos generales</legend>		
 								<div class="slds-form-element__group">				
+								
 									<div class="slds-form-element__row">
 										<div class="slds-form-element slds-size_1-of-2">
 											<label class="slds-form-element__label">
@@ -61,6 +62,7 @@
 										</div>
 										<div class="slds-form-element slds-size_2-of-2">
 											<label class="slds-form-element__label">
+												<abbr class="slds-required" title="requerido">*</abbr>											
 												Pedir Autorización
 											</label>
 											<div style="margin-left: 10px;">
@@ -71,6 +73,7 @@
 											</div>
 										</div>
 									</div>
+									
 									<div class="slds-form-element__row">
 										<div class="slds-form-element slds-size_1-of-1">
 											<label class="slds-form-element__label">
@@ -81,16 +84,14 @@
 										</div>
 										<div class="slds-form-element slds-size_1-of-1">
 											<label class="slds-form-element__label">
-												<abbr class="slds-required" title="requerido">*</abbr>
-												Tipo de Autorización
+												Comentarios autorización
 											</label>
 											<BR/>
-											<!-- <apex:selectList value="{!sTipoAutor}" title="TipoAutor" size="1" id="TipoAutor" rendered="{!sIdUserActualPerfil == 'CoordinacionAdministrativa'}" >
-												<apex:selectOptions value="{!slTipoAutor}" />                       
-											</apex:selectList> -->							
-											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTTypeAuthorization__c}" rendered="{!sIdUserActualPerfil != 'CoordinacionAdministrativa'}"/>
+											<apex:inputField styleClass="slds-input" value="{!DatosDirComercial.DCTComentariosAutorizacion__c}" rendered="{!AND(OR(sIdUserActualPerfil == 'JEC', sIdUserActualPerfil == 'Administrador del sistema'), DatosDirComercial.DCTResearchLegend__c != 'Procede Activación', DatosDirComercial.DCTResearchLegend__c != 'Procede Activación si cuenta con antecedentes en M2K')}"/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTComentariosAutorizacion__c}" rendered="{!AND(sIdUserActualPerfil != 'JEC', OR(DatosDirComercial.DCTResearchLegend__c == 'Procede Activación', DatosDirComercial.DCTResearchLegend__c == 'Procede Activación si cuenta con antecedentes en M2K'))}"/>
 										</div>
 									</div>
+
 									<div class="slds-form-element__row">
 										<div class="slds-form-element slds-size_1-of-1">
 											<label class="slds-form-element__label">
@@ -102,13 +103,15 @@
 										</div>
 										<div class="slds-form-element slds-size_1-of-1">
 											<label class="slds-form-element__label">
-												Comentarios de Investigación							
+												<abbr class="slds-required" title="requerido">*</abbr>
+												No. Lineas solicitadas
 											</label>
-											<!-- <apex:inputTextarea rows="1" styleClass="slds-input" value="{!sCommInvestiga}" rendered="{!sIdUserActualPerfil = 'CoordinacionAdministrativa'}"/> -->						 
 											<BR/>
-											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTCommentsInvestigation__c}" rendered="{!sIdUserActualPerfil != 'CoordinacionAdministrativa'}"/>
-										</div>
+											<apex:inputField styleClass="slds-input" value="{!DatosDirComercial.DCTNoLineasSolicitadas__c}" rendered="{!AND(OR(sIdUserActualPerfil == 'JEC', sIdUserActualPerfil == 'Administrador del sistema'), DatosDirComercial.DCTResearchLegend__c != 'Procede Activación', DatosDirComercial.DCTResearchLegend__c != 'Procede Activación si cuenta con antecedentes en M2K')}"/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTNoLineasSolicitadas__c}" rendered="{!AND(sIdUserActualPerfil != 'JEC', OR(DatosDirComercial.DCTResearchLegend__c == 'Procede Activación', DatosDirComercial.DCTResearchLegend__c == 'Procede Activación si cuenta con antecedentes en M2K'))}"/>
+										</div>										
 									</div>
+
 									<div class="slds-form-element__row">
 										<div class="slds-form-element slds-size_1-of-1">
 											<label class="slds-form-element__label">
@@ -116,10 +119,43 @@
 												Investigación
 											</label>
 											<BR/>
-											<!-- <apex:selectList value="{!sTipoInvest}" title="TipoInvest" size="1" id="tipoInvest" rendered="{!sIdUserActualPerfil == 'CoordinacionAdministrativa'}" >
-												<apex:selectOptions value="{!slTipoInvest}" />                       
-											</apex:selectList> -->
 											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTInvestigation__c}" rendered="{!sIdUserActualPerfil != 'CoordinacionAdministrativa'}"/>							
+										</div>
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												Tipo de Autorización
+											</label>
+											<BR/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTTypeAuthorization__c}" rendered="{!sIdUserActualPerfil != 'CoordinacionAdministrativa'}"/>
+										</div>
+									</div>
+									<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												Total de Lineas Autorizadas	Investigación
+											</label>
+											<BR/>
+											<label class="slds-form-element__label">
+												{!DatosDirComercial.DCTTotLineasAutorInvest__c}
+											</label>
+										</div>										
+										<div class="slds-form-element slds-size_1-of-1">
+											<label >
+												Comentarios de Investigación							
+											</label>						 
+											<BR/>
+											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTCommentsInvestigation__c}" rendered="{!sIdUserActualPerfil != 'CoordinacionAdministrativa'}"/>
+										</div>
+									</div>
+									<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size_1-of-1">
+											<label class="slds-form-element__label">
+												Total de Lineas Activas
+											</label>
+											<BR/>
+											<label >
+												{!iTotLineasActivas}
+											</label>
 										</div>
 										<div class="slds-form-element slds-size_1-of-1">
 											<label class="slds-form-element__label">
@@ -129,28 +165,12 @@
 											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTAuthorizationDateVoBoManagement__c}"/>
 										</div>
 									</div>
-									<div class="slds-form-element__row">
-										<div class="slds-form-element slds-size_1-of-1">
-											<label class="slds-form-element__label">
-												Total de Lineas Autorizadas	Investigación
-											</label>
-											<BR/>
-											<apex:outputField styleClass="slds-input" value="{!DatosDirComercial.DCTTotLineasAutorInvest__c}" /> 							 
-										</div>
-										<div class="slds-form-element slds-size_1-of-1">
-											<label class="slds-form-element__label">
-												Total de Lineas Activas
-											</label>
-											<BR/>
-											<apex:outputText styleClass="slds-input" value="{!iTotLineasActivas}"/>
-										</div>
-									</div>
 								</div>			
 							</fieldset>		
 						</div>
 						<BR/>
 						<div style="width: max-content; margin: 0 auto;">
-							<apex:commandLink action="{!LoadActualizaImvestigacionesWs}" rendered="{!bDespliegaBoton}" styleClass="slds-button slds-button_brand" rerender="mainForm" status="processing" >
+							<apex:commandLink action="{!generaProcesoAproba}" rendered="{!bDespliegaBoton}" styleClass="slds-button slds-button_brand" rerender="mainForm" status="processing" >
 								Guardar
 							</apex:commandLink>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -219,16 +239,6 @@
 											</div>
 										</td>
 									</tr>
-<!-- 									<tr class="slds-text-title_caps">
-										<th scope="col">
-											<div class="slds-truncate" style="text-align: right;" title="Autorizadas por">Autorizadas por</div>
-										</th>	
-										<td data-label="Líneas activas" style="text-align: left;">
-											<div class="slds-truncate" title="Líneas activas">
-												<div class="slds-truncate" title="Autorizadas por">{!dctNuevaLinea.Aprobador__r.Name}</div>
-											</div>
-										</td>
-									</tr> -->
 									<tr class="slds-text-title_caps">
 										<th scope="col">
 											<div class="slds-truncate" style="text-align: right;" title="Usuario universal">Usuario universal</div>

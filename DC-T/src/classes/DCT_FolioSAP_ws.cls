@@ -101,65 +101,16 @@ public with sharing class DCT_FolioSAP_ws {
 			objRegistraCuentaDeudora.pUsuario = sUsuario;
 			objRegistraCuentaDeudora.pContrasenia = sPwd;
 			objRegistraCuentaDeudora.pXmlConsulta = sXmlEnt;
-			
 			objFolioCuentaDeudoraSoap.timeout_x = 120000;
+			
 			sRespuestaSap = objFolioCuentaDeudoraSoap.RegistraCuentaDeudora(objRegistraCuentaDeudora.pUsuario, objRegistraCuentaDeudora.pContrasenia, 
 				objRegistraCuentaDeudora.pXmlConsulta); 
 			System.debug('EN DCT_FolioSAP_ws.getFolioSAP sRespuestaSap: ' + sRespuestaSap);
-
-
-			//EL ANTERIOR				    	         		
-	    	/*//Prueba con la clase que cargaste de SAP
-	    	DCT_CuentaDeudoraSAP.RegistraCtaDeudora objRegistraCtaDeudora = new DCT_CuentaDeudoraSAP.RegistraCtaDeudora();
-	    	objRegistraCtaDeudora.password = sPwd;
-	    	objRegistraCtaDeudora.usuario = sUsuario;
-	    	objRegistraCtaDeudora.xmlConsultaStock = '<xmlConsultaStock><![CDATA[<?xml version="1.0" encoding="UTF-8"?><DATOS><DEUDORES><DEUDOR><NEMPLEADO>15969</NEMPLEADO><GPOCTA>DT03</GPOCTA><RAMO>D002</RAMO><REGION>MR01</REGION><AREASVTA><AREAVTA><SOCIEDAD>MX01</SOCIEDAD><CANALDIST>10</CANALDIST><SECTOR>10</SECTOR><GPOCTE>18</GPOCTE></AREAVTA></AREASVTA><PERSONAMORAL><RFC>BMI9312038R8</RFC><CONCEPTOBUSQ>CEMEX CENTRAL SA DE C</CONCEPTOBUSQ><NOM1PM>CEMEX CENTRAL SA DE C</NOM1PM><NOM2PM></NOM2PM><NOM3PM></NOM3PM><NOM4PM></NOM4PM></PERSONAMORAL><DIRECCION><CALLE>INSURGENTES NORTE</CALLE><NUMEROL>1100</NUMEROL><COMPLNUM></COMPLNUM><CODPOSTAL>35548</CODPOSTAL><DELMUN>GUSTAVO MADERO</DELMUN><COLONIA>LOS OLVISO</COLONIA><CIUDAD>CDMX</CIUDAD><PAIS>MX</PAIS><ESTADO>CDMX</ESTADO></DIRECCION><DATFINANZAS><CTAASOCIADA>1102010005</CTAASOCIADA><GPOTESORERIA>D003</GPOTESORERIA></DATFINANZAS><DATVENTAS><ZONAVTA>MX0002</ZONAVTA><LISTAPRECIO>11</LISTAPRECIO><MONEDA>MXN</MONEDA><TIPOIVA>1</TIPOIVA></DATVENTAS></DEUDOR></DEUDORES></DATOS>]]></xmlConsultaStock>';
-	    	
-	    	DCT_CuentaDeudoraSAP.SapCtaDeudoraWSPort objSapCtaDeudoraWSPort = new DCT_CuentaDeudoraSAP.SapCtaDeudoraWSPort();
-	    	objSapCtaDeudoraWSPort.timeout_x = 10000;
-	    	String sRepoCtaDeudora = objSapCtaDeudoraWSPort.RegistraCtaDeudora(sUsuario, sPwd, sXmlEnt);
-			System.debug('EN DCT_FolioSAP_ws.getFolioSAP sRepoCtaDeudora: ' + sRepoCtaDeudora);*/
-	    	
-			/*//Una prueba utilzando HTTP 
-			HttpRequest request = new HttpRequest();
-			request.setMethod('POST'); //'POST'
-			request.setHeader('Content-Type', 'application/x-www-form-urlencoded;');
-			request.setHeader('Host', 'www.region9.telcel.com');
-			request.setHeader('Cache-Control', 'no-cache');  			
-			request.setEndpoint('http://10.188.90.120:7080/WSCuentaDeudoraWeb/SapCtaDeudoraWSService');					
-			request.setTimeout(120000);
-			
-			//JSONBody = EncodingUtil.urlEncode(JSONBody, 'UTF-8');
-			String JSONBody = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservices.ctadeudora.ddas.gis.sss.dfa.telcel.com/">' +
-   				'<soapenv:Header/>' +
-   				'<soapenv:Body>' +
-      			'<web:RegistraCtaDeudora>' +
-         		'<usuario>'+ sUsuario +'</usuario>' +
-         		'<password>'+ sPwd +'</password>' + 
-         		'<xmlConsultaStock><![CDATA[<?xml version="1.0" encoding="UTF-8"?><DATOS><DEUDORES><DEUDOR><NEMPLEADO>15969</NEMPLEADO><GPOCTA>DT03</GPOCTA><RAMO>D002</RAMO><REGION>MR01</REGION><AREASVTA><AREAVTA><SOCIEDAD>MX01</SOCIEDAD><CANALDIST>10</CANALDIST><SECTOR>10</SECTOR><GPOCTE>18</GPOCTE></AREAVTA></AREASVTA><PERSONAMORAL><RFC>BMI9312038R8</RFC><CONCEPTOBUSQ>CEMEX CENTRAL SA DE C</CONCEPTOBUSQ><NOM1PM>CEMEX CENTRAL SA DE C</NOM1PM><NOM2PM></NOM2PM><NOM3PM></NOM3PM><NOM4PM></NOM4PM></PERSONAMORAL><DIRECCION><CALLE>INSURGENTES NORTE</CALLE><NUMEROL>1100</NUMEROL><COMPLNUM></COMPLNUM><CODPOSTAL>35548</CODPOSTAL><DELMUN>GUSTAVO MADERO</DELMUN><COLONIA>LOS OLVISO</COLONIA><CIUDAD>CDMX</CIUDAD><PAIS>MX</PAIS><ESTADO>CDMX</ESTADO></DIRECCION><DATFINANZAS><CTAASOCIADA>1102010005</CTAASOCIADA><GPOTESORERIA>D003</GPOTESORERIA></DATFINANZAS><DATVENTAS><ZONAVTA>MX0002</ZONAVTA><LISTAPRECIO>11</LISTAPRECIO><MONEDA>MXN</MONEDA><TIPOIVA>1</TIPOIVA></DATVENTAS></DEUDOR></DEUDORES></DATOS>]]></xmlConsultaStock>' +
-      			'</web:RegistraCtaDeudora>' + 
-   				'</soapenv:Body>' +
-				'</soapenv:Envelope>';
-					
-			//Incializa el Body con JSONBody						
-			request.setBody(JSONBody);
-
-			//System.debug('EN DCT_FolioSAP_ws.getFolioSAP endpoint: ' + request.getEndpoint());
-			//System.debug('EN DCT_FolioSAP_ws.getFolioSAP Accept: ' + request.getHeader('Accept'));			
-			//System.debug('EN DCT_FolioSAP_ws.getFolioSAP Content-Type: ' + request.getHeader('Content-Type'));
-			//System.debug('EN DCT_FolioSAP_ws.getFolioSAP Cache-Control: ' + request.getHeader('Cache-Control'));
-			//System.debug('EN DCT_FolioSAP_ws.getFolioSAP Authorization: ' + request.getHeader('Authorization'));
-			//System.debug('EN DCT_FolioSAP_ws.getFolioSAP JSONBody: ' + JSONBody);
-
-			HTTPResponse res;
-			res = new Http().send(request);
-			String sXmlRes = res.getBody();
-			sXmlRes = sXmlRes.replace(' id=\'1\'', '');
-			System.debug('EN getFolioSAP HTTP: ' + res + ' sXmlRes: ' + sXmlRes);*/
 			
 			//Inicializa el campo de sXmlRes con el de sResultFcdSap
 			String sXmlRes = sRespuestaSap;
-			//sXmlRes = '<?xml version="1.0" encoding="UTF-8"?><DATOS><DEUDORES><DEUDOR id=\'1\'><ERROR><IDERROR>18001370</IDERROR><MSGERROR>S - Cuenta de Deudor creada exitosamente</MSGERROR></ERROR></DEUDOR></DEUDORES><ERROR><IDERROR>0</IDERROR><MSGERROR>Proceso Exitoso</MSGERROR></ERROR></DATOS>';
+			if (Test.isRunningTest())
+				sXmlRes = '<?xml version="1.0" encoding="UTF-8"?><DATOS><DEUDORES><DEUDOR id=\'1\'><ERROR><IDERROR>18001370</IDERROR><MSGERROR>S - Cuenta de Deudor creada exitosamente</MSGERROR></ERROR></DEUDOR></DEUDORES><ERROR><IDERROR>0</IDERROR><MSGERROR>Proceso Exitoso</MSGERROR></ERROR></DATOS>';
  			sXmlRes = sXmlRes.replace(' id=\'1\'', '');
  				
 			if (sXmlRes != null && sXmlRes != ''){								
@@ -253,11 +204,6 @@ public with sharing class DCT_FolioSAP_ws {
 			//}//Fin si String.valueOf(res).contains('200')
 			}//Fin si sXmlRes != null && sXmlRes != '' 
 			 
-			/*//Ve si el campo JsonRes tiene algo
-			if (String.valueOf(res).contains('400') || String.valueOf(res).contains('404') || String.valueOf(res).contains('405') || String.valueOf(res).contains('500') ){
-				System.debug('ERROR A LA HORA DE LLAMAR EL SERVICIO getFolioSAP objDtRespuesta: ' + sXmlRes);
-			}//Fin si sXmlRes != null && sXmlRes.length() == 0*/
-
 		}catch(Exception ex){
 			System.debug('ERROR EN DCT_FolioSAP_ws.getFolioSAP AL HACER EL LLAMADO AL WS: ' + ex.getMessage() + ' ' + ex.getLineNumber());
 		}

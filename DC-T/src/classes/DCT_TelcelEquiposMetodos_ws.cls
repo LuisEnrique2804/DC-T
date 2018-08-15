@@ -1,6 +1,6 @@
 public with sharing class DCT_TelcelEquiposMetodos_ws {
 
-	//Metodo ConsultarMarcas
+	/*//Metodo ConsultarMarcas
 	public static DCT_TelcelEquiposSoap_ws.getMarcasResponseDTO ConsultarMarcas(String slConsecCons, String sFuerzaVentas){
 		System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas slConsecCons: ' + slConsecCons + ' sFuerzaVentas: ' + sFuerzaVentas);
 		
@@ -38,11 +38,11 @@ public with sharing class DCT_TelcelEquiposMetodos_ws {
 			//Incializa el Body con JSONBody						
 			request.setBody(JSONBody);
 
-			/*System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas endpoint: ' + request.getEndpoint());
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas Accept: ' + request.getHeader('Accept'));			
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas Content-Type: ' + request.getHeader('Content-Type'));
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas Cache-Control: ' + request.getHeader('Cache-Control'));
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas Authorization: ' + request.getHeader('Authorization'));*/										
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas endpoint: ' + request.getEndpoint());
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas Accept: ' + request.getHeader('Accept'));			
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas Content-Type: ' + request.getHeader('Content-Type'));
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas Cache-Control: ' + request.getHeader('Cache-Control'));
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas Authorization: ' + request.getHeader('Authorization'));
 			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas JSONBody: ' + JSONBody);
 
 			HTTPResponse res;
@@ -138,10 +138,10 @@ public with sharing class DCT_TelcelEquiposMetodos_ws {
 
 		System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarMarcas MarcasResponseDTOResult: ' + MarcasResponseDTOResult);		
 		return MarcasResponseDTOResult;
-	}
+	}*/
 
 
-	//Metodo ConsultarModelos
+	/*//Metodo ConsultarModelos
 	public static DCT_TelcelEquiposSoap_ws.getModelosResponseDTO ConsultarModelos(String slConsecCons, String sFuerzaVentas, String sMarcaClave){
 		System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos slConsecCons: ' + slConsecCons + ' sFuerzaVentas: ' + sFuerzaVentas + ' sMarcaClave: ' + sMarcaClave);
 		
@@ -180,12 +180,12 @@ public with sharing class DCT_TelcelEquiposMetodos_ws {
 			//Incializa el Body con JSONBody						
 			request.setBody(JSONBody);
 
-			/*System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos endpoint: ' + request.getEndpoint());
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos Accept: ' + request.getHeader('Accept'));			
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos Content-Type: ' + request.getHeader('Content-Type'));
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos Cache-Control: ' + request.getHeader('Cache-Control'));
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos Authorization: ' + request.getHeader('Authorization'));*/										
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos JSONBody: ' + JSONBody);
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos endpoint: ' + request.getEndpoint());
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos Accept: ' + request.getHeader('Accept'));			
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos Content-Type: ' + request.getHeader('Content-Type'));
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos Cache-Control: ' + request.getHeader('Cache-Control'));
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos Authorization: ' + request.getHeader('Authorization'));
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos JSONBody: ' + JSONBody);
 
 			HTTPResponse res;
 			res = new Http().send(request);
@@ -284,9 +284,9 @@ public with sharing class DCT_TelcelEquiposMetodos_ws {
 
 		System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarModelos ModelosResponseDTOResult: ' + ModelosResponseDTOResult);		
 		return ModelosResponseDTOResult;
-	}
+	}*/
 
-	//Metodo ConsultarInformacionModelo
+	/*//Metodo ConsultarInformacionModelo
 	public static DCT_TelcelEquiposSoap_ws.getInformacionModeloResponseDTO ConsultarInformacionModelo(String slConsecCons, String sFuerzaVentas, String sMarcaClave){
 		System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo slConsecCons: ' + slConsecCons + ' sFuerzaVentas: ' + sFuerzaVentas + ' sMarcaClave: ' + sMarcaClave);
 		
@@ -346,17 +346,17 @@ public with sharing class DCT_TelcelEquiposMetodos_ws {
 			//Incializa el Body con JSONBody						
 			request.setBody(JSONBody);
 
-			/*System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo endpoint: ' + request.getEndpoint());
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo Accept: ' + request.getHeader('Accept'));			
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo Content-Type: ' + request.getHeader('Content-Type'));
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo Cache-Control: ' + request.getHeader('Cache-Control'));
-			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo Authorization: ' + request.getHeader('Authorization'));*/										
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo endpoint: ' + request.getEndpoint());
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo Accept: ' + request.getHeader('Accept'));			
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo Content-Type: ' + request.getHeader('Content-Type'));
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo Cache-Control: ' + request.getHeader('Cache-Control'));
+			//System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo Authorization: ' + request.getHeader('Authorization'));
 			System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo JSONBody: ' + JSONBody);
 
-			/*HTTPResponse res;
-			res = new Http().send(request);
-			String sXmlRes = res.getBody().replaceAll('xsi:nil="true"', '');
-			System.debug('EN ConsultarInformacionModelo HTTP: ' + res + ' sXmlRes: ' + sXmlRes);*/
+			//HTTPResponse res;
+			//res = new Http().send(request);
+			//String sXmlRes = res.getBody().replaceAll('xsi:nil="true"', '');
+			//System.debug('EN ConsultarInformacionModelo HTTP: ' + res + ' sXmlRes: ' + sXmlRes);
 											
 			//if (String.valueOf(res).contains('200') ){
 
@@ -703,17 +703,12 @@ public with sharing class DCT_TelcelEquiposMetodos_ws {
 
 			//}//Fin si String.valueOf(res).contains('200')
 			 
-			/*//Ve si el campo JsonRes tiene algo
-			if (String.valueOf(res).contains('400') || String.valueOf(res).contains('404') || String.valueOf(res).contains('405') || String.valueOf(res).contains('500') ){
-				System.debug('ERROR A LA HORA DE LLAMAR EL SERVICIO ConsultarInformacionModelo objDtRespuesta: ' + sXmlRes);
-			}//Fin si sXmlRes != null && sXmlRes.length() == 0*/
-
 		}catch(Exception ex){
 			System.debug('ERROR EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo AL HACER EL LLAMADO AL WS: ' + ex.getMessage() + ' ' + ex.getLineNumber());
 		}
 
 		System.debug('EN DCT_TelcelEquiposSoap_ws.ConsultarInformacionModelo InformacionModeloResponseDTOResult: ' + InformacionModeloResponseDTOResult);		
 		return InformacionModeloResponseDTOResult;
-	}	
+	}*/
 
 }

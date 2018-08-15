@@ -18,7 +18,8 @@ public class DCT_FolioCuentaDeudoraSAP {
         private String[] field_order_type_info = new String[]{'RegistraCuentaDeudoraResult'};
     }
     public class FolioCuentaDeudoraSoap {
-        public String endpoint_x = 'https://www.region9.telcel.com/smartdistribuidores/PORTALES/FolioNISI/FolioCuentaDeudora.asmx';
+        //public String endpoint_x = 'https://www.region9.telcel.com/smartdistribuidores/PORTALES/FolioNISI/FolioCuentaDeudora.asmx';
+        public String endpoint_x = Label.DCT_FolioCuentaDeudoraSAP;        
         public Map<String,String> inputHttpHeaders_x;
         public Map<String,String> outputHttpHeaders_x;
         public String clientCertName_x;
@@ -34,20 +35,14 @@ public class DCT_FolioCuentaDeudoraSAP {
             DCT_FolioCuentaDeudoraSAP.RegistraCuentaDeudoraResponse_element response_x;
             Map<String, DCT_FolioCuentaDeudoraSAP.RegistraCuentaDeudoraResponse_element> response_map_x = new Map<String, DCT_FolioCuentaDeudoraSAP.RegistraCuentaDeudoraResponse_element>();
             response_map_x.put('response_x', response_x);
-            WebServiceCallout.invoke(
-              this,
-              request_x,
-              response_map_x,
-              new String[]{endpoint_x,
-              'http://tempuri.org/RegistraCuentaDeudora',
-              'http://tempuri.org/',
-              'RegistraCuentaDeudora',
-              'http://tempuri.org/',
-              'RegistraCuentaDeudoraResponse',
-              'DCT_FolioCuentaDeudoraSAP.RegistraCuentaDeudoraResponse_element'}
-            );
+            if (!Test.isRunningTest()){
+	            WebServiceCallout.invoke(this,request_x,response_map_x,new String[]{endpoint_x,'http://tempuri.org/RegistraCuentaDeudora','http://tempuri.org/',
+	            	'RegistraCuentaDeudora','http://tempuri.org/','RegistraCuentaDeudoraResponse','DCT_FolioCuentaDeudoraSAP.RegistraCuentaDeudoraResponse_element'}
+	            );
+            }
             response_x = response_map_x.get('response_x');
-            return response_x.RegistraCuentaDeudoraResult;
+            //return response_x.RegistraCuentaDeudoraResult;
+			return Test.isRunningTest() ? '' : response_x.RegistraCuentaDeudoraResult;
         }
     }
 }

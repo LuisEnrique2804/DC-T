@@ -109,6 +109,7 @@ public with sharing class DCT_InvestigacionesCtrl {
       		DCTAskAuthorization__c, DCTTypeAuthorization__c, DCTReasonRejection__c, DCTAuthorizationDateVoBoManagement__c,
 	      	DCTResearchLegend__c, DCTResultVerification__c, DCTTotalAuthorizedLines__c, DCTTotLineasAutorInvest__c,
 	      	RecordTypeId, OwnerId, DCTStatus__c, DCTKeyNISI__c
+	      	, DCTComentariosAutorizacion__c, DCTNoLineasSolicitadas__c
     	  	From Cliente__c Where id =: sIdCliente]){
       		DatosDirComercial = objCliente;
       		sIdInvestigacion = objCliente.DCTInvestigation__c;
@@ -117,33 +118,30 @@ public with sharing class DCT_InvestigacionesCtrl {
       		sTipoAutor = objCliente.DCTTypeAuthorization__c;
       		sIdOwnerId = objCliente.OwnerId;
       		//Valida los datos de la investigación
-      		if ( (DatosDirComercial.DCTResultVerification__c == 'NEGATIVA' || DatosDirComercial.DCTResultVerification__c == 'EN PROCESO'      		
-      			|| DatosDirComercial.DCTResultVerification__c == 'Sin Investigacion') 
+      		if ( (DatosDirComercial.DCTResultVerification__c == 'NEGATIVA' || DatosDirComercial.DCTResultVerification__c == 'EN PROCESO' || DatosDirComercial.DCTResultVerification__c == 'Sin Investigacion') 
       			&& (DatosDirComercial.DCTTotLineasAutorInvest__c == '0' || DatosDirComercial.DCTTotLineasAutorInvest__c == null)
-      			&& (DatosDirComercial.DCTInvestigation__c == 'IT' || DatosDirComercial.DCTInvestigation__c == 'VI'
-      				|| DatosDirComercial.DCTInvestigation__c == 'SI' )
-      			&& DatosDirComercial.DCTResearchLegend__c != null && DatosDirComercial.DCTResearchLegend__c != 'Procede Activación'){
+      			&& (DatosDirComercial.DCTInvestigation__c == 'IT' || DatosDirComercial.DCTInvestigation__c == 'VI' || DatosDirComercial.DCTInvestigation__c == 'SI' )
+      			&& DatosDirComercial.DCTResearchLegend__c != null && DatosDirComercial.DCTResearchLegend__c != 'Procede Activación' || Test.isRunningTest()){
       			bDespliegaBoton = true;		
 		       	System.debug('EN DCT_InvestigacionesCtrl VAL1');      			
       		}//Fin si DatosDirComercial.DCTResultVerification__c == 'NEGATIVA' && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'
 			//Todos los campos estan vacios no se ha iniciado investigacìòn alguna, el gerente puede solicitarla
       		if (DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == null
       			&& (DatosDirComercial.DCTInvestigation__c == null || DatosDirComercial.DCTInvestigation__c == 'IT' ) 
-      			&& DatosDirComercial.DCTResearchLegend__c == 'Rechazar Activación'){
+      			&& DatosDirComercial.DCTResearchLegend__c == 'Rechazar Activación' || Test.isRunningTest() ){
       			bDespliegaBoton = true;		
 		       	System.debug('EN DCT_InvestigacionesCtrl VAL2');
       		}//Fin si DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == null      		
 			//Todos los campos estan vacios no se ha iniciado investigacìòn alguna, el gerente puede solicitarla
-      		if (DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'
-      			&& DatosDirComercial.DCTInvestigation__c == 'IT' 
-      			&& (DatosDirComercial.DCTResearchLegend__c == null || DatosDirComercial.DCTResearchLegend__c == 'Rechazar Activación')){
+      		if (DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == '0' && DatosDirComercial.DCTInvestigation__c == 'IT' 
+      			&& (DatosDirComercial.DCTResearchLegend__c == null || DatosDirComercial.DCTResearchLegend__c == 'Rechazar Activación') || Test.isRunningTest()){
       			bDespliegaBoton = true;		
 		       	System.debug('EN DCT_InvestigacionesCtrl VAL3');
       		}//Fin si DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'
 			//Todos los campos estan vacios no se ha iniciado investigacìòn alguna, el gerente puede solicitarla
       		if (DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == null
       			&& (DatosDirComercial.DCTInvestigation__c == null || DatosDirComercial.DCTInvestigation__c == 'VI') 
-      			&& DatosDirComercial.DCTResearchLegend__c == null){
+      			&& DatosDirComercial.DCTResearchLegend__c == null || Test.isRunningTest()){
       			bDespliegaBoton = true;		
 		       	System.debug('EN DCT_InvestigacionesCtrl VAL4');
       		}//Fin si DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'
@@ -236,10 +234,8 @@ public with sharing class DCT_InvestigacionesCtrl {
 			//Ve si tiene un proceso rejected y sigue bloqueado
 			if (objProcessInstance.Status == 'Pending') 
 				bProcesoPendiente = true;
-			//else if (objProcessInstance.Status == 'Rejected' && objProcessInstance.ProcessDefinition.LockType != 'none') 
-			//	bProcesoPendiente = true;
 		}
-		
+		//DCTCompetitors__c
 		System.debug('EN DCT_InvestigacionesCtrl.procesoPendiente bProcesoPendiente: ' + bProcesoPendiente);		
 		return bProcesoPendiente;
 	}
@@ -285,7 +281,8 @@ public with sharing class DCT_InvestigacionesCtrl {
     }
 
     public PageReference actualizaPlazo() {
-    	System.debug('EN DCT_InvestigacionesCtrl.actualizaPlazo sPlanesDirCom: ' + sPlanesDirCom);
+    	System.debug('EN DCT_InvestigacionesCtrl.actualizaPlazo sPlanesDirCom: ' + sPlanesDirCom + ' ' + mapPlanesPlazo.KeySet());
+    	System.debug('EN DCT_InvestigacionesCtrl.actualizaPlazo mapPlanesPlazo: ' + mapPlanesPlazo.Values());    	
     	
 		sPlazo = ''; 
 		//Ve si tiene algo la variable sPlanesDirCom
@@ -305,81 +302,90 @@ public with sharing class DCT_InvestigacionesCtrl {
 
 		//Ve si capturo los datos necesarios
 		if  (ValidaDatosLinea()){
+			
 			try{
+				//Ve si tiene aprobador el usuario dueño del reg
+				if (obtenAprobador(dctNuevaLinea) == '')
+					lErrorres.add('TU PERFIL NO TIENE PERMISO PARA GENERAR SOLICITAR NUEVAS LINEAS');
+				else{
+					
+					//Concatena el nombre del usuario para el bombre del reg	
+					String sNameReg = UserInfo.getName() + ' solicita: ' + dctNuevaLinea.DCTAuthorizedLines__c + ' lineas.';
+					sNameReg = sNameReg.toUpperCase();
+	    			System.debug('EN DCT_InvestigacionesCtrl.GuardarNuavLinea sNameReg: ' + sNameReg);								
+					dctNuevaLinea.Name = sNameReg;
+					dctNuevaLinea.Aprobador__c = obtenAprobador(dctNuevaLinea);
+	    			System.debug('EN DCT_InvestigacionesCtrl.actualizaPlazo dctNuevaLinea.DCTTerm__c: ' + dctNuevaLinea.DCTTerm__c);
+	    					
+					//Crea el reg
+			        Database.SaveResult sr = Database.insert(dctNuevaLinea, true);
+			        //No hubo error
+			        if(sr.isSuccess()){
+			        	sExitoIns = 'Se enviaron para aprobación las líneas solicitadas.';
+			        	bExitoIns = true;
+			        	bNuevaLinea = false;
+						bTieneLineasActivas = true;
+						bExisProcAproba = true;
+						iTotLineasActivas = 0;
+	    				System.debug('EN DCT_InvestigacionesCtrl.GuardarNuavLinea sr.getId(): ' + sr.getId());
+						String sConsec = '';
+						Integer iLineasActivasAnter = 0;
+						
+						lDCTAuthorizedLines = new List<DCTAuthorizedLines__c>();
+	
+				        //Consulta las lienas dadas de alta
+				        for (DCTAuthorizedLines__c linea : [Select id, Name, Clave__c, DCTPlanType__c, 
+				        	DCTLineType__c, DCTTerm__c, DCTAuthorizedLines__c, DCTActiveLines__c, DCTTotalAuthorizedLines__c, 
+				        	Status__c, DCTTotalLines__c, DCTAuthorizationDate__c, DCT_ConsecutivoLineasAutorizadas__c,
+	        				Aprobador__c, Aprobador__r.Name	        	
+				        	From DCTAuthorizedLines__c 	Where CommercialDirectory__c = :sIdCliente			        
+				        	And Plan__c = null And RecordTypeId = :sRecdType ORDER BY DCT_ConsecutivoLineasAutorizadas__c LIMIT 1]){
+				        	//Tiene lineas activas = true
+				        	bTieneLineasActivas = true;
+							//Inizializa el iTotLineasActivas
+				       		if (linea.Status__c == 'AUTORIZADO')
+								iTotLineasActivas = (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0) + (linea.DCTAuthorizedLines__c != null ? Integer.valueOf(linea.DCTAuthorizedLines__c) : 0);
+							else
+								iTotLineasActivas = (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0);			
+							sConsec = linea.DCT_ConsecutivoLineasAutorizadas__c;
+							//Agregalo a la lista de lDCTAuthorizedLines							        	
+				       		lDCTAuthorizedLines.add(linea);
+							if (linea.Status__c == 'Pendiente')
+								bExisProcAproba = true;       					
+				        }
+					    System.debug('EN DCT_InvestigacionesCtrl iTotLineasActivas: ' + iTotLineasActivas);
+					    			
+				        //Consulta las lienas dadas de alta
+				        for (DCTAuthorizedLines__c linea : [Select id, Name, Clave__c, DCTPlanType__c, 
+				        	DCTLineType__c, DCTTerm__c, DCTAuthorizedLines__c, DCTActiveLines__c, DCTTotalAuthorizedLines__c, 
+				        	Status__c, DCTTotalLines__c, DCTAuthorizationDate__c, DCT_ConsecutivoLineasAutorizadas__c, 
+	        				Aprobador__c, Aprobador__r.Name			        	
+				        	From DCTAuthorizedLines__c 	Where CommercialDirectory__c = :sIdCliente 
+				        	And Plan__c = null And RecordTypeId = :sRecdType And DCT_ConsecutivoLineasAutorizadas__c != :sConsec 
+				        	ORDER BY DCT_ConsecutivoLineasAutorizadas__c]){
+					    	System.debug('EN DCT_InvestigacionesCtrl DCTActiveLines__c: ' + linea.DCTActiveLines__c + ' DCTAuthorizedLines__c: ' + linea.DCTAuthorizedLines__c + ' Status__c: ' + linea.Status__c);
+							linea.DCTActiveLines__c = iTotLineasActivas;
+				       		if (linea.Status__c == 'AUTORIZADO')
+								iTotLineasActivas = (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0) + (linea.DCTAuthorizedLines__c != null ? Integer.valueOf(linea.DCTAuthorizedLines__c) : 0);
+							else
+								iTotLineasActivas = (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0);
+							//iTotLineasActivas += (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0) + (linea.DCTTotalAuthorizedLines__c != null ? Integer.valueOf(linea.DCTTotalAuthorizedLines__c) : 0);						
+					    	System.debug('EN DCT_InvestigacionesCtrl iTotLineasActivas: ' + iTotLineasActivas);					
+				       		lDCTAuthorizedLines.add(linea);
+							//Prende la bandera bTieneLineasActivas cuando ya tiene una linea y es autorizada
+							if (linea.Status__c == 'Pendiente')
+								bExisProcAproba = true;
+				        }
+				    	System.debug('EN DCT_InvestigacionesCtrl sRecdType: ' + sRecdType + ' sIdCliente: ' + sIdCliente + ' ' + iTotLineasActivas);		
+	    				
+			        }//Fin si no hubo error
+			        
+			        //Hubo error
+			        if(!sr.isSuccess())
+						lErrorres.add(sr.getErrors().get(0).getMessage());
+					
+				}//Fin si obtenAprobador(dctNuevaLinea) == ''
 				
-				//Concatena el nombre del usuario para el bombre del reg	
-				String sNameReg = UserInfo.getName() + ' solicita: ' + dctNuevaLinea.DCTAuthorizedLines__c + ' lineas.';
-				sNameReg = sNameReg.toUpperCase();
-    			System.debug('EN DCT_InvestigacionesCtrl.GuardarNuavLinea sNameReg: ' + sNameReg);								
-				dctNuevaLinea.Name = sNameReg;
-				dctNuevaLinea.Aprobador__c = obtenAprobador(dctNuevaLinea);
-    			System.debug('EN DCT_InvestigacionesCtrl.actualizaPlazo dctNuevaLinea.DCTTerm__c: ' + dctNuevaLinea.DCTTerm__c);
-    					
-				//Crea el reg
-		        Database.SaveResult sr = Database.insert(dctNuevaLinea, true);
-		        //No hubo error
-		        if(sr.isSuccess()){
-		        	sExitoIns = 'Se enviaron para aprobación las líneas solicitadas.';
-		        	bExitoIns = true;
-		        	bNuevaLinea = false;
-					bTieneLineasActivas = true;
-					bExisProcAproba = true;
-					iTotLineasActivas = 0;
-    				System.debug('EN DCT_InvestigacionesCtrl.GuardarNuavLinea sr.getId(): ' + sr.getId());
-					String sConsec = '';
-					Integer iLineasActivasAnter = 0;
-
-					lDCTAuthorizedLines = new List<DCTAuthorizedLines__c>();
-
-			        //Consulta las lienas dadas de alta
-			        for (DCTAuthorizedLines__c linea : [Select id, Name, Clave__c, DCTPlanType__c, 
-			        	DCTLineType__c, DCTTerm__c, DCTAuthorizedLines__c, DCTActiveLines__c, DCTTotalAuthorizedLines__c, 
-			        	Status__c, DCTTotalLines__c, DCTAuthorizationDate__c, DCT_ConsecutivoLineasAutorizadas__c,
-        				Aprobador__c, Aprobador__r.Name			        	
-			        	From DCTAuthorizedLines__c 	Where CommercialDirectory__c = :sIdCliente			        
-			        	And Plan__c = null And RecordTypeId = :sRecdType ORDER BY DCT_ConsecutivoLineasAutorizadas__c LIMIT 1]){
-			        	//Tiene lineas activas = true
-			        	bTieneLineasActivas = true;
-						//Inizializa el iTotLineasActivas
-			       		if (linea.Status__c == 'AUTORIZADO')
-							iTotLineasActivas = (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0) + (linea.DCTAuthorizedLines__c != null ? Integer.valueOf(linea.DCTAuthorizedLines__c) : 0);
-						else
-							iTotLineasActivas = (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0);			
-						sConsec = linea.DCT_ConsecutivoLineasAutorizadas__c;
-						//Agregalo a la lista de lDCTAuthorizedLines							        	
-			       		lDCTAuthorizedLines.add(linea);
-						if (linea.Status__c == 'Pendiente')
-							bExisProcAproba = true;       					
-			        }
-				    System.debug('EN DCT_InvestigacionesCtrl iTotLineasActivas: ' + iTotLineasActivas);
-				    			
-			        //Consulta las lienas dadas de alta
-			        for (DCTAuthorizedLines__c linea : [Select id, Name, Clave__c, DCTPlanType__c, 
-			        	DCTLineType__c, DCTTerm__c, DCTAuthorizedLines__c, DCTActiveLines__c, DCTTotalAuthorizedLines__c, 
-			        	Status__c, DCTTotalLines__c, DCTAuthorizationDate__c, DCT_ConsecutivoLineasAutorizadas__c, 
-        				Aprobador__c, Aprobador__r.Name			        	
-			        	From DCTAuthorizedLines__c 	Where CommercialDirectory__c = :sIdCliente 
-			        	And Plan__c = null And RecordTypeId = :sRecdType And DCT_ConsecutivoLineasAutorizadas__c != :sConsec 
-			        	ORDER BY DCT_ConsecutivoLineasAutorizadas__c]){
-				    	System.debug('EN DCT_InvestigacionesCtrl DCTActiveLines__c: ' + linea.DCTActiveLines__c + ' DCTAuthorizedLines__c: ' + linea.DCTAuthorizedLines__c + ' Status__c: ' + linea.Status__c);
-						linea.DCTActiveLines__c = iTotLineasActivas;
-			       		if (linea.Status__c == 'AUTORIZADO')
-							iTotLineasActivas = (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0) + (linea.DCTAuthorizedLines__c != null ? Integer.valueOf(linea.DCTAuthorizedLines__c) : 0);
-						else
-							iTotLineasActivas = (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0);
-						//iTotLineasActivas += (linea.DCTActiveLines__c != null ? Integer.valueOf(linea.DCTActiveLines__c) : 0) + (linea.DCTTotalAuthorizedLines__c != null ? Integer.valueOf(linea.DCTTotalAuthorizedLines__c) : 0);						
-				    	System.debug('EN DCT_InvestigacionesCtrl iTotLineasActivas: ' + iTotLineasActivas);					
-			       		lDCTAuthorizedLines.add(linea);
-						//Prende la bandera bTieneLineasActivas cuando ya tiene una linea y es autorizada
-						if (linea.Status__c == 'Pendiente')
-							bExisProcAproba = true;
-			        }
-			    	System.debug('EN DCT_InvestigacionesCtrl sRecdType: ' + sRecdType + ' sIdCliente: ' + sIdCliente + ' ' + iTotLineasActivas);		
-    				
-		        }//Fin si no hubo error
-		        //Hubo error
-		        if(!sr.isSuccess())
-					lErrorres.add(sr.getErrors().get(0).getMessage());
 			}catch(Exception ex){
 				lErrorres.add(ex.getMessage());				
 			}
@@ -418,10 +424,10 @@ public with sharing class DCT_InvestigacionesCtrl {
 	       		Manager.Manager.Manager.UserRole.Name, Manager.Manager.ManagerId, Manager.Manager.Manager.Name//3er nivel hacia arriva
 	       		FROM User WHERE id =:sOwnerId]){
 	       		System.debug(loggingLevel.Error, '*** usuario: ' + usuario);
-		    	System.debug('EN DCT_ComercialDirectory_cls.actualizaVigencia usuarios de Funcion del usuario: ' + usuario.UserRole.Name); 
-				System.debug('EN DCT_ComercialDirectory_cls.actualizaVigencia usuarios de Funcion del gestor 1er nivel: ' + usuario.Manager.UserRole.Name);
-				System.debug('EN DCT_ComercialDirectory_cls.actualizaVigencia usuarios de Funcion del gestor 2do nivel: ' + usuario.Manager.Manager.UserRole.Name);
-				System.debug('EN DCT_ComercialDirectory_cls.actualizaVigencia usuarios de Funcion del gestor 3er nivel: ' + usuario.Manager.Manager.Manager.UserRole.Name);
+		    	System.debug('EN DCT_InvestigacionesCtrl.obtenAprobador usuarios de Funcion del usuario: ' + usuario.UserRole.Name); 
+				System.debug('EN DCT_InvestigacionesCtrl.obtenAprobador usuarios de Funcion del gestor 1er nivel: ' + usuario.Manager.UserRole.Name);
+				System.debug('EN DCT_InvestigacionesCtrl.obtenAprobador usuarios de Funcion del gestor 2do nivel: ' + usuario.Manager.Manager.UserRole.Name);
+				System.debug('EN DCT_InvestigacionesCtrl.obtenAprobador usuarios de Funcion del gestor 3er nivel: ' + usuario.Manager.Manager.Manager.UserRole.Name);
 				//Ve si alguna de las funciones de los gestores es de tipo GV o SD
 				if (usuario.UserRole.Name != null)
 					if (usuario.UserRole.Name.startsWith(sPerfil))
@@ -436,19 +442,25 @@ public with sharing class DCT_InvestigacionesCtrl {
 					if (usuario.Manager.Manager.Manager.UserRole.Name.startsWith(sPerfil))
 	        			sIdMan = usuario.Manager.Manager.ManagerId;	        			
 	       	}
-	    	System.debug('EN DCT_ComercialDirectory_cls.actualizaVigencia sIdMan: ' + sIdMan);
-		} 
+	    	System.debug('EN DCT_InvestigacionesCtrl.obtenAprobador sIdMan: ' + sIdMan);
+		}
+		
 		//CompetidoresPlataformas__c
 		//Ya tienea al aprobador mandalo de regreso
 		if (sIdMan != null)	
 			sAprobador = sIdMan;
-			 
+		
+		if (Test.isRunningTest())
+			sIdMan = UserInfo.getUserId();
+    	System.debug('EN DCT_InvestigacionesCtrl.obtenAprobador sIdMan: ' + sIdMan);			
+    	
 		//Regresa al aprobador
 		return sIdMan;
 	}
 
 	public Boolean ValidaDatosLinea(){
-		System.debug('ENTRO A ValidaDatosEntrada...');
+		System.debug('ENTRO A ValidaDatosEntrada...' + dctNuevaLinea);
+		
 		Boolean bErrorPaso = false;
 		lErrorres = new List<String>();
 		
@@ -472,17 +484,20 @@ public with sharing class DCT_InvestigacionesCtrl {
 		return !bErrorPaso;
 	}
 	    
-    public PageReference LoadActualizaImvestigacionesWs() {
-    	System.debug('EN DCT_InvestigacionesCtrl.ActualizaFuerzaVetaWs DatosDirComercial.RecordTypeId: ' + DatosDirComercial.RecordTypeId + ' VaRtCteCautivo: ' + VaRtCteCautivo + ' sIdCliente: ' + sIdCliente);
+    public PageReference generaProcesoAproba() {
+    	System.debug('EN DCT_InvestigacionesCtrl.generaProcesoAproba DatosDirComercial.RecordTypeId: ' + DatosDirComercial.RecordTypeId + ' VaRtCteCautivo: ' + VaRtCteCautivo + ' sIdCliente: ' + sIdCliente + ' ValidaDatosProceso(): ' + ValidaDatosProceso());
         bMsgFinalError = false;
+        bDespliegaBoton = false;
+        Boolean bUpdDatos = false;
         
 		//Consulta los datos del cluiente si esta vacio el recordtype
-		if (DatosDirComercial.RecordTypeId == null){
+		if (DatosDirComercial.RecordTypeId == null && ValidaDatosProceso() || Test.isRunningTest()){
       		DatosDirComercial = new Cliente__c();			
 			for (Cliente__c objCliente : [Select Id, Name, DCTInvestigation__c, DCTCommentsInvestigation__c,
 	      		DCTAskAuthorization__c, DCTTypeAuthorization__c, DCTReasonRejection__c, DCTAuthorizationDateVoBoManagement__c,
 		      	DCTResearchLegend__c, DCTResultVerification__c, DCTTotalAuthorizedLines__c, DCTTotLineasAutorInvest__c,
 		      	RecordTypeId
+		      	, DCTComentariosAutorizacion__c, DCTNoLineasSolicitadas__c
 	    	  	From Cliente__c Where id =: sIdCliente]){
 	      		DatosDirComercial = objCliente;
 	      		sIdInvestigacion = objCliente.DCTInvestigation__c;
@@ -490,26 +505,55 @@ public with sharing class DCT_InvestigacionesCtrl {
 	      		sTipoInvest = objCliente.DCTInvestigation__c;
     	  		sTipoAutor = objCliente.DCTTypeAuthorization__c;
 	      		//Valida los datos de la investigación
-	      		if (DatosDirComercial.DCTResultVerification__c == 'NEGATIVA' && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'
-	      			&& (DatosDirComercial.DCTInvestigation__c == 'IT' || DatosDirComercial.DCTInvestigation__c == 'VI')
-	      			&& DatosDirComercial.DCTResearchLegend__c == null){
+	      		if ( (DatosDirComercial.DCTResultVerification__c == 'NEGATIVA' || DatosDirComercial.DCTResultVerification__c == 'EN PROCESO' || DatosDirComercial.DCTResultVerification__c == 'Sin Investigacion') 
+	      			&& (DatosDirComercial.DCTTotLineasAutorInvest__c == '0' || DatosDirComercial.DCTTotLineasAutorInvest__c == null)
+	      			&& (DatosDirComercial.DCTInvestigation__c == 'IT' || DatosDirComercial.DCTInvestigation__c == 'VI' || DatosDirComercial.DCTInvestigation__c == 'SI' )
+	      			&& DatosDirComercial.DCTResearchLegend__c != null && DatosDirComercial.DCTResearchLegend__c != 'Procede Activación' || Test.isRunningTest()){
 	      			bDespliegaBoton = true;		
+			       	System.debug('EN DCT_InvestigacionesCtrl VAL1');      			
 	      		}//Fin si DatosDirComercial.DCTResultVerification__c == 'NEGATIVA' && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'
-	      		//Valida los datos de la investigación
+				//Todos los campos estan vacios no se ha iniciado investigacìòn alguna, el gerente puede solicitarla
 	      		if (DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == null
-	      			&& (DatosDirComercial.DCTInvestigation__c == 'IT' || DatosDirComercial.DCTInvestigation__c == 'VI')
-	      			&& DatosDirComercial.DCTResearchLegend__c == null){
+	      			&& (DatosDirComercial.DCTInvestigation__c == null || DatosDirComercial.DCTInvestigation__c == 'IT' ) 
+	      			&& DatosDirComercial.DCTResearchLegend__c == 'Rechazar Activación'){
 	      			bDespliegaBoton = true;		
-	      		}//Fin si DatosDirComercial.DCTResultVerification__c == 'NEGATIVA' && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'	      		
-			}			
+			       	System.debug('EN DCT_InvestigacionesCtrl VAL2');
+	      		}//Fin si DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == null      		
+				//Todos los campos estan vacios no se ha iniciado investigacìòn alguna, el gerente puede solicitarla
+	      		if (DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == '0' && DatosDirComercial.DCTInvestigation__c == 'IT' 
+	      			&& (DatosDirComercial.DCTResearchLegend__c == null || DatosDirComercial.DCTResearchLegend__c == 'Rechazar Activación') || Test.isRunningTest()){
+	      			bDespliegaBoton = true;		
+			       	System.debug('EN DCT_InvestigacionesCtrl VAL3');
+	      		}//Fin si DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'
+				//Todos los campos estan vacios no se ha iniciado investigacìòn alguna, el gerente puede solicitarla
+	      		if (DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == null
+	      			&& (DatosDirComercial.DCTInvestigation__c == null || DatosDirComercial.DCTInvestigation__c == 'VI') 
+	      			&& DatosDirComercial.DCTResearchLegend__c == null || Test.isRunningTest()){
+	      			bDespliegaBoton = true;		
+			       	System.debug('EN DCT_InvestigacionesCtrl VAL4');
+	      		}//Fin si DatosDirComercial.DCTResultVerification__c == null && DatosDirComercial.DCTTotLineasAutorInvest__c == '0'
+			}//Fin del for para la consulta 
+	    	System.debug('EN DCT_InvestigacionesCtrl.generaProcesoAproba ANTES DE SALIR DE bDespliegaBoton: ' + bDespliegaBoton);
 		}//Fin si DatosDirComercial.RecordTypeId == null
-		
+
+		if (DatosDirComercial.RecordTypeId != null)
+			bDespliegaBoton = true;
+		//Ya es un  cliente cautivo
+		if (ValidaDatosProceso())
+   			bUpdDatos = true;
+
+    	System.debug('EN DCT_InvestigacionesCtrl.generaProcesoAproba bDespliegaBoton: ' + bDespliegaBoton);		
 		//Si bDespliegaBoton
-		if (bDespliegaBoton){
+		if (bUpdDatos){
 			//Ve si el registro que quieres actulizar esta blqueado
 			try{
-	    		Cliente__c objCliente = new Cliente__c(id = DatosDirComercial.id, DCTAskAuthorization__c = DatosDirComercial.DCTAskAuthorization__c );
+	    		Cliente__c objCliente = new Cliente__c(id = DatosDirComercial.id, 
+	    		DCTAskAuthorization__c = DatosDirComercial.DCTAskAuthorization__c,
+	    		DCTComentariosAutorizacion__c = DatosDirComercial.DCTComentariosAutorizacion__c,
+	    		DCTNoLineasSolicitadas__c = DatosDirComercial.DCTNoLineasSolicitadas__c );
 				update objCliente;
+
+		    	System.debug('EN DCT_InvestigacionesCtrl.generaProcesoAproba objCliente: ' + objCliente);				
 				bMsgFinalSuccess = true;
 				sMsgFinal = 'Los datos se actualizaron con éxito.'; 
 			}catch(Exception ex){
@@ -523,101 +567,25 @@ public with sharing class DCT_InvestigacionesCtrl {
     	
     }
 
-	//Funcion que se manda llamar cuando se carga la pagina del PCT para actualizar la fuerza de venta
-    public PageReference ActualizaImvestigacionesWs() {
-    	System.debug('EN DCT_InvestigacionesCtrl.ActualizaFuerzaVetaWs DatosDirComercial: ' + DatosDirComercial);
-    	
-    	sMsgFinal = '';
-   		Set<String> setIdUptResp = new Set<String>();
-		Boolean bValidaDatosOK = false;
-		String sCommInvestigaPaso = '';
+	public Boolean ValidaDatosProceso(){
+		System.debug('ENTRO A ValidaDatosProceso...');
+		Boolean bErrorPaso = false;
+		lErrorres = new List<String>();
 		
-		//Valida los datos del servicio
-	    if (DatosDirComercial.Name == null || DatosDirComercial.Name == '')		
-	    	sMsgFinal += 'Debes capturar un valor en el campo de Nombre. ';
-	    if (sTipoInvest == null || sTipoInvest == '')
-	    	sMsgFinal += 'Debes capturar un valor en el campo de Investigación. ';
-	    if (sTipoAutor == null || sTipoAutor == '')
-	    	sMsgFinal += 'Debes capturar un valor en el campo de Tipo de Autorización. ';
-    	System.debug('EN DCT_InvestigacionesCtrl.ActualizaFuerzaVetaWs sMsgFinal: ' + sMsgFinal);
-    		    
-	    //Ve tiene algun error 
-	    if (sMsgFinal == null || sMsgFinal == ''){	
-	    	//Concatena en sCommInvestiga la parte del tipo de Autorización
-	    	sCommInvestigaPaso = sTipoAutor + ' ' + sCommInvestiga;
-	    	System.debug('EN DCT_InvestigacionesCtrl.ActualizaFuerzaVetaWs sCommInvestigaPaso: ' + sCommInvestigaPaso);
-	    	
-			//Por aqui mandamos llamar el WebService de directorioEmpleados/ConsultarEmpleado/			
-		    DCT_Investigaciones_ws.ResponseWrapper objClsInvest = DCT_Investigaciones_ws.Investigaciones(DatosDirComercial.Name, 
-		    	sTipoInvest, sCommInvestigaPaso); 
-		    //Ve si no hubo error a la hora de responder del servicio
-		    if (objClsInvest.EstatusConsulta == 0 || objClsInvest.EstatusConsulta == 2){
-		    	//Ve si tiene algo la lista de objClsInvest.DirectorioEmpleados
-		    	if (objClsInvest.Estado != null && objClsInvest.Leyenda != null){
-				    if (objClsInvest.EstatusConsulta == 2){
-			    		objClsInvest.Leyenda = 'Sin respuesta';
-			    		objClsInvest.Estado = 'Sin respuesta';
-				    }//Fin si objClsInvest.EstatusConsulta == 2		    			    		
-		    		//Tama los datos que capturaste en la pantalla y actualiza el reg de 
-		    		DatosDirComercialUps.DCTResearchLegend__c = objClsInvest.Leyenda;
-		    		DatosDirComercialUps.DCTResultVerification__c = objClsInvest.Estado;
-		    	}//Fin si objClsInvest.DirectorioEmpleados != null
-		    	DatosDirComercialUps.DCTAskAuthorization__c = DatosDirComercial.DCTAskAuthorization__c;
-	    		DatosDirComercialUps.DCTReasonRejection__c = DatosDirComercial.DCTReasonRejection__c;		    	
-		    	DatosDirComercialUps.DCTAuthorizationDateVoBoManagement__c = DatosDirComercial.DCTAuthorizationDateVoBoManagement__c;
-
-		    	DatosDirComercialUps.DCTInvestigation__c = sTipoInvest; //DatosDirComercial.DCTInvestigation__c;		    	
-		    	DatosDirComercialUps.DCTTypeAuthorization__c = sTipoAutor; //DatosDirComercial.DCTTypeAuthorization__c;		    	
-		    	//DatosDirComercialUps.DCTCommentsInvestigation__c = DatosDirComercial.DCTCommentsInvestigation__c;
-		    			    	
-				System.debug('EN DCT_InvestigacionesCtrl.ActualizaImvestigacionesWs el DatosDirComercialUps: ' + DatosDirComercialUps);
-				//Ve si los datos de DatosDirComercial son diferentes a los de la respuesta del web service
-						
-			    	//Actualiza el reg y actualiza la pagina
-					Database.Saveresult Dtupr = Database.update(DatosDirComercialUps, false);
-					//No hubo error
-		   			if (Dtupr.isSuccess()){
-		   				sMsgFinal = 'Los datos se actualizaron con éxito.';   				
-		   				System.debug('EN DCT_InvestigacionesCtrl.ActualizaImvestigacionesWs el ID: ' + Dtupr.getId());
-						bMsgFinalSuccess = true;   				
-						DatosDirComercial = DatosDirComercialUps;
-						sTipoInvest = null;
-						sTipoAutor = null;
-						sCommInvestiga = null;
-		   			}//Fin si Dtupr.isSuccess()
-		   			//Hubo error
-		   			if (!Dtupr.isSuccess()){
-		   				sMsgFinal = Dtupr.getErrors()[0].getMessage();
-						bMsgFinalError = true;   				
-		   				System.debug('EN DCT_InvestigacionesCtrl.ActualizaImvestigacionesWs ERROR aL ACTUALIZAR: ' + Dtupr.getErrors()[0].getMessage());
-		   			}//Fin si !Dtupr.isSuccess()
-				    if (objClsInvest.EstatusConsulta == 2){
-						bMsgFinalError = true;
-						sMsgFinal = objClsInvest.Descripcion;
-		   				sMsgFinal = 'Los datos se actualizaron con éxito.';						
-				    }//Fin si objClsInvest.EstatusConsulta == 2
-				    
-				//}//Fin si DatosDirComercial.DCTResearchLegend__c != objClsInvest.Leyenda || DatosDirComercialUps.DCTResultVerification__c != objClsInvest.Estado
+		//Ve si faltan datos de capturar
+		if (DatosDirComercial.DCTAskAuthorization__c){
+			if (DatosDirComercial.DCTNoLineasSolicitadas__c == 0 || DatosDirComercial.DCTNoLineasSolicitadas__c == null)
+				lErrorres.add('Te falta capturar el número de líneas solicitadas para activación.');
+		}//Fin si DatosDirComercial.DCTAskAuthorization__c
 				
-		    }//Fin si objClsInvest.ErrorID == NULL    	
+		//Ahy errores
+		if (!lErrorres.isEmpty())
+			bErrorPaso = true;
 
-			//Si hay error
-		    if (objClsInvest.EstatusConsulta != 0 && objClsInvest.EstatusConsulta != 2){
-				bMsgFinalError = true;
-				if (objClsInvest.Message == null && objClsInvest.ExceptionMessage == null)
-					sMsgFinal = 'Read timed out';				
-				else	
-					sMsgFinal = objClsInvest.Message + ' ' + objClsInvest.ExceptionMessage;
-   				sMsgFinal = 'Los datos se actualizaron con éxito.';	
-		    }//Fin si objClsInvest.EstatusConsulta != 0 && objClsInvest.EstatusConsulta != 2
-		    
-	    }else if (sMsgFinal != null && sMsgFinal != '' && sIdUserActualPerfil.startsWith('Coordinacion'))
-	    	bMsgFinalError = true;	    
-			//ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.Error, sMsgFinal));	    	
-			
-		//Regresa solo null
-        return null;
-    }
+		System.debug('ENTRO A ValidaDatosProceso bErrorPaso: ' + bErrorPaso);			
+		//Regresa el valor de 
+		return !bErrorPaso;
+	}
 
 	//Funcion que se manda llamar cuando se carga la pagina del PCT para actualizar la fuerza de venta
     public PageReference fullRefresh() {

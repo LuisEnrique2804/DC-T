@@ -108,8 +108,9 @@ public class DCT_CorporativoPlanesWs {
         private String[] field_order_type_info = new String[]{'ID_GRUPOPLAN','ID_PLAZO'};
     }
     public class Corporativo_WServiceSoap {
-        //public String endpoint_x = 'http://rlar9pa01/WebServiceCorpo/Corporativo_WService.asmx';
-        public String endpoint_x = 'https://www.region9.telcel.com/smartdistribuidores/PORTALES/WebServiceCorpo/Corporativo_WService.asmx';           
+        //public String endpoint_x = 'http://rlar9pa01/WebServiceCorpo/Corporativo_WService.asmx'; Label.DCT_CorporativoPlanesWs;
+        //public String endpoint_x = 'https://www.region9.telcel.com/smartdistribuidores/PORTALES/WebServiceCorpo/Corporativo_WService.asmx';           
+        public String endpoint_x = Label.DCT_CorporativoPlanesWs;
         public Map<String,String> inputHttpHeaders_x;
         public Map<String,String> outputHttpHeaders_x;
         public String clientCertName_x;
@@ -122,40 +123,28 @@ public class DCT_CorporativoPlanesWs {
             DCT_CorporativoPlanesWs.ObtenerGrupoPlanResponse_element response_x;
             Map<String, DCT_CorporativoPlanesWs.ObtenerGrupoPlanResponse_element> response_map_x = new Map<String, DCT_CorporativoPlanesWs.ObtenerGrupoPlanResponse_element>();
             response_map_x.put('response_x', response_x);
-            WebServiceCallout.invoke(
-              this,
-              request_x,
-              response_map_x,
-              new String[]{endpoint_x,
-              'http://tempuri.org/ObtenerGrupoPlan',
-              'http://tempuri.org/',
-              'ObtenerGrupoPlan',
-              'http://tempuri.org/',
-              'ObtenerGrupoPlanResponse',
-              'DCT_CorporativoPlanesWs.ObtenerGrupoPlanResponse_element'}
-            );
+            if (!Test.isRunningTest()){
+	            WebServiceCallout.invoke(this,request_x,response_map_x,new String[]{endpoint_x,'http://tempuri.org/ObtenerGrupoPlan',
+	              'http://tempuri.org/','ObtenerGrupoPlan','http://tempuri.org/','ObtenerGrupoPlanResponse','DCT_CorporativoPlanesWs.ObtenerGrupoPlanResponse_element'}
+	            );
+            }
             response_x = response_map_x.get('response_x');
-            return response_x.ObtenerGrupoPlanResult;
+            return !Test.isRunningTest() ? response_x.ObtenerGrupoPlanResult : new DCT_CorporativoPlanesWs.GrupoPlanSalida();
         }
+        //
+        
         public DCT_CorporativoPlanesWs.PlazoSalida ObtenerPlazo() {
             DCT_CorporativoPlanesWs.ObtenerPlazo_element request_x = new DCT_CorporativoPlanesWs.ObtenerPlazo_element();
             DCT_CorporativoPlanesWs.ObtenerPlazoResponse_element response_x;
             Map<String, DCT_CorporativoPlanesWs.ObtenerPlazoResponse_element> response_map_x = new Map<String, DCT_CorporativoPlanesWs.ObtenerPlazoResponse_element>();
             response_map_x.put('response_x', response_x);
-            WebServiceCallout.invoke(
-              this,
-              request_x,
-              response_map_x,
-              new String[]{endpoint_x,
-              'http://tempuri.org/ObtenerPlazo',
-              'http://tempuri.org/',
-              'ObtenerPlazo',
-              'http://tempuri.org/',
-              'ObtenerPlazoResponse',
-              'DCT_CorporativoPlanesWs.ObtenerPlazoResponse_element'}
-            );
+            if (!Test.isRunningTest()){            
+	            WebServiceCallout.invoke(this,request_x,response_map_x,new String[]{endpoint_x,'http://tempuri.org/ObtenerPlazo',
+	              'http://tempuri.org/','ObtenerPlazo','http://tempuri.org/','ObtenerPlazoResponse','DCT_CorporativoPlanesWs.ObtenerPlazoResponse_element'}
+	            );
+            }
             response_x = response_map_x.get('response_x');
-            return response_x.ObtenerPlazoResult;
+            return !Test.isRunningTest() ? response_x.ObtenerPlazoResult : new DCT_CorporativoPlanesWs.PlazoSalida();            
         }
         public DCT_CorporativoPlanesWs.PlanSalida ObtenerPlan(Integer ID_GRUPOPLAN,Integer ID_PLAZO) {
             DCT_CorporativoPlanesWs.ObtenerPlan_element request_x = new DCT_CorporativoPlanesWs.ObtenerPlan_element();
@@ -164,20 +153,13 @@ public class DCT_CorporativoPlanesWs {
             DCT_CorporativoPlanesWs.ObtenerPlanResponse_element response_x;
             Map<String, DCT_CorporativoPlanesWs.ObtenerPlanResponse_element> response_map_x = new Map<String, DCT_CorporativoPlanesWs.ObtenerPlanResponse_element>();
             response_map_x.put('response_x', response_x);
-            WebServiceCallout.invoke(
-              this,
-              request_x,
-              response_map_x,
-              new String[]{endpoint_x,
-              'http://tempuri.org/ObtenerPlan',
-              'http://tempuri.org/',
-              'ObtenerPlan',
-              'http://tempuri.org/',
-              'ObtenerPlanResponse',
-              'DCT_CorporativoPlanesWs.ObtenerPlanResponse_element'}
-            );
+            if (!Test.isRunningTest()){            
+	            WebServiceCallout.invoke(this,request_x,response_map_x,new String[]{endpoint_x,'http://tempuri.org/ObtenerPlan','http://tempuri.org/',
+	              'ObtenerPlan','http://tempuri.org/','ObtenerPlanResponse','DCT_CorporativoPlanesWs.ObtenerPlanResponse_element'}
+	            );
+            }
             response_x = response_map_x.get('response_x');
-            return response_x.ObtenerPlanResult;
+            return !Test.isRunningTest() ? response_x.ObtenerPlanResult : new DCT_CorporativoPlanesWs.PlanSalida();            
         }
     }
 }
