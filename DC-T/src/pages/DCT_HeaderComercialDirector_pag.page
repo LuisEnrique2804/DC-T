@@ -1,4 +1,5 @@
 <apex:page title="TEST" showHeader="true" sidebar="false" standardStylesheets="false" standardController="Cliente__c" extensions="DCT_HeaderComercialDirector_ctr">
+
 	<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
 		<head>
 			<meta charset="utf-8" />
@@ -22,7 +23,7 @@
 			</script>
 		</head>
 		<body>
-			<apex:form id="headerForm">
+ 			<apex:form id="headerForm">
 				<apex:actionFunction name="afsubmitForApprovalFun" action="{!submitForApproval}" rerender="oupEnBlanco"/>
 				<div class="slds-page-header">
 					<div class="slds-grid">
@@ -33,7 +34,7 @@
 										<use xlink:href="{!URLFOR($Resource.SLDS,'icons/custom-sprite/svg/symbols.svg#custom60')}" xmlns:xlink="http://www.w3.org/1999/xlink"/>
 									</svg>
 								</div>
-								<div class="slds-media__body">
+								<div class="slds-media__body"> 
 									<!-- <apex:sectionHeader subtitle="{!Cliente__c.Name}" title="{!Cliente__c.RecordType.Name}"/> -->
 									<p class="slds-text-title--caps slds-line-height--reset">{!Cliente__c.RecordType.Name}</p>
 									<p class="slds-page-header__title slds-truncate" title="{!Cliente__c.Name}">{!Cliente__c.Name}</p>
@@ -55,8 +56,8 @@
 						</div>
 					</div>
 				</div>
-				<div style="width: 100%; margin: 0 auto; word-wrap: break-word;">
-					<!-- <apex:outputPanel rendered="{!IF(Cliente__c.RecordType.Name == 'Cliente Cautivo',true,false)}">
+				<!-- <div style="width: 100%; margin: 0 auto; word-wrap: break-word;">
+					<apex:outputPanel rendered="{!IF(Cliente__c.RecordType.Name == 'Cliente Cautivo',true,false)}">
 						<table class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout: fixed; width: 100%">
 					  	<thead>
 							<tr class="slds-text-title_caps">
@@ -81,8 +82,8 @@
 							</apex:repeat>
 					  	</tbody>
 						</table>
-					</apex:outputPanel> -->
-				</div>
+					</apex:outputPanel>
+				</div> -->
 			</apex:form>
 			<apex:outputPanel id="oupEnBlanco">
 				<div class="slds-truncate"> &nbsp;</div>			

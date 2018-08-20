@@ -146,6 +146,7 @@ global class DCT_ResponseSISACactiva_cls {
 		global Date FechaRegistro;
 		global Date FechaModificacion;
 		global String UltimoUsuarioModificar;
+		global String XOUltimoUsuarioModificar;
 		global Date FechaBaja; 
 		global Boolean PuedeActivarVPN;
 		global String CicloFacturacion;

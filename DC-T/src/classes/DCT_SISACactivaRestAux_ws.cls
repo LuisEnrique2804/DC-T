@@ -479,6 +479,7 @@ public class DCT_SISACactivaRestAux_ws {
 						info.FechaRegistro =clienteIterator.DCTRegistrationDate__c;
 						info.FechaModificacion =Date.valueOf(clienteIterator.LastModifiedDate);
 						info.UltimoUsuarioModificar =clienteIterator.LastModifiedBy.Name;
+						info.XOUltimoUsuarioModificar =clienteIterator.LastModifiedBy.DCTXO__c;
 						info.FechaBaja =clienteIterator.DCTLowDate__c; 
 						info.PuedeActivarVPN =clienteIterator.DCTVPNActivation__c ? true : false;
 						info.CicloFacturacion =clienteIterator.DCTBillingCycle__c != null ? clienteIterator.DCTBillingCycle__c : null;
@@ -625,7 +626,7 @@ public class DCT_SISACactivaRestAux_ws {
 		String strQuerryCliente = 'SELECT '+String.join(new List<String>(SObjectType.Cliente__c.Fields.getMap().keySet()), ', ')+
 			', Grupo__r.Name, Cliente__r.Estatus__c, DCTPlan__r.Clave__c, DCTPlan__r.DCTLineType__c, DCTPlan__r.DCTServicekey__c,'+
 			' DCTPlan__r.DCTAdditionalServices__c, DCTPlan__r.DCTBrand__c, DCTPlan__r.DCTModel__c, DCTPlan__r.DCTTerm__c,'+
-			' DCT_CatalogoFuerzaVenta__r.Name, DCTCatalogoFuerzaVenta2__r.Name, LastModifiedBy.Name, DCT_CatalogoFuerzaVenta__r.DCT_PrepagoSiapID__c,'+
+			' DCT_CatalogoFuerzaVenta__r.Name, DCTCatalogoFuerzaVenta2__r.Name, LastModifiedBy.Name, LastModifiedBy.DCTXO__c, DCT_CatalogoFuerzaVenta__r.DCT_PrepagoSiapID__c,'+
 			' DCTCatalogoFuerzaVenta2__r.DCT_PrepagoSiapID__c, Owner.Name, '+
 			'(SELECT DCT_ConsecutivoLineasAutorizadas__c, Name,Clave__c,DCT_Tarifa__c,Plan__r.DescripcionGrupoPlan__c,Plan__r.DCTCode__c,Plan__r.Name,Plan__r.DCTTerm__c,'+
 				'CreatedBy.Manager.Name,DCTAuthorizationDate__c,DCTActiveLines__c,DCTAuthorizedLines__c,Status__c,Aprobador__r.Name,'+
@@ -740,7 +741,7 @@ public class DCT_SISACactivaRestAux_ws {
 			if(rfc == null) {
 				if(legalName == null) {
 					strCodeNumber = method;
-					strDescription = 'Favor de validar que este el RFC y Razon social.';
+					strDescription = 'Favor de validar que este el RFC y Razón social.';
 					blnEvrythingIsOK = false;
 				}
 			}
@@ -787,41 +788,4 @@ public class DCT_SISACactivaRestAux_ws {
 		}
 		return blnEvrythingIsOK;
 	}
-
-	//public static List<DCTAuthorizedLines__c> generateQueryPlan(String strIdProspect){
-	//	List<DCTAuthorizedLines__c> lstNewPlan = new List<DCTAuthorizedLines__c>();
-
-	//	//this.sQuery +=' (Select Plan__r.DescripcionGrupoPlan__c, Plan__r.DCTTerm__c, ';
-	//	//this.sQuery +=' DCTAuthorizationDate__c, DCTActiveLines__c, DCTAuthorizedLines__c, Status__c, RecordType.Name, Plan__r.ClavePlan__c ';
-	//	//this.sQuery +=' From Lineas_Autorizadas__r ORDER BY DCT_ConsecutivoLineasAutorizadas__c), '; //Where RecordType.Name = \'Plan\'
-		
-	//	//this.sQuery +=' (Select Name, Posicion__c, DCTTypeContact__c, MobilePhone, DCTNIP__c, Email, DCTReceiveInformation__c ';
-	//	//this.sQuery +=' From DirectorioComercial_Contactos__r Where DCT_ContactoDirectorio__c = true) ';
-
-	//	lstNewPlan = [
-	//		SELECT 
-	//			Name, 
-	//			Clave__c,
-	//			DCT_Tarifa__c, 
-	//			Plan__r.DescripcionGrupoPlan__c, 
-	//			Plan__r.DCTCode__c, 
-	//			Plan__r.Name,
-	//			Plan__r.DCTTerm__c,
-	//			CreatedBy.Manager.Name,
-				
-	//			DCTActiveLines__c,
-	//			DCTAuthorizedLines__c,
-	//			Status__c,
-	//			Aprobador__r.Name,
-	//			DCTAuthorizationDate__c,
-	//			DCTTotalAuthorizedLines__c
-
-	//		FROM DCTAuthorizedLines__c 
-	//		WHERE CommercialDirectory__c  =: strIdProspect 
-	//		AND RecordType.Name = 'Plan'
-	//		And Status__c != 'Rechazado'
-	//	];
-	//	System.debug(loggingLevel.Error, '*** lstNewPlan: ' + lstNewPlan);
-	//	return lstNewPlan;
-	//}
 }
